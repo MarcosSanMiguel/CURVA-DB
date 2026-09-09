@@ -627,7 +627,7 @@
                     country: safeStr(row.c[4]),
                     tags: safeStr(row.c[5]),
                     image: safeStr(row.c[7])
-                })).filter(g => g.id !== '');
+                })).filter(g => g.id !== '' && g.id.toLowerCase() !== 'group_id' && g.name.toLowerCase() !== 'ultra_group');
 
                 globalMedia = (mediaJson.table.rows || []).map(row => ({
                     id: safeStr(row.c[0]),
@@ -636,7 +636,7 @@
                     link: safeStr(row.c[4]),
                     tags: safeStr(row.c[5]),
                     title: safeStr(row.c[6])
-                })).filter(m => m.id !== '');
+                })).filter(m => m.id !== '' && m.id.toLowerCase() !== 'media_id');
 
                 const uniqueCountries = new Set(globalGroups.map(g => g.country).filter(Boolean));
                 document.getElementById('stat-groups').textContent = globalGroups.length;
@@ -732,6 +732,21 @@
             document.getElementById('curvaNoResults').style.display = hasResults ? 'none' : 'block';
         };
 
+        function renderTagBadges(tagString, maxTags = 8) {
+            if (!tagString) return '';
+            const allTags = tagString.split(',')
+                .map(t => t.trim())
+                .filter(Boolean);
+            if (allTags.length === 0) return '';
+            if (allTags.length <= maxTags) {
+                return allTags.map(t => `<span class="curva-badge">${t}</span>`).join('');
+            }
+            const visibleTags = allTags.slice(0, maxTags);
+            const remaining = allTags.length - maxTags;
+            return visibleTags.map(t => `<span class="curva-badge">${t}</span>`).join('') +
+                `<span class="curva-badge">+${remaining} more</span>`;
+        }
+
         function renderGroups(groups) {
             const grid = document.getElementById('curvaGroupsGrid');
             let html = '';
@@ -761,12 +776,7 @@
 
             groups.forEach(g => {
                 const loc = g.club ? `${g.club} · ${g.country}` : g.country;
-                const tagBadges = g.tags.split(',')
-                    .map(t => t.trim())
-                    .filter(Boolean)
-                    .slice(0, 4)
-                    .map(t => `<span class="curva-badge">${t}</span>`)
-                    .join('');
+                const tagBadges = renderTagBadges(g.tags, 8);
 
                 const defaultFallback = 'https://sites.gatech.edu/curva/files/2026/04/CURVAlogoCroppedWhite.png';
                 const imgSrc = g.image || defaultFallback;
@@ -815,7 +825,7 @@
                 }
 
                 const thumb = thumbUrl ? `<div class="media-thumb-right"><img src="${thumbUrl}" alt="Media thumbnail" loading="lazy" /></div>` : '';
-                const tags = m.tags.split(',').map(t => t.trim()).filter(Boolean).map(t => `<span class="curva-badge">${t}</span>`).join('');
+                const tags = renderTagBadges(m.tags, 8);
 
                 return `
                     <div class="curva-card-media" onclick="window.location.href='${MEDIA_BASE_URL}?mediaId=${m.id}'">
