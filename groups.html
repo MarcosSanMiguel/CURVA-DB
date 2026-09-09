@@ -177,30 +177,50 @@
 
     <!-- MODAL: ADD MEDIA -->
     <div id="modalAddMedia" class="curva-modal-overlay" style="display: none;">
-        <div class="curva-modal-box">
+        <div class="curva-modal-box" style="max-width: 560px; max-height: 90vh; overflow-y: auto;">
             <div class="curva-modal-header">
                 <h3>Add New Media Item</h3>
                 <button class="curva-modal-close" onclick="closeModal('modalAddMedia')">&times;</button>
             </div>
+            
             <div class="curva-form-group">
                 <label>Media Type</label>
-                <select id="newMedType" class="curva-form-input">
+                <select id="newMedType" class="curva-form-input" onchange="handleMediaTypeChange(this.value)">
                     <option value="YouTube Video">YouTube Video</option>
                     <option value="Image URL">Image URL</option>
+                    <option value="Social Media">Social Media</option>
+                    <option value="Other">Other</option>
                 </select>
             </div>
+
             <div class="curva-form-group">
-                <label>Title / Description</label>
-                <input type="text" id="newMedTitle" class="curva-form-input" placeholder="e.g. Derby Matchday Pyro Choreo">
+                <label>Title</label>
+                <input type="text" id="newMedTitle" class="curva-form-input" placeholder="e.g. Derby Pyro Choreo 2024">
             </div>
+
+            <div class="curva-form-group">
+                <label>Description (Optional)</label>
+                <textarea id="newMedDesc" class="curva-inline-textarea" style="min-height: 70px;" placeholder="Add historical context, fixture details, or background on this media item..."></textarea>
+            </div>
+
             <div class="curva-form-group">
                 <label>Media Link / URL</label>
-                <input type="url" id="newMedLink" class="curva-form-input" placeholder="YouTube or image direct URL">
+                <input type="url" id="newMedLink" class="curva-form-input" placeholder="YouTube, Tweet, TikTok, or direct URL">
             </div>
+
+            <!-- DYNAMIC CUSTOM THUMBNAIL (Social Media & Other only) -->
+            <div class="curva-form-group" id="customThumbGroup" style="display: none;">
+                <label>Custom Thumbnail Image URL (Optional)</label>
+                <input type="url" id="newMedThumb" class="curva-form-input" placeholder="https://example.com/screenshot.jpg">
+                <span style="font-size: 11px; color: #64748b; margin-top: 4px; display: block;">Paste an image link to serve as the card preview.</span>
+            </div>
+
+            <!-- CONTROLLED TAG BANK SELECTOR -->
             <div class="curva-form-group">
-                <label>Tags (Comma separated)</label>
-                <input type="text" id="newMedTags" class="curva-form-input" placeholder="Tifo, Pyro, Derby">
+                <label>Tags</label>
+                <div id="mediaTagBankContainer" style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;"></div>
             </div>
+
             <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px;">
                 <button class="curva-btn-discard" onclick="closeModal('modalAddMedia')">Cancel</button>
                 <button class="curva-btn-save" onclick="submitCreateMedia()">Add Media</button>
@@ -353,14 +373,22 @@
         margin-bottom: 16px;
     }
     .curva-tags-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .curva-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 4px;
+    }
+
     .curva-badge {
-        background: #1e293b;
-        color: #cbd5e1;
-        padding: 4px 10px;
-        border-radius: 12px;
+        background: #f1f5f9;
+        color: #475569;
+        padding: 3px 9px;
+        border-radius: 10px;
         font-size: 11px;
         font-weight: 600;
-        border: 1px solid #334155;
+        display: inline-block;
+        border: 1px solid transparent;
     }
 
     /* TABS */
@@ -805,7 +833,26 @@
             'Other'
         ];
 
-        const MEDIA_TYPES = ['YouTube Video', 'Image URL'];
+        const MEDIA_TYPES = ['YouTube Video', 'Image URL', 'Social Media', 'Other'];
+
+        const MEDIA_TAG_BANK = {
+            'Content Type': [
+                'Tifo', 'Chant', 'Pyro', 'Banner', 'Match footage', 
+                'Protest', 'March', 'Documentary', 'Interview', 
+                'Merchandise', 'Charity event', 'Historical archive'
+            ],
+            'Setting': [
+                'Home game', 'Away game', 'Derby', 'Street / March', 'Community event'
+            ],
+            'Subject / Theme': [
+                'Anti-fascist', 'Fascist / Far-right', 'Anti-racist', 'Racist', 
+                'Feminism', 'LGBTQ+', 'Palestine', 'Refugees', 'Environment', 
+                'Anti-modern-football', 'Fans\' rights', 'Anti-repression', 
+                'Violence', 'Charity', 'Volunteering'
+            ]
+        };
+
+        let selectedModalMediaTags = new Set();
 
         const urlParams = new URLSearchParams(window.location.search);
         const currentGroupId = urlParams.get('groupId');
@@ -902,7 +949,9 @@
                         type: safeStr(r.c[3]),
                         link: safeStr(r.c[4]),
                         tags: safeStr(r.c[5]),
-                        title: safeStr(r.c[6])
+                        title: safeStr(r.c[6]),
+                        description: safeStr(r.c[7]),
+                        thumbnailUrl: safeStr(r.c[8])
                     }));
 
                 renderProfile();
@@ -1195,6 +1244,10 @@
                     ? pendingMediaEdits[m.id].tags
                     : m.tags;
 
+                const currentDesc = isDirty && pendingMediaEdits[m.id].media_description !== undefined
+                    ? pendingMediaEdits[m.id].media_description
+                    : (m.description || '');
+
                 let cardHtml = '';
                 if (adminActive) {
                     const typePills = MEDIA_TYPES.map(t => {
@@ -1212,20 +1265,24 @@
                         <div style="padding: 14px 16px 10px;">
                             <div class="curva-pill-selector" style="margin-right: 28px;">${typePills}</div>
                             <input type="text" class="curva-inline-input" placeholder="Media title" value="${currentTitle.replace(/"/g, '&quot;')}" oninput="stageMediaFieldChange('${m.id}', 'media_title', this.value)">
+                            <textarea class="curva-inline-textarea" style="min-height: 55px; margin-bottom: 6px;" placeholder="Media description (optional)" oninput="stageMediaFieldChange('${m.id}', 'media_description', this.value)">${currentDesc}</textarea>
                             <input type="url" class="curva-inline-input" placeholder="Media Link (YouTube/Image URL)" value="${currentLink.replace(/"/g, '&quot;')}" oninput="stageMediaFieldChange('${m.id}', 'media_link', this.value)">
                             <input type="text" class="curva-inline-input" placeholder="Tags (comma separated)" value="${currentTags.replace(/"/g, '&quot;')}" oninput="stageMediaFieldChange('${m.id}', 'tags', this.value)">
                         </div>
-                    `;
+                    `;      
                 } else {
                     const isYouTube = m.type.toLowerCase().includes('youtube');
                     const typeLabel = isYouTube ? 'YouTube Video' : 'Image';
 
                     let thumbUrl = '';
-                    if (isYouTube) {
+                    if (m.type === 'YouTube Video') {
                         const vidId = getYouTubeId(m.link);
                         thumbUrl = vidId ? `https://img.youtube.com/vi/${vidId}/mqdefault.jpg` : '';
-                    } else {
+                    } else if (m.type === 'Image URL') {
                         thumbUrl = m.link;
+                    } else {
+                        // Social Media or Other: use custom thumbnail, or fall back to default badge
+                        thumbUrl = m.thumbnailUrl || 'https://sites.gatech.edu/curva/files/2026/04/CURVAlogoCroppedWhite.png';
                     }
 
                     const thumb = thumbUrl ? `<div class="media-thumb-right"><img src="${thumbUrl}" alt="Media thumbnail" loading="lazy" /></div>` : '';
@@ -1402,6 +1459,7 @@
                         if (itm) {
                             if (u.media_type !== undefined) itm.type = u.media_type;
                             if (u.media_title !== undefined) itm.title = u.media_title;
+                            if (u.media_description !== undefined) itm.description = u.media_description;
                             if (u.media_link !== undefined) itm.link = u.media_link;
                             if (u.tags !== undefined) itm.tags = u.tags;
                         }
@@ -1481,8 +1539,10 @@
         window.submitCreateMedia = async function () {
             const type = document.getElementById('newMedType').value;
             const title = document.getElementById('newMedTitle').value.trim();
+            const desc = document.getElementById('newMedDesc').value.trim();
             const link = document.getElementById('newMedLink').value.trim();
-            const tags = document.getElementById('newMedTags').value.trim();
+            const thumb = document.getElementById('newMedThumb').value.trim();
+            const tags = Array.from(selectedModalMediaTags).join(', ');
 
             if (!title || !link) { alert('Title and Link are required'); return; }
 
@@ -1495,15 +1555,19 @@
                         ultraGroup: groupRecord.name,
                         mediaType: type,
                         mediaTitle: title,
+                        mediaDescription: desc,
                         mediaLink: link,
-                        tags: tags
+                        tags: tags,
+                        thumbnailUrl: thumb
                     }
                 });
 
                 closeModal('modalAddMedia');
                 document.getElementById('newMedTitle').value = '';
+                document.getElementById('newMedDesc').value = '';
                 document.getElementById('newMedLink').value = '';
-                document.getElementById('newMedTags').value = '';
+                document.getElementById('newMedThumb').value = '';
+                selectedModalMediaTags.clear();
                 loadProfileData();
             } catch (err) {
                 alert('Failed to add media item: ' + err.message);
@@ -1523,6 +1587,60 @@
             } catch (err) {
                 alert('Failed to delete media item: ' + err.message);
             }
+        };
+
+        // ==========================================
+        // Tag bank and dynamic media input logic
+        // ==========================================
+        window.handleMediaTypeChange = function(type) {
+            const thumbField = document.getElementById('customThumbGroup');
+            const thumbInput = document.getElementById('newMedThumb');
+            if (!thumbField) return;
+
+            if (type === 'Social Media' || type === 'Other') {
+                thumbField.style.display = 'block';
+            } else {
+                thumbField.style.display = 'none';
+                if (thumbInput) thumbInput.value = '';
+            }
+        };
+
+        window.initMediaTagBank = function() {
+            selectedModalMediaTags.clear();
+            const container = document.getElementById('mediaTagBankContainer');
+            if (!container) return;
+
+            let html = '';
+            for (const [category, tags] of Object.entries(MEDIA_TAG_BANK)) {
+                html += `<div>
+                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">${category}</div>
+                    <div class="curva-pill-selector" style="margin-bottom: 0;">`;
+                tags.forEach(t => {
+                    html += `<span class="curva-opt-pill" onclick="toggleModalMediaTag('${t.replace(/'/g, "\\'")}', this)">${t}</span>`;
+                });
+                html += `</div></div>`;
+            }
+            container.innerHTML = html;
+        };
+
+        window.toggleModalMediaTag = function(tag, el) {
+            if (selectedModalMediaTags.has(tag)) {
+                selectedModalMediaTags.delete(tag);
+                el.classList.remove('selected');
+            } else {
+                selectedModalMediaTags.add(tag);
+                el.classList.add('selected');
+            }
+        };
+
+        // Open Modal Override to Initialize Tag Bank
+        const origOpenModal = window.openModal;
+        window.openModal = function(id) {
+            if (id === 'modalAddMedia') {
+                initMediaTagBank();
+                handleMediaTypeChange(document.getElementById('newMedType').value);
+            }
+            document.getElementById(id).style.display = 'flex';
         };
 
         // ==========================================
