@@ -54,6 +54,15 @@ function doPost(e) {
       case "verify_passcode":
         return jsonResponse({ status: "success", verified: true });
 
+      case "batch_update_responses":
+        return jsonResponse(batchUpdateResponses(data.updates));
+
+      case "batch_update_sources":
+      return jsonResponse(batchUpdateSources(data.updates));
+
+      case "batch_update_media":
+        return jsonResponse(batchUpdateMedia(data.updates));
+
       default:
         return jsonResponse({ status: "error", message: "Unknown action: " + action }, 400);
     }
@@ -452,7 +461,8 @@ function createMediaItem(p) {
     p.mediaLink,
     p.tags || "",
     p.mediaTitle,
-    p.mediaDescription || ""
+    p.mediaDescription || "",
+    p.thumbnailUrl || ""
   ]);
 
   return { status: "success", mediaId: mediaId };
@@ -524,4 +534,114 @@ function logError(groupId, stepName, errorMessage, snippet) {
 function jsonResponse(obj, statusCode) {
   return ContentService.createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// For updating pre-existing ultra group/source/media information
+function batchUpdateResponses(updates) {
+  if (!updates || updates.length === 0) return { status: "success", updated: 0 };
+  
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("Responses");
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+
+  const idCol = headers.indexOf("response_id");
+  const tokenCol = headers.indexOf("binary_or_choice");
+  const answerCol = headers.indexOf("answer_text");
+  const confCol = headers.indexOf("confidence");
+  const notesCol = headers.indexOf("research_notes");
+
+  // Map response_id to row index
+  const rowMap = {};
+  for (let r = 1; r < data.length; r++) {
+    rowMap[String(data[r][idCol])] = r + 1;
+  }
+
+  let updateCount = 0;
+  updates.forEach(u => {
+    const rowNum = rowMap[u.response_id];
+    if (rowNum) {
+      if (u.binary_or_choice !== undefined && tokenCol !== -1) {
+        sheet.getRange(rowNum, tokenCol + 1).setValue(u.binary_or_choice);
+      }
+      if (u.answer_text !== undefined && answerCol !== -1) {
+        sheet.getRange(rowNum, answerCol + 1).setValue(u.answer_text);
+      }
+      if (u.confidence !== undefined && confCol !== -1) {
+        sheet.getRange(rowNum, confCol + 1).setValue(u.confidence);
+      }
+      if (u.research_notes !== undefined && notesCol !== -1) {
+        sheet.getRange(rowNum, notesCol + 1).setValue(u.research_notes);
+      }
+      updateCount++;
+    }
+  });
+
+  return { status: "success", updated: updateCount };
+}
+
+function batchUpdateSources(updates) {
+  if (!updates || updates.length === 0) return { status: "success", updated: 0 };
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("Sources");
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+
+  const idCol = headers.indexOf("source_id");
+  const typeCol = headers.indexOf("source_type");
+  const titleCol = headers.indexOf("title");
+  const urlCol = headers.indexOf("url");
+
+  const rowMap = {};
+  for (let r = 1; r < data.length; r++) {
+    rowMap[String(data[r][idCol])] = r + 1;
+  }
+
+  let count = 0;
+  updates.forEach(u => {
+    const rowNum = rowMap[u.source_id];
+    if (rowNum) {
+      if (u.source_type !== undefined && typeCol !== -1) sheet.getRange(rowNum, typeCol + 1).setValue(u.source_type);
+      if (u.title !== undefined && titleCol !== -1) sheet.getRange(rowNum, titleCol + 1).setValue(u.title);
+      if (u.url !== undefined && urlCol !== -1) sheet.getRange(rowNum, urlCol + 1).setValue(u.url);
+      count++;
+    }
+  });
+  return { status: "success", updated: count };
+}
+
+function batchUpdateMedia(updates) {
+  if (!updates || updates.length === 0) return { status: "success", updated: 0 };
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("Media");
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+
+  const idCol = headers.indexOf("media_id");
+  const typeCol = headers.indexOf("media_type");
+  const linkCol = headers.indexOf("media_link");
+  const tagsCol = headers.indexOf("tags");
+  const titleCol = headers.indexOf("media_title");
+  const descCol = headers.indexOf("media_description");
+  const thumbCol = headers.indexOf("thumbnail_url");
+
+  const rowMap = {};
+  for (let r = 1; r < data.length; r++) {
+    rowMap[String(data[r][idCol])] = r + 1;
+  }
+
+  let count = 0;
+  updates.forEach(u => {
+    const rowNum = rowMap[u.media_id];
+    if (rowNum) {
+      if (u.media_type !== undefined && typeCol !== -1) sheet.getRange(rowNum, typeCol + 1).setValue(u.media_type);
+      if (u.media_link !== undefined && linkCol !== -1) sheet.getRange(rowNum, linkCol + 1).setValue(u.media_link);
+      if (u.tags !== undefined && tagsCol !== -1) sheet.getRange(rowNum, tagsCol + 1).setValue(u.tags);
+      if (u.media_title !== undefined && titleCol !== -1) sheet.getRange(rowNum, titleCol + 1).setValue(u.media_title);
+      if (u.media_description !== undefined && descCol !== -1) sheet.getRange(rowNum, descCol + 1).setValue(u.media_description);
+      if (u.thumbnail_url !== undefined && thumbCol !== -1) sheet.getRange(rowNum, thumbCol + 1).setValue(u.thumbnail_url);
+      count++;
+    }
+  });
+  return { status: "success", updated: count };
 }
