@@ -1,0 +1,977 @@
+<div id="curva-home-app">
+
+    <!-- TOP BAR: ADMIN TOGGLE -->
+    <div class="curva-top-bar">
+        <div class="curva-admin-badge" id="curvaAdminStatus">Public Mode</div>
+        <button id="curvaAdminToggleBtn" class="curva-admin-btn" onclick="curvaToggleAdmin()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span id="curvaAdminBtnText">Admin Access</span>
+        </button>
+    </div>
+
+    <!-- HERO -->
+    <div class="curva-hero">
+        <div class="curva-hero-eyebrow">Georgia Tech · Research Project</div>
+        <img src="https://sites.gatech.edu/curva/files/2026/04/CURVAlogoCroppedWhite.png" alt="CURVA Database" class="curva-hero-logo">
+        <p class="curva-hero-sub">An archive of ultra groups around the world</p>
+        <div class="curva-search-wrapper">
+            <svg class="curva-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="curvaSearchInput" class="curva-search" placeholder="Search by team, country, theme, group name..." onkeyup="curvaHandleSearch()">
+        </div>
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="curva-stats-row">
+        <div class="curva-stat-card">
+            <div class="curva-stat-num" id="stat-groups">0</div>
+            <div class="curva-stat-lbl">Ultra groups</div>
+        </div>
+        <div class="curva-stat-card">
+            <div class="curva-stat-num" id="stat-countries">0</div>
+            <div class="curva-stat-lbl">Countries</div>
+        </div>
+        <div class="curva-stat-card">
+            <div class="curva-stat-num" id="stat-media">0</div>
+            <div class="curva-stat-lbl">Media items</div>
+        </div>
+    </div>
+
+    <!-- LOADING -->
+    <div id="loading-state" style="padding: 40px; text-align: center; color: #64748b; font-size: 15px;">
+        Connecting to the CURVA database...
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="app-content" style="display: none;">
+
+        <!-- ULTRA GROUPS SECTION -->
+        <div class="curva-section-label" id="groups-label">Ultra groups</div>
+        <div id="curvaGroupsGrid" class="curva-grid"></div>
+
+        <!-- MEDIA SECTION -->
+        <div class="curva-section-label" id="media-label" style="margin-top: 20px;">Media</div>
+        <div id="curvaMediaGrid" class="curva-grid"></div>
+
+        <div id="curvaNoResults" style="display:none; padding: 40px; text-align: center; color: #64748b; font-size: 15px;">
+            No results match your search query.
+        </div>
+    </div>
+
+    <!-- ADMIN MODAL: UPLOAD PDF -->
+    <div id="curvaUploadModal" class="curva-modal-overlay" style="display: none;">
+        <div class="curva-modal-box">
+            <div class="curva-modal-header">
+                <h3>Ingest Deep Research PDF</h3>
+                <button class="curva-modal-close" onclick="closeUploadModal()">&times;</button>
+            </div>
+            <p class="curva-modal-desc">
+                Select a Gemini Deep Research PDF report. The system will automatically stage the file and trigger the 4-stage extraction pipeline into Google Sheets.
+            </p>
+            
+            <div class="curva-drop-zone" id="curvaDropZone" onclick="document.getElementById('curvaFileInput').click()">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="17 8 12 3 7 8"></polyline>
+                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <div id="curvaDropZoneText" style="margin-top: 10px; font-size: 14px; color: #475569; font-weight: 500;">
+                    Click to browse or drop PDF here
+                </div>
+                <input type="file" id="curvaFileInput" accept="application/pdf" style="display:none;" onchange="handleFileSelected(this.files)">
+            </div>
+
+            <div id="uploadProgressContainer" style="display: none; margin-top: 20px;">
+                <div class="curva-progress-bar-bg">
+                    <div id="curvaProgressBar" class="curva-progress-bar-fill"></div>
+                </div>
+                <div id="curvaProgressStatus" style="font-size: 12px; color: #64748b; margin-top: 8px; text-align: center;">
+                    Preparing upload...
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
+                <button class="curva-btn-secondary" onclick="closeUploadModal()">Cancel</button>
+                <button id="curvaStartUploadBtn" class="curva-btn-primary" onclick="startPdfIngestion()" disabled>Start Ingestion</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
+
+    #curva-home-app * {
+        box-sizing: border-box;
+    }
+
+    #curva-home-app {
+        font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #ffffff;
+        color: #1e293b;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-bottom: 60px;
+    }
+
+    #navbar-main-btn-search {
+        display: none !important;
+    }
+
+    /* --- TOP BAR (ADMIN TOGGLE) --- */
+    .curva-top-bar {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 24px 0 24px;
+        background: #111827; /* Unified with Hero */
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+    }
+
+    .curva-admin-badge {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #94a3b8;
+        padding: 3px 8px;
+        border-radius: 4px;
+        background: #1e293b;
+    }
+
+    .curva-admin-badge.active {
+        color: #22c55e;
+        background: rgba(34, 197, 94, 0.15);
+    }
+
+    .curva-admin-btn {
+        background: transparent;
+        border: 1px solid #334155;
+        color: #cbd5e1;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+    }
+
+    .curva-admin-btn:hover {
+        background: #1e293b;
+        color: #ffffff;
+        border-color: #475569;
+    }
+
+    /* --- HERO --- */
+    .curva-hero {
+        background: #111827;
+        padding: 20px 24px 36px;
+        text-align: center;
+    }
+
+    .curva-hero-eyebrow {
+        font-size: 11px;
+        letter-spacing: 2px;
+        color: #b3a369;
+        text-transform: uppercase;
+        font-weight: 600;
+        margin-bottom: 24px;
+    }
+
+    .curva-hero-logo {
+        max-width: 340px;
+        width: 100%;
+        height: auto;
+        margin: -10px auto -8px auto;
+        display: block;
+    }
+
+    .curva-hero-sub {
+        font-size: 14px;
+        color: #94a3b8;
+        margin: 0 0 24px 0;
+    }
+
+    .curva-search-wrapper {
+        position: relative;
+        max-width: 620px;
+        margin: 0 auto;
+    }
+
+    .curva-search-icon {
+        position: absolute;
+        left: 18px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+        pointer-events: none;
+    }
+
+    #curva-home-app input.curva-search {
+        width: 100% !important;
+        padding: 14px 20px 14px 48px !important;
+        font-size: 15px !important;
+        border: none !important;
+        border-radius: 40px !important;
+        outline: none !important;
+        background: #fff !important;
+        color: #1e293b !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25) !important;
+    }
+
+    /* --- STATS --- */
+    .curva-stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        background: #1e293b;
+        border-bottom: 1px solid #334155;
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 16px;
+    }
+
+    .curva-stat-card {
+        padding: 14px 20px;
+        text-align: center;
+        border-right: 1px solid #334155;
+    }
+
+    .curva-stat-card:last-child {
+        border-right: none;
+    }
+
+    .curva-stat-num {
+        font-family: 'DM Serif Display', serif;
+        font-size: 26px;
+        color: #b3a369;
+        line-height: 1;
+        margin-bottom: 3px;
+    }
+
+    .curva-stat-lbl {
+        font-size: 11px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+    }
+
+    /* --- SECTION LABELS --- */
+    .curva-section-label {
+        font-size: 11px;
+        color: #94a3b8;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 16px 24px 10px;
+    }
+
+    /* --- GRIDS --- */
+    .curva-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+        gap: 16px;
+        padding: 0 24px 16px;
+    }
+
+    /* --- ADD GROUP ACTION CARD --- */
+    .curva-card-add {
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 240px;
+        cursor: pointer;
+        background: #f8fafc;
+        transition: all 0.2s;
+        text-align: center;
+        padding: 24px;
+    }
+
+    .curva-card-add:hover {
+        border-color: #b3a369;
+        background: #fefce8;
+        transform: translateY(-2px);
+    }
+
+    .curva-card-add-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: #e2e8f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #475569;
+        margin-bottom: 12px;
+    }
+
+    .curva-card-add:hover .curva-card-add-icon {
+        background: #b3a369;
+        color: #fff;
+    }
+
+    /* --- GROUP CARD --- */
+    .curva-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        background: #fff;
+        transition: transform 0.2s, box-shadow 0.2s;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .curva-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .curva-card img {
+        width: 100%;
+        height: 155px;
+        object-fit: cover;
+        background: #0f172a;
+        display: block;
+    }
+
+    .curva-card-body {
+        padding: 14px 16px;
+        flex-grow: 1;
+    }
+
+    .curva-card h4 {
+        margin: 0 0 4px 0;
+        font-size: 15px;
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .curva-card-location {
+        margin: 0 0 10px 0;
+        color: #64748b;
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    /* --- MEDIA CARD --- */
+    .curva-card-media {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #e2e8f0;
+        border-left: 3px solid #b3a369;
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        background: #fff;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .curva-card-media:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .media-top-section {
+        display: flex;
+        flex-direction: row;
+        padding: 14px 16px 10px;
+        gap: 14px;
+        align-items: flex-start;
+    }
+
+    .media-info-left {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .media-type-label {
+        font-size: 10px;
+        color: #b3a369;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+        font-weight: 700;
+    }
+
+    .media-title-large {
+        margin: 0;
+        font-size: 13px;
+        color: #1e293b;
+        line-height: 1.45;
+        font-weight: 500;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .media-thumb-right {
+        width: 100px;
+        aspect-ratio: 16/9;
+        flex-shrink: 0;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #0f172a;
+    }
+
+    .media-thumb-right img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .media-bottom-section {
+        padding: 10px 16px 12px;
+        background: #f8fafc;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .group-name-small {
+        margin: 0 0 6px 0;
+        font-size: 11px;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .curva-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .curva-badge {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    /* --- MODAL --- */
+    .curva-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        padding: 20px;
+    }
+
+    .curva-modal-box {
+        background: #ffffff;
+        width: 100%;
+        max-width: 500px;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .curva-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+    .curva-modal-header h3 {
+        margin: 0;
+        font-size: 18px;
+        color: #0f172a;
+    }
+
+    .curva-modal-close {
+        background: none;
+        border: none;
+        font-size: 24px;
+        color: #94a3b8;
+        cursor: pointer;
+    }
+
+    .curva-modal-desc {
+        font-size: 13px;
+        color: #64748b;
+        margin: 0 0 16px 0;
+        line-height: 1.5;
+    }
+
+    .curva-drop-zone {
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        cursor: pointer;
+        background: #f8fafc;
+        transition: border-color 0.2s;
+    }
+
+    .curva-drop-zone:hover {
+        border-color: #b3a369;
+    }
+
+    .curva-btn-primary {
+        background: #111827;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .curva-btn-primary:disabled {
+        background: #94a3b8;
+        cursor: not-allowed;
+    }
+
+    .curva-btn-secondary {
+        background: #f1f5f9;
+        color: #475569;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .curva-progress-bar-bg {
+        width: 100%;
+        height: 6px;
+        background: #e2e8f0;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .curva-progress-bar-fill {
+        width: 0%;
+        height: 100%;
+        background: #b3a369;
+        transition: width 0.3s;
+    }
+</style>
+
+<script>
+    (function () {
+        const SHEET_ID = '1kn6ioZYQiyDaRjVWrisrVipOldxVCLyiBMOmf80mkqQ';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCuAQqe9X-lidTXDgmO93VZzLoVbapbOX2sZb0b1XAJU5buh0FY6mGKy1VhAtxEOC9Fg/exec';
+
+        const PROFILE_BASE_URL = 'https://sites.gatech.edu/curva/group-profile/';
+        const MEDIA_BASE_URL = 'https://sites.gatech.edu/curva/media-item/';
+
+        const GROUPS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Groups`;
+        const MEDIA_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Media`;
+
+        let globalGroups = [];
+        let globalMedia = [];
+        let selectedFileBase64 = null;
+        let selectedFileName = '';
+
+        function parseGviz(text) {
+            const start = text.indexOf('{');
+            const end = text.lastIndexOf('}');
+            return JSON.parse(text.slice(start, end + 1));
+        }
+
+        function safeStr(cell) {
+            return (cell && cell.v != null) ? String(cell.v).trim() : '';
+        }
+
+        function getYouTubeId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        function loadCurvaDatabase() {
+            Promise.all([
+                fetch(GROUPS_URL).then(res => res.text()),
+                fetch(MEDIA_URL).then(res => res.text())
+            ]).then(([groupsText, mediaText]) => {
+                const groupsJson = parseGviz(groupsText);
+                const mediaJson = parseGviz(mediaText);
+
+                globalGroups = (groupsJson.table.rows || []).map(row => ({
+                    id: safeStr(row.c[0]),
+                    name: safeStr(row.c[1]),
+                    club: safeStr(row.c[2]),
+                    city: safeStr(row.c[3]),
+                    country: safeStr(row.c[4]),
+                    tags: safeStr(row.c[5]),
+                    image: safeStr(row.c[7])
+                })).filter(g => g.id !== '');
+
+                globalMedia = (mediaJson.table.rows || []).map(row => ({
+                    id: safeStr(row.c[0]),
+                    groupId: safeStr(row.c[1]),
+                    type: safeStr(row.c[3]),
+                    link: safeStr(row.c[4]),
+                    tags: safeStr(row.c[5]),
+                    title: safeStr(row.c[6])
+                })).filter(m => m.id !== '');
+
+                const uniqueCountries = new Set(globalGroups.map(g => g.country).filter(Boolean));
+                document.getElementById('stat-groups').textContent = globalGroups.length;
+                document.getElementById('stat-countries').textContent = uniqueCountries.size;
+                document.getElementById('stat-media').textContent = globalMedia.length;
+
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('app-content').style.display = 'block';
+
+                window.curvaHandleSearch();
+            }).catch(err => {
+                document.getElementById('loading-state').innerHTML = `<p style="color:#ef4444;">Error connecting to database: ${err.message}</p>`;
+            });
+        }
+
+        function isAdmin() {
+            return !!sessionStorage.getItem('curva_admin_passcode');
+        }
+
+        function updateAdminUI() {
+            const badge = document.getElementById('curvaAdminStatus');
+            const btnText = document.getElementById('curvaAdminBtnText');
+            if (isAdmin()) {
+                badge.textContent = 'Admin Mode';
+                badge.classList.add('active');
+                btnText.textContent = 'Lock / Exit';
+            } else {
+                badge.textContent = 'Public Mode';
+                badge.classList.remove('active');
+                btnText.textContent = 'Admin Access';
+            }
+        }
+
+        window.curvaToggleAdmin = async function () {
+            if (isAdmin()) {
+                sessionStorage.removeItem('curva_admin_passcode');
+                updateAdminUI();
+                window.curvaHandleSearch();
+            } else {
+                const pass = prompt('Enter team admin passcode:');
+                if (!pass) return;
+
+                const btnText = document.getElementById('curvaAdminBtnText');
+                const origText = btnText.textContent;
+                btnText.textContent = 'Verifying...';
+
+                try {
+                    const res = await callBackend({
+                        action: 'verify_passcode',
+                        passcode: pass
+                    });
+
+                    if (res && res.status === 'success') {
+                        sessionStorage.setItem('curva_admin_passcode', pass);
+                        updateAdminUI();
+                        window.curvaHandleSearch();
+                    } else {
+                        alert('Incorrect passcode. Access denied.');
+                    }
+                } catch (err) {
+                    alert('Authentication failed: ' + err.message);
+                } finally {
+                    btnText.textContent = isAdmin() ? 'Lock / Exit' : origText;
+                }
+            }
+        };
+
+        window.curvaHandleSearch = function () {
+            const q = (document.getElementById('curvaSearchInput').value || '').toLowerCase().trim();
+
+            const filteredGroups = globalGroups.filter(g => {
+                return !q ||
+                    g.name.toLowerCase().includes(q) ||
+                    g.club.toLowerCase().includes(q) ||
+                    g.country.toLowerCase().includes(q) ||
+                    g.city.toLowerCase().includes(q) ||
+                    g.tags.toLowerCase().includes(q);
+            });
+
+            const filteredMedia = globalMedia.filter(m => {
+                const parent = globalGroups.find(g => g.id === m.groupId);
+                const parentName = parent ? parent.name.toLowerCase() : '';
+                return !q ||
+                    m.title.toLowerCase().includes(q) ||
+                    m.tags.toLowerCase().includes(q) ||
+                    parentName.includes(q);
+            });
+
+            renderGroups(filteredGroups);
+            renderMedia(filteredMedia);
+
+            const hasResults = filteredGroups.length > 0 || filteredMedia.length > 0 || isAdmin();
+            document.getElementById('curvaNoResults').style.display = hasResults ? 'none' : 'block';
+        };
+
+        function renderGroups(groups) {
+            const grid = document.getElementById('curvaGroupsGrid');
+            let html = '';
+
+            if (isAdmin()) {
+                html += `
+                    <div class="curva-card-add" onclick="openUploadModal()">
+                        <div class="curva-card-add-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </div>
+                        <h4 style="margin: 0; font-size: 15px; font-weight: 600; color: #1e293b;">+ Add Ultra Group</h4>
+                        <p style="margin: 4px 0 0 0; font-size: 12px; color: #64748b;">Upload Deep Research PDF</p>
+                    </div>
+                `;
+            }
+
+            if (groups.length === 0 && !isAdmin()) {
+                document.getElementById('groups-label').style.display = 'none';
+                grid.innerHTML = '';
+                return;
+            }
+
+            document.getElementById('groups-label').style.display = 'block';
+
+            groups.forEach(g => {
+                const loc = g.club ? `${g.club} · ${g.country}` : g.country;
+                const tagBadges = g.tags.split(',')
+                    .map(t => t.trim())
+                    .filter(Boolean)
+                    .slice(0, 4)
+                    .map(t => `<span class="curva-badge">${t}</span>`)
+                    .join('');
+
+                const defaultFallback = 'https://sites.gatech.edu/curva/files/2026/04/CURVAlogoCroppedWhite.png';
+                const imgSrc = g.image || defaultFallback;
+
+                html += `
+                    <div class="curva-card" onclick="window.location.href='${PROFILE_BASE_URL}?groupId=${g.id}'">
+                        <img src="${imgSrc}" alt="${g.name}" loading="lazy" />
+                        <div class="curva-card-body">
+                            <h4>${g.name}</h4>
+                            <p class="curva-card-location">${loc}</p>
+                            <div class="curva-tags">${tagBadges}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            grid.innerHTML = html;
+        }
+
+        function renderMedia(media) {
+            const grid = document.getElementById('curvaMediaGrid');
+            const label = document.getElementById('media-label');
+
+            if (media.length === 0) {
+                label.style.display = 'none';
+                grid.innerHTML = '';
+                return;
+            }
+
+            label.style.display = 'block';
+
+            grid.innerHTML = media.map(m => {
+                const parent = globalGroups.find(g => g.id === m.groupId);
+                const parentName = parent ? parent.name : 'Ultra Group';
+                const parentLoc = parent ? (parent.club || parent.country) : '';
+
+                const isYouTube = m.type.toLowerCase().includes('youtube');
+                const typeLabel = isYouTube ? 'YouTube Video' : 'Image';
+
+                let thumbUrl = '';
+                if (isYouTube) {
+                    const vidId = getYouTubeId(m.link);
+                    thumbUrl = vidId ? `https://img.youtube.com/vi/${vidId}/mqdefault.jpg` : '';
+                } else {
+                    thumbUrl = m.link;
+                }
+
+                const thumb = thumbUrl ? `<div class="media-thumb-right"><img src="${thumbUrl}" alt="Media thumbnail" loading="lazy" /></div>` : '';
+                const tags = m.tags.split(',').map(t => t.trim()).filter(Boolean).map(t => `<span class="curva-badge">${t}</span>`).join('');
+
+                return `
+                    <div class="curva-card-media" onclick="window.location.href='${MEDIA_BASE_URL}?mediaId=${m.id}'">
+                        <div class="media-top-section">
+                            <div class="media-info-left">
+                                <div class="media-type-label">${typeLabel}</div>
+                                <h4 class="media-title-large">${m.title || 'Untitled Media Item'}</h4>
+                            </div>
+                            ${thumb}
+                        </div>
+                        <div class="media-bottom-section">
+                            <h5 class="group-name-small">${parentName} ${parentLoc ? '· ' + parentLoc : ''}</h5>
+                            <div class="curva-tags">${tags}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        window.openUploadModal = function () {
+            document.getElementById('curvaUploadModal').style.display = 'flex';
+            resetUploadForm();
+        };
+
+        window.closeUploadModal = function () {
+            document.getElementById('curvaUploadModal').style.display = 'none';
+            resetUploadForm();
+        };
+
+        function resetUploadForm() {
+            selectedFileBase64 = null;
+            selectedFileName = '';
+            document.getElementById('curvaFileInput').value = '';
+            document.getElementById('curvaDropZoneText').textContent = 'Click to browse or drop PDF here';
+            document.getElementById('curvaStartUploadBtn').disabled = true;
+            document.getElementById('uploadProgressContainer').style.display = 'none';
+            document.getElementById('curvaProgressBar').style.width = '0%';
+        }
+
+        window.handleFileSelected = function (files) {
+            if (!files || files.length === 0) return;
+            const file = files[0];
+            if (file.type !== 'application/pdf') {
+                alert('Please select a valid PDF document.');
+                return;
+            }
+
+            selectedFileName = file.name;
+            document.getElementById('curvaDropZoneText').textContent = `Selected: ${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                selectedFileBase64 = e.target.result;
+                document.getElementById('curvaStartUploadBtn').disabled = false;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.startPdfIngestion = async function () {
+            if (!selectedFileBase64) return;
+
+            const passcode = sessionStorage.getItem('curva_admin_passcode');
+            if (!passcode) {
+                alert('Admin session expired. Please log in again.');
+                return;
+            }
+
+            const btn = document.getElementById('curvaStartUploadBtn');
+            const progressContainer = document.getElementById('uploadProgressContainer');
+            const progressBar = document.getElementById('curvaProgressBar');
+            const progressStatus = document.getElementById('curvaProgressStatus');
+
+            btn.disabled = true;
+            progressContainer.style.display = 'block';
+
+            function updateStep(percent, message) {
+                progressBar.style.width = percent + '%';
+                progressStatus.textContent = message;
+            }
+
+            try {
+                updateStep(10, 'Staging PDF in Google Drive...');
+                const stageRes = await callBackend({
+                    action: 'stage_pdf',
+                    passcode: passcode,
+                    base64Data: selectedFileBase64,
+                    fileName: selectedFileName
+                });
+
+                const fileId = stageRes.fileId;
+
+                updateStep(30, 'Extracting Group Profile & Sections 1–2...');
+                const c1 = await callBackend({
+                    action: 'ingest_chunk_1',
+                    passcode: passcode,
+                    fileId: fileId
+                });
+
+                const groupId = c1.groupId;
+                const ultraGroup = c1.ultraGroup;
+
+                updateStep(55, 'Extracting Sections 3 & 4 (Behavior & Ideology)...');
+                await callBackend({
+                    action: 'ingest_chunk_2',
+                    passcode: passcode,
+                    fileId: fileId,
+                    groupId: groupId,
+                    ultraGroup: ultraGroup
+                });
+
+                updateStep(75, 'Extracting Sections 5 & 6 (Organization & Representation)...');
+                await callBackend({
+                    action: 'ingest_chunk_3',
+                    passcode: passcode,
+                    fileId: fileId,
+                    groupId: groupId,
+                    ultraGroup: ultraGroup
+                });
+
+                updateStep(90, 'Extracting Sources Appendix & final cleanup...');
+                await callBackend({
+                    action: 'ingest_chunk_4',
+                    passcode: passcode,
+                    fileId: fileId,
+                    groupId: groupId,
+                    ultraGroup: ultraGroup
+                });
+
+                updateStep(100, 'Ingestion complete!');
+                setTimeout(() => {
+                    closeUploadModal();
+                    loadCurvaDatabase();
+                }, 1000);
+
+            } catch (err) {
+                alert('Ingestion failed: ' + err.message);
+                btn.disabled = false;
+                progressStatus.textContent = 'Error during ingestion: ' + err.message;
+            }
+        };
+
+        async function callBackend(payload) {
+            const res = await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+            if (data.status === 'error') {
+                throw new Error(data.message || 'Unknown server error');
+            }
+            return data;
+        }
+
+        updateAdminUI();
+        loadCurvaDatabase();
+    })();
+</script>

@@ -1,0 +1,1215 @@
+<div id="curva-profile-app">
+
+    <!-- TOP NAV BAR -->
+    <div class="curva-top-bar">
+        <a href="https://sites.gatech.edu/curva/" class="curva-back-btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Database
+        </a>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="curva-admin-badge" id="curvaAdminStatus">Public Mode</div>
+            <button id="curvaAdminToggleBtn" class="curva-admin-btn" onclick="curvaToggleAdmin()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span id="curvaAdminBtnText">Admin Access</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- LOADING & ERROR STATES -->
+    <div id="loading-state" class="curva-feedback-box">
+        Loading group profile from CURVA archive...
+    </div>
+    <div id="error-state" class="curva-feedback-box" style="display:none; color:#ef4444;"></div>
+
+    <!-- MAIN PROFILE VIEW -->
+    <div id="profile-content" style="display: none;">
+
+        <!-- HERO HEADER -->
+        <div class="curva-hero-container">
+            <div id="hero-backdrop" class="curva-hero-backdrop"></div>
+            <div class="curva-hero-inner">
+                <div class="curva-cover-wrap">
+                    <img id="group-cover-img" src="" alt="Ultra Group Cover" />
+                    <button class="curva-cover-edit-btn admin-only" onclick="editCoverUrl()" title="Edit Cover Image URL">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="curva-hero-details">
+                    <div class="curva-hero-club" id="hero-club-country">—</div>
+                    <h1 class="curva-hero-title" id="hero-group-name">—</h1>
+                    <div class="curva-hero-meta" id="hero-meta-strip"></div>
+                    <div class="curva-tags-row" id="hero-tags"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- NAVIGATION TABS -->
+        <div class="curva-tabs-bar">
+            <button class="curva-tab active" onclick="switchTab('overview', this)">Overview</button>
+            <button class="curva-tab" onclick="switchTab('sec-behavioral', this)">Behavioral</button>
+            <button class="curva-tab" onclick="switchTab('sec-ideological', this)">Ideological</button>
+            <button class="curva-tab" onclick="switchTab('sec-organizational', this)">Organizational</button>
+            <button class="curva-tab" onclick="switchTab('sec-representational', this)">Representational</button>
+            <button class="curva-tab" onclick="switchTab('sec-sources', this)">
+                Sources (<span id="tab-sources-count">0</span>)
+            </button>
+            <button class="curva-tab" onclick="switchTab('sec-media', this)">
+                Media (<span id="tab-media-count">0</span>)
+            </button>
+        </div>
+
+        <!-- TAB PANELS -->
+        <div class="curva-tab-body">
+            
+            <!-- 1. OVERVIEW & HISTORICAL -->
+            <div id="panel-overview" class="curva-panel active">
+                <div class="curva-overview-grid">
+                    <div class="curva-metric-card">
+                        <div class="curva-metric-label">Year Founded</div>
+                        <div class="curva-metric-val" id="meta-founded">—</div>
+                    </div>
+                    <div class="curva-metric-card">
+                        <div class="curva-metric-label">City / Region</div>
+                        <div class="curva-metric-val" id="meta-city">—</div>
+                    </div>
+                    <div class="curva-metric-card">
+                        <div class="curva-metric-label">League Level</div>
+                        <div class="curva-metric-val" id="meta-league">—</div>
+                    </div>
+                    <div class="curva-metric-card">
+                        <div class="curva-metric-label">Club Affiliation</div>
+                        <div class="curva-metric-val" id="meta-club">—</div>
+                    </div>
+                </div>
+
+                <div class="curva-section-heading">Founding & Historical Dimension</div>
+                <div id="overview-historical-cards" class="curva-qa-flow"></div>
+            </div>
+
+            <!-- 2. BEHAVIORAL DIMENSION -->
+            <div id="panel-sec-behavioral" class="curva-panel">
+                <div class="curva-section-heading">Section 3: Behavioral Dimension & Activism</div>
+                <div id="sec3-cards" class="curva-qa-flow"></div>
+            </div>
+
+            <!-- 3. IDEOLOGICAL DIMENSION -->
+            <div id="panel-sec-ideological" class="curva-panel">
+                <div class="curva-section-heading">Section 4: Ideology, Politics & Social Movements</div>
+                <div id="sec4-cards" class="curva-qa-flow"></div>
+            </div>
+
+            <!-- 4. ORGANIZATIONAL DIMENSION -->
+            <div id="panel-sec-organizational" class="curva-panel">
+                <div class="curva-section-heading">Section 5: Internal Organization, Finance & Autonomy</div>
+                <div id="sec5-cards" class="curva-qa-flow"></div>
+            </div>
+
+            <!-- 5. REPRESENTATIONAL DIMENSION -->
+            <div id="panel-sec-representational" class="curva-panel">
+                <div class="curva-section-heading">Section 6: Visual Culture, Tifos, Chants & Pyro</div>
+                <div id="sec6-cards" class="curva-qa-flow"></div>
+            </div>
+
+            <!-- 6. SOURCES APPENDIX -->
+            <div id="panel-sec-sources" class="curva-panel">
+                <div class="curva-section-heading">Research Sources & Archival References</div>
+                <div id="sources-grid" class="curva-sources-grid"></div>
+            </div>
+
+            <!-- 7. MEDIA GALLERY -->
+            <div id="panel-sec-media" class="curva-panel">
+                <div class="curva-section-heading">Associated Photographs & Videos</div>
+                <div id="media-grid" class="curva-grid"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- FLOATING SAVE BAR -->
+    <div id="curvaSaveBar" class="curva-floating-bar" style="display: none;">
+        <div class="curva-save-status">
+            <span class="curva-save-indicator"></span>
+            <span id="curvaPendingCount">0 unsaved changes</span>
+        </div>
+        <div style="display: flex; gap: 8px;">
+            <button class="curva-btn-discard" onclick="discardPendingEdits()">Discard</button>
+            <button id="curvaSaveAllBtn" class="curva-btn-save" onclick="saveAllPendingEdits()">Save All Changes</button>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
+
+    #curva-profile-app * { box-sizing: border-box; }
+    #curva-profile-app {
+        font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #ffffff;
+        color: #1e293b;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-bottom: 90px;
+    }
+
+    .curva-feedback-box {
+        padding: 50px 20px;
+        text-align: center;
+        font-size: 15px;
+        color: #64748b;
+    }
+
+    /* TOP BAR */
+    .curva-top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 20px;
+        background: #111827;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+    }
+
+    .curva-back-btn {
+        color: #cbd5e1;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: color 0.15s;
+    }
+    .curva-back-btn:hover { color: #b3a369; }
+
+    .curva-admin-badge {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #94a3b8;
+        padding: 3px 8px;
+        border-radius: 4px;
+        background: #1e293b;
+    }
+    .curva-admin-badge.active { color: #22c55e; background: rgba(34, 197, 94, 0.15); }
+
+    .curva-admin-btn {
+        background: transparent;
+        border: 1px solid #334155;
+        color: #cbd5e1;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+    }
+    .curva-admin-btn:hover { background: #1e293b; color: #fff; }
+
+    /* HERO */
+    .curva-hero-container {
+        position: relative;
+        background: #111827;
+        padding: 40px 32px 32px;
+        overflow: hidden;
+        border-bottom: 1px solid #334155;
+    }
+
+    .curva-hero-backdrop {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0.15;
+        filter: blur(25px);
+        transform: scale(1.1);
+        pointer-events: none;
+    }
+
+    .curva-hero-inner {
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 32px;
+        z-index: 1;
+    }
+
+    .curva-cover-wrap {
+        position: relative;
+        width: 170px;
+        height: 170px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 2px solid #334155;
+        background: #0b0f19;
+        flex-shrink: 0;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+    .curva-cover-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+    .curva-cover-edit-btn {
+        position: absolute;
+        bottom: 8px; right: 8px;
+        background: rgba(17, 24, 39, 0.85);
+        border: 1px solid #475569;
+        color: #fff;
+        border-radius: 6px;
+        padding: 6px;
+        cursor: pointer;
+        display: none;
+    }
+
+    .curva-hero-details { flex: 1; }
+    .curva-hero-club {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #b3a369;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+    .curva-hero-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 38px;
+        color: #ffffff;
+        margin: 0 0 14px 0;
+        line-height: 1.1;
+    }
+    .curva-hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 13px;
+        color: #94a3b8;
+        margin-bottom: 16px;
+    }
+    .curva-tags-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .curva-badge {
+        background: #1e293b;
+        color: #cbd5e1;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 600;
+        border: 1px solid #334155;
+    }
+
+    /* TABS */
+    .curva-tabs-bar {
+        display: flex;
+        flex-wrap: wrap;
+        background: #1e293b;
+        padding: 0 20px;
+        border-bottom: 1px solid #334155;
+    }
+    .curva-tab {
+        background: none;
+        border: none;
+        padding: 16px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #94a3b8;
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        transition: all 0.15s;
+        font-family: inherit;
+    }
+    .curva-tab:hover { color: #ffffff; }
+    .curva-tab.active { color: #b3a369; border-bottom-color: #b3a369; }
+
+    .curva-tab-body { padding: 30px 24px; background: #ffffff; }
+    .curva-panel { display: none; }
+    .curva-panel.active { display: block; }
+
+    .curva-section-heading {
+        font-size: 14px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #64748b;
+        margin-bottom: 20px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    /* OVERVIEW TILES */
+    .curva-overview-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 32px;
+    }
+    .curva-metric-card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 16px;
+    }
+    .curva-metric-label {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #94a3b8;
+        margin-bottom: 6px;
+    }
+    .curva-metric-val { font-size: 16px; font-weight: 600; color: #0f172a; }
+
+    /* Q&A CARDS & INLINE CONTROLS */
+    .curva-qa-flow { display: flex; flex-direction: column; gap: 16px; }
+    .curva-qa-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 18px 20px;
+        background: #ffffff;
+        transition: border-color 0.15s;
+        position: relative;
+    }
+    .curva-qa-card.is-dirty {
+        border-color: #b3a369 !important;
+        background: #fffdf5;
+    }
+
+    .curva-qa-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 10px;
+    }
+    .curva-qa-title { font-size: 15px; font-weight: 600; color: #0f172a; line-height: 1.4; }
+    .curva-qa-num { color: #b3a369; font-weight: 700; margin-right: 6px; }
+
+    /* Pill Selection Bars */
+    .curva-pill-selector {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+    .curva-opt-pill {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 4px 11px;
+        border-radius: 14px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.15s;
+        user-select: none;
+    }
+    .curva-opt-pill:hover { background: #e2e8f0; }
+    .curva-opt-pill.selected {
+        background: #b3a369;
+        color: #ffffff;
+        border-color: #968652;
+    }
+    .curva-opt-pill.selected.token-yes { background: #16a34a; border-color: #15803d; }
+    .curva-opt-pill.selected.token-no { background: #dc2626; border-color: #b91c1c; }
+
+    .curva-token-badge {
+        background: #fefce8;
+        color: #854d0e;
+        border: 1px solid #fef08a;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+    .curva-token-badge.token-yes { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+    .curva-token-badge.token-no { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+
+    /* Text & Editable Areas */
+    .curva-qa-body {
+        font-size: 14px;
+        color: #334155;
+        line-height: 1.6;
+        margin-bottom: 10px;
+    }
+    .curva-inline-textarea {
+        width: 100%;
+        min-height: 85px;
+        padding: 10px 12px;
+        font-size: 14px;
+        font-family: inherit;
+        color: #1e293b;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        resize: vertical;
+        line-height: 1.5;
+        outline: none;
+        transition: border-color 0.15s;
+    }
+    .curva-inline-textarea:focus { border-color: #b3a369; box-shadow: 0 0 0 2px rgba(179, 163, 105, 0.2); }
+
+    .curva-qa-footer {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        font-size: 12px;
+        color: #64748b;
+        background: #f8fafc;
+        padding: 10px 12px;
+        border-radius: 6px;
+        margin-top: 10px;
+    }
+    .curva-footer-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* SOURCES & MEDIA GRIDS */
+    .curva-sources-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 16px;
+    }
+    .curva-source-card {
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 16px;
+        background: #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .curva-source-type {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #b3a369;
+        letter-spacing: 0.8px;
+        margin-bottom: 6px;
+    }
+    .curva-source-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #0f172a;
+        line-height: 1.4;
+        margin-bottom: 12px;
+    }
+    .curva-source-link {
+        color: #2563eb;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 500;
+        word-break: break-all;
+    }
+    .curva-source-link:hover { text-decoration: underline; }
+
+    .curva-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+        gap: 16px;
+    }
+    .curva-card-media {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #e2e8f0;
+        border-left: 3px solid #b3a369;
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        background: #fff;
+        transition: transform 0.2s;
+    }
+    .curva-card-media:hover { transform: translateY(-3px); }
+    .media-top-section {
+        display: flex;
+        flex-direction: row;
+        padding: 14px 16px 10px;
+        gap: 14px;
+        align-items: flex-start;
+    }
+    .media-info-left { flex: 1; }
+    .media-type-label {
+        font-size: 10px;
+        color: #b3a369;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+        font-weight: 700;
+    }
+    .media-title-large {
+        margin: 0;
+        font-size: 13px;
+        color: #1e293b;
+        line-height: 1.45;
+        font-weight: 500;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .media-thumb-right {
+        width: 100px;
+        aspect-ratio: 16/9;
+        flex-shrink: 0;
+        border-radius: 6px;
+        overflow: hidden;
+        background: #0f172a;
+    }
+    .media-thumb-right img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .media-bottom-section { padding: 10px 16px 12px; background: #f8fafc; border-top: 1px solid #f1f5f9; }
+
+    /* FLOATING STICKY SAVE BAR */
+    .curva-floating-bar {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #111827;
+        color: #ffffff;
+        border: 1px solid #334155;
+        padding: 12px 20px;
+        border-radius: 30px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        z-index: 999999;
+    }
+    .curva-save-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .curva-save-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #eab308;
+    }
+    .curva-btn-save {
+        background: #b3a369;
+        color: #ffffff;
+        border: none;
+        border-radius: 20px;
+        padding: 8px 18px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .curva-btn-save:hover { background: #a39258; }
+    .curva-btn-discard {
+        background: transparent;
+        color: #94a3b8;
+        border: 1px solid #475569;
+        border-radius: 20px;
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+    .curva-btn-discard:hover { color: #ffffff; background: #1e293b; }
+</style>
+
+<script>
+    (function () {
+        // ==========================================
+        // CONFIGURATION
+        // ==========================================
+        const SHEET_ID = '1kn6ioZYQiyDaRjVWrisrVipOldxVCLyiBMOmf80mkqQ';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCuAQqe9X-lidTXDgmO93VZzLoVbapbOX2sZb0b1XAJU5buh0FY6mGKy1VhAtxEOC9Fg/exec';
+        const MEDIA_BASE_URL = 'https://sites.gatech.edu/curva/media-item/';
+
+        const CONFIDENCE_VOCABULARY = [
+            'Well-supported',
+            'Partially supported',
+            'Not found with sufficient confidence',
+            'Not applicable'
+        ];
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentGroupId = urlParams.get('groupId');
+
+        if (!currentGroupId) {
+            document.getElementById('loading-state').style.display = 'none';
+            const err = document.getElementById('error-state');
+            err.style.display = 'block';
+            err.innerHTML = '<h3>No Group ID Specified</h3><p>Please select a profile from the main database gallery.</p>';
+            return;
+        }
+
+        let groupRecord = null;
+        let responsesList = [];
+        let sourcesList = [];
+        let mediaList = [];
+
+        // Staged edits: { [responseId]: { binary_or_choice?, answer_text?, confidence?, research_notes? } }
+        let pendingEdits = {};
+
+        function parseGviz(text) {
+            const start = text.indexOf('{');
+            const end = text.lastIndexOf('}');
+            return JSON.parse(text.slice(start, end + 1));
+        }
+
+        function safeStr(cell) {
+            return (cell && cell.v != null) ? String(cell.v).trim() : '';
+        }
+
+        function getYouTubeId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        // ==========================================
+        // FETCH DATA
+        // ==========================================
+
+        const GVIZ_URL = tab => `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${tab}`;
+
+        function loadProfileData() {
+            Promise.all([
+                fetch(GVIZ_URL('Groups')).then(r => r.text()),
+                fetch(GVIZ_URL('Responses')).then(r => r.text()),
+                fetch(GVIZ_URL('Sources')).then(r => r.text()),
+                fetch(GVIZ_URL('Media')).then(r => r.text())
+            ]).then(([gTxt, rTxt, sTxt, mTxt]) => {
+                const gRows = parseGviz(gTxt).table.rows || [];
+                const rRows = parseGviz(rTxt).table.rows || [];
+                const sRows = parseGviz(sTxt).table.rows || [];
+                const mRows = parseGviz(mTxt).table.rows || [];
+
+                const matchG = gRows.find(r => safeStr(r.c[0]) === currentGroupId);
+                if (!matchG) {
+                    throw new Error(`Group profile '${currentGroupId}' was not found in the database.`);
+                }
+
+                groupRecord = {
+                    id: safeStr(matchG.c[0]),
+                    name: safeStr(matchG.c[1]),
+                    club: safeStr(matchG.c[2]),
+                    city: safeStr(matchG.c[3]),
+                    country: safeStr(matchG.c[4]),
+                    tags: safeStr(matchG.c[5]),
+                    image: safeStr(matchG.c[7])
+                };
+
+                responsesList = rRows
+                    .filter(r => safeStr(r.c[1]) === currentGroupId)
+                    .map(r => ({
+                        id: safeStr(r.c[0]),
+                        secNum: parseInt(safeStr(r.c[3]), 10) || 0,
+                        secName: safeStr(r.c[4]),
+                        qNum: safeStr(r.c[5]),
+                        question: safeStr(r.c[6]),
+                        token: safeStr(r.c[7]),
+                        answer: safeStr(r.c[8]),
+                        confidence: safeStr(r.c[9]),
+                        note: safeStr(r.c[10]),
+                        notesResearch: safeStr(r.c[11])
+                    }));
+
+                sourcesList = sRows
+                    .filter(r => safeStr(r.c[1]) === currentGroupId)
+                    .map(r => ({
+                        id: safeStr(r.c[0]),
+                        type: safeStr(r.c[3]),
+                        title: safeStr(r.c[4]),
+                        url: safeStr(r.c[5])
+                    }));
+
+                mediaList = mRows
+                    .filter(r => safeStr(r.c[1]) === currentGroupId)
+                    .map(r => ({
+                        id: safeStr(r.c[0]),
+                        type: safeStr(r.c[3]),
+                        link: safeStr(r.c[4]),
+                        tags: safeStr(r.c[5]),
+                        title: safeStr(r.c[6])
+                    }));
+
+                renderProfile();
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('profile-content').style.display = 'block';
+                updateAdminUI();
+
+            }).catch(err => {
+                document.getElementById('loading-state').style.display = 'none';
+                const errBox = document.getElementById('error-state');
+                errBox.style.display = 'block';
+                errBox.textContent = err.message;
+            });
+        }
+
+        // ==========================================
+        // RENDER PROFILE
+        // ==========================================
+
+        function renderProfile() {
+            const defaultCover = 'https://sites.gatech.edu/curva/files/2026/04/CURVAlogoCroppedWhite.png';
+            const cover = groupRecord.image || defaultCover;
+
+            document.getElementById('group-cover-img').src = cover;
+            document.getElementById('hero-backdrop').style.backgroundImage = `url('${cover}')`;
+            document.getElementById('hero-group-name').textContent = groupRecord.name;
+            document.getElementById('hero-club-country').textContent = `${groupRecord.club} · ${groupRecord.country}`;
+
+            document.getElementById('hero-meta-strip').innerHTML = `
+                <span><strong>City:</strong> ${groupRecord.city || '—'}</span>
+                <span><strong>ID:</strong> ${groupRecord.id}</span>
+            `;
+
+            const tagBadges = groupRecord.tags.split(',')
+                .map(t => t.trim())
+                .filter(Boolean)
+                .map(t => `<span class="curva-badge">${t}</span>`)
+                .join('');
+            document.getElementById('hero-tags').innerHTML = tagBadges;
+
+            const qLeague = responsesList.find(r => r.qNum === '1.3');
+            const qFounded = responsesList.find(r => r.qNum === '1.6');
+            document.getElementById('meta-club').textContent = groupRecord.club || '—';
+            document.getElementById('meta-city').textContent = groupRecord.city || '—';
+            document.getElementById('meta-league').textContent = qLeague ? (qLeague.token || qLeague.answer) : '—';
+            document.getElementById('meta-founded').textContent = qFounded ? qFounded.answer : '—';
+
+            document.getElementById('tab-sources-count').textContent = sourcesList.length;
+            document.getElementById('tab-media-count').textContent = mediaList.length;
+
+            renderQA('overview-historical-cards', responsesList.filter(r => r.secNum === 2));
+            renderQA('sec3-cards', responsesList.filter(r => r.secNum === 3));
+            renderQA('sec4-cards', responsesList.filter(r => r.secNum === 4));
+            renderQA('sec5-cards', responsesList.filter(r => r.secNum === 5));
+            renderQA('sec6-cards', responsesList.filter(r => r.secNum === 6));
+
+            renderSources();
+            renderMedia();
+        }
+
+        // ==========================================
+        // EXTRACT PERMISSIBLE QUESTION TOKENS
+        // ==========================================
+
+        function extractTokensForQuestion(questionText) {
+            let options = [];
+
+            if (questionText.includes('[Y/N]')) {
+                options = ['Yes', 'No'];
+            } else if (questionText.includes('[MULTI:')) {
+                const match = questionText.match(/\[MULTI:\s*([^\]]+)\]/i);
+                if (match && match[1]) {
+                    options = match[1].split('|').map(s => s.trim()).filter(Boolean);
+                }
+            }
+
+            if (options.length > 0) {
+                // Add controlled standard fallbacks
+                if (!options.includes('Not applicable')) options.push('Not applicable');
+                if (!options.includes('Not found with sufficient confidence')) options.push('Not found with sufficient confidence');
+            }
+
+            return options;
+        }
+
+        // ==========================================
+        // RENDER QUESTION CARDS
+        // ==========================================
+
+        function renderQA(containerId, items) {
+            const el = document.getElementById(containerId);
+            if (items.length === 0) {
+                el.innerHTML = '<div style="color:#94a3b8; font-size:14px;">No research entries recorded for this section.</div>';
+                return;
+            }
+
+            const adminActive = isAdmin();
+
+            el.innerHTML = items.map(item => {
+                const options = extractTokensForQuestion(item.question);
+                const isDirty = !!pendingEdits[item.id];
+                const currentToken = isDirty && pendingEdits[item.id].binary_or_choice !== undefined
+                    ? pendingEdits[item.id].binary_or_choice
+                    : item.token;
+
+                const currentAnswer = isDirty && pendingEdits[item.id].answer_text !== undefined
+                    ? pendingEdits[item.id].answer_text
+                    : item.answer;
+
+                const currentConf = isDirty && pendingEdits[item.id].confidence !== undefined
+                    ? pendingEdits[item.id].confidence
+                    : item.confidence;
+
+                const currentNotes = isDirty && pendingEdits[item.id].research_notes !== undefined
+                    ? pendingEdits[item.id].research_notes
+                    : item.notesResearch;
+
+                // 1. Token representation (View vs Edit)
+                let tokenHtml = '';
+                if (adminActive && options.length > 0) {
+                    tokenHtml = `<div class="curva-pill-selector">` + options.map(opt => {
+                        const isSelected = currentToken === opt;
+                        let tokenClass = '';
+                        if (opt === 'Yes') tokenClass = 'token-yes';
+                        if (opt === 'No') tokenClass = 'token-no';
+                        return `<span class="curva-opt-pill ${isSelected ? 'selected ' + tokenClass : ''}" onclick="stageTokenChange('${item.id}', '${opt.replace(/'/g, "\\'")}', this)">${opt}</span>`;
+                    }).join('') + `</div>`;
+                } else if (currentToken) {
+                    let tokenClass = '';
+                    if (currentToken.toLowerCase() === 'yes') tokenClass = 'token-yes';
+                    if (currentToken.toLowerCase() === 'no') tokenClass = 'token-no';
+                    tokenHtml = `<span class="curva-token-badge ${tokenClass}">${currentToken}</span>`;
+                }
+
+                // 2. Answer text representation (View vs Edit)
+                let bodyHtml = '';
+                if (adminActive) {
+                    bodyHtml = `<textarea class="curva-inline-textarea" oninput="stageTextChange('${item.id}', 'answer_text', this.value)" placeholder="Enter research response text...">${currentAnswer || ''}</textarea>`;
+                } else {
+                    bodyHtml = `<div class="curva-qa-body">${currentAnswer || '<em style="color:#94a3b8;">No response text</em>'}</div>`;
+                }
+
+                // 3. Confidence & Notes representation
+                let footerHtml = '';
+                if (adminActive) {
+                    const confPills = CONFIDENCE_VOCABULARY.map(c => {
+                        const isSel = currentConf === c;
+                        return `<span class="curva-opt-pill ${isSel ? 'selected' : ''}" onclick="stageConfidenceChange('${item.id}', '${c.replace(/'/g, "\\'")}', this)">${c}</span>`;
+                    }).join('');
+
+                    footerHtml = `
+                        <div class="curva-footer-row">
+                            <strong style="font-size:11px; text-transform:uppercase; color:#94a3b8;">Confidence:</strong>
+                            <div class="curva-pill-selector" style="margin-bottom:0;">${confPills}</div>
+                        </div>
+                        <div style="margin-top: 6px;">
+                            <textarea class="curva-inline-textarea" style="min-height:45px;" oninput="stageTextChange('${item.id}', 'research_notes', this.value)" placeholder="Research notes (optional)...">${currentNotes || ''}</textarea>
+                        </div>
+                    `;
+                } else {
+                    footerHtml = `
+                        <span><strong>Confidence:</strong> ${currentConf || 'Not evaluated'}</span>
+                        ${item.note ? `<span><strong>Note:</strong> ${item.note}</span>` : ''}
+                        ${currentNotes ? `<span><strong>Research notes:</strong> ${currentNotes}</span>` : ''}
+                    `;
+                }
+
+                return `
+                    <div class="curva-qa-card ${isDirty ? 'is-dirty' : ''}" id="card-${item.id}">
+                        <div class="curva-qa-header">
+                            <div class="curva-qa-title">
+                                <span class="curva-qa-num">${item.qNum}</span> ${item.question}
+                            </div>
+                            ${!adminActive ? tokenHtml : ''}
+                        </div>
+                        ${adminActive ? tokenHtml : ''}
+                        ${bodyHtml}
+                        <div class="curva-qa-footer">
+                            ${footerHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderSources() {
+            const grid = document.getElementById('sources-grid');
+            if (sourcesList.length === 0) {
+                grid.innerHTML = '<div style="color:#94a3b8; font-size:14px;">No archival sources cataloged for this group.</div>';
+                return;
+            }
+
+            grid.innerHTML = sourcesList.map(s => `
+                <div class="curva-source-card">
+                    <div>
+                        <div class="curva-source-type">${s.type || 'Source'}</div>
+                        <div class="curva-source-title">${s.title || 'Untitled Reference'}</div>
+                    </div>
+                    <div>
+                        ${s.url ? `<a href="${s.url}" target="_blank" rel="noopener" class="curva-source-link">View Source &nearr;</a>` : '<span style="font-size:12px; color:#94a3b8;">No URL provided</span>'}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderMedia() {
+            const grid = document.getElementById('media-grid');
+            if (mediaList.length === 0) {
+                grid.innerHTML = '<div style="color:#94a3b8; font-size:14px;">No media items linked to this group yet.</div>';
+                return;
+            }
+
+            grid.innerHTML = mediaList.map(m => {
+                const isYouTube = m.type.toLowerCase().includes('youtube');
+                const typeLabel = isYouTube ? 'YouTube Video' : 'Image';
+
+                let thumbUrl = '';
+                if (isYouTube) {
+                    const vidId = getYouTubeId(m.link);
+                    thumbUrl = vidId ? `https://img.youtube.com/vi/${vidId}/mqdefault.jpg` : '';
+                } else {
+                    thumbUrl = m.link;
+                }
+
+                const thumb = thumbUrl ? `<div class="media-thumb-right"><img src="${thumbUrl}" alt="Media thumbnail" loading="lazy" /></div>` : '';
+                const tags = m.tags.split(',').map(t => t.trim()).filter(Boolean).map(t => `<span class="curva-badge">${t}</span>`).join('');
+
+                return `
+                    <div class="curva-card-media" onclick="window.location.href='${MEDIA_BASE_URL}?mediaId=${m.id}'">
+                        <div class="media-top-section">
+                            <div class="media-info-left">
+                                <div class="media-type-label">${typeLabel}</div>
+                                <h4 class="media-title-large">${m.title || 'Untitled Media'}</h4>
+                            </div>
+                            ${thumb}
+                        </div>
+                        <div class="media-bottom-section">
+                            <div class="curva-tags">${tags}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==========================================
+        // INLINE EDIT STAGING
+        // ==========================================
+
+        window.stageTokenChange = function (responseId, token, el) {
+            if (!pendingEdits[responseId]) pendingEdits[responseId] = {};
+            pendingEdits[responseId].binary_or_choice = token;
+            
+            // Instantly toggle UI selected classes
+            if (el && el.parentElement) {
+                el.parentElement.querySelectorAll('.curva-opt-pill').forEach(p => {
+                    p.classList.remove('selected', 'token-yes', 'token-no');
+                });
+                el.classList.add('selected');
+                if (token === 'Yes') el.classList.add('token-yes');
+                if (token === 'No') el.classList.add('token-no');
+            }
+
+            markDirty(responseId);
+        };
+
+        window.stageConfidenceChange = function (responseId, conf, el) {
+            if (!pendingEdits[responseId]) pendingEdits[responseId] = {};
+            pendingEdits[responseId].confidence = conf;
+
+            // Instantly toggle UI selected class
+            if (el && el.parentElement) {
+                el.parentElement.querySelectorAll('.curva-opt-pill').forEach(p => {
+                    p.classList.remove('selected');
+                });
+                el.classList.add('selected');
+            }
+
+            markDirty(responseId);
+        };
+
+        window.stageTextChange = function (responseId, field, value) {
+            if (!pendingEdits[responseId]) pendingEdits[responseId] = {};
+            pendingEdits[responseId][field] = value;
+            markDirty(responseId);
+        };
+
+        function markDirty(responseId) {
+            const card = document.getElementById(`card-${responseId}`);
+            if (card) card.classList.add('is-dirty');
+            updateSaveBar();
+        }
+
+        function updateSaveBar() {
+            const bar = document.getElementById('curvaSaveBar');
+            const count = Object.keys(pendingEdits).length;
+            if (count > 0 && isAdmin()) {
+                bar.style.display = 'flex';
+                document.getElementById('curvaPendingCount').textContent = `${count} unsaved ${count === 1 ? 'change' : 'changes'}`;
+            } else {
+                bar.style.display = 'none';
+            }
+        }
+
+        window.discardPendingEdits = function () {
+            if (!confirm('Discard all unsaved edits?')) return;
+            pendingEdits = {};
+            updateSaveBar();
+            renderProfile();
+        };
+
+        window.saveAllPendingEdits = async function () {
+            const keys = Object.keys(pendingEdits);
+            if (keys.length === 0) return;
+
+            const btn = document.getElementById('curvaSaveAllBtn');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            const updates = keys.map(id => ({
+                response_id: id,
+                ...pendingEdits[id]
+            }));
+
+            try {
+                await callBackend({
+                    action: 'batch_update_responses',
+                    passcode: sessionStorage.getItem('curva_admin_passcode'),
+                    updates: updates
+                });
+
+                // Commit edits to local memory
+                updates.forEach(u => {
+                    const item = responsesList.find(r => r.id === u.response_id);
+                    if (item) {
+                        if (u.binary_or_choice !== undefined) item.token = u.binary_or_choice;
+                        if (u.answer_text !== undefined) item.answer = u.answer_text;
+                        if (u.confidence !== undefined) item.confidence = u.confidence;
+                        if (u.research_notes !== undefined) item.notesResearch = u.research_notes;
+                    }
+                });
+
+                pendingEdits = {};
+                updateSaveBar();
+                renderProfile();
+                alert(`Successfully saved ${updates.length} responses to Google Sheets.`);
+            } catch (err) {
+                alert('Save failed: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save All Changes';
+            }
+        };
+
+        // ==========================================
+        // TAB NAVIGATION
+        // ==========================================
+
+        window.switchTab = function (tabId, btn) {
+            document.querySelectorAll('.curva-tab').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.curva-panel').forEach(p => p.classList.remove('active'));
+
+            btn.classList.add('active');
+            const target = document.getElementById(`panel-${tabId}`);
+            if (target) target.classList.add('active');
+        };
+
+        // ==========================================
+        // ADMIN TOGGLE & AUTH
+        // ==========================================
+
+        function isAdmin() {
+            return !!sessionStorage.getItem('curva_admin_passcode');
+        }
+
+        function updateAdminUI() {
+            const badge = document.getElementById('curvaAdminStatus');
+            const btnText = document.getElementById('curvaAdminBtnText');
+            const adminButtons = document.querySelectorAll('.admin-only');
+
+            if (isAdmin()) {
+                badge.textContent = 'Admin Mode';
+                badge.classList.add('active');
+                btnText.textContent = 'Lock / Exit';
+                adminButtons.forEach(b => b.style.display = 'inline-flex');
+            } else {
+                badge.textContent = 'Public Mode';
+                badge.classList.remove('active');
+                btnText.textContent = 'Admin Access';
+                adminButtons.forEach(b => b.style.display = 'none');
+            }
+            updateSaveBar();
+        }
+
+        window.curvaToggleAdmin = async function () {
+            if (isAdmin()) {
+                if (Object.keys(pendingEdits).length > 0) {
+                    if (!confirm('You have unsaved changes. Exiting admin mode will discard them. Continue?')) return;
+                }
+                sessionStorage.removeItem('curva_admin_passcode');
+                pendingEdits = {};
+                updateAdminUI();
+                renderProfile();
+            } else {
+                const pass = prompt('Enter team admin passcode:');
+                if (!pass) return;
+
+                const btnText = document.getElementById('curvaAdminBtnText');
+                const orig = btnText.textContent;
+                btnText.textContent = 'Verifying...';
+
+                try {
+                    const res = await callBackend({
+                        action: 'verify_passcode',
+                        passcode: pass
+                    });
+
+                    if (res && res.status === 'success') {
+                        sessionStorage.setItem('curva_admin_passcode', pass);
+                        updateAdminUI();
+                        renderProfile();
+                    } else {
+                        alert('Incorrect passcode.');
+                    }
+                } catch (e) {
+                    alert('Verification error: ' + e.message);
+                } finally {
+                    btnText.textContent = isAdmin() ? 'Lock / Exit' : orig;
+                }
+            }
+        };
+
+        window.editCoverUrl = async function () {
+            const current = groupRecord.image || '';
+            const newUrl = prompt('Enter new Cover Image URL for this group:', current);
+            if (newUrl === null || newUrl === current) return;
+
+            try {
+                await callBackend({
+                    action: 'update_field',
+                    passcode: sessionStorage.getItem('curva_admin_passcode'),
+                    tabName: 'Groups',
+                    idColumn: 'group_id',
+                    idValue: groupRecord.id,
+                    field: 'cover_image_url',
+                    value: newUrl
+                });
+
+                groupRecord.image = newUrl;
+                document.getElementById('group-cover-img').src = newUrl;
+                document.getElementById('hero-backdrop').style.backgroundImage = `url('${newUrl}')`;
+                alert('Cover image updated successfully.');
+            } catch (err) {
+                alert('Failed to update cover URL: ' + err.message);
+            }
+        };
+
+        async function callBackend(payload) {
+            const res = await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (data.status === 'error') throw new Error(data.message || 'Server returned error');
+            return data;
+        }
+
+        // Initialize
+        loadProfileData();
+    })();
+</script>
