@@ -69,7 +69,7 @@
         <!-- TAB PANELS -->
         <div class="curva-tab-body">
             
-            <!-- 1. OVERVIEW & HISTORICAL -->
+            <!-- OVERVIEW -->
             <div id="panel-overview" class="curva-panel active">
                 <div class="curva-overview-grid">
                     <div class="curva-metric-card">
@@ -94,37 +94,33 @@
                 <div id="overview-historical-cards" class="curva-qa-flow"></div>
             </div>
 
-            <!-- 2. BEHAVIORAL DIMENSION -->
             <div id="panel-sec-behavioral" class="curva-panel">
                 <div class="curva-section-heading">Section 3: Behavioral Dimension & Activism</div>
                 <div id="sec3-cards" class="curva-qa-flow"></div>
             </div>
 
-            <!-- 3. IDEOLOGICAL DIMENSION -->
             <div id="panel-sec-ideological" class="curva-panel">
                 <div class="curva-section-heading">Section 4: Ideology, Politics & Social Movements</div>
                 <div id="sec4-cards" class="curva-qa-flow"></div>
             </div>
 
-            <!-- 4. ORGANIZATIONAL DIMENSION -->
             <div id="panel-sec-organizational" class="curva-panel">
                 <div class="curva-section-heading">Section 5: Internal Organization, Finance & Autonomy</div>
                 <div id="sec5-cards" class="curva-qa-flow"></div>
             </div>
 
-            <!-- 5. REPRESENTATIONAL DIMENSION -->
             <div id="panel-sec-representational" class="curva-panel">
                 <div class="curva-section-heading">Section 6: Visual Culture, Tifos, Chants & Pyro</div>
                 <div id="sec6-cards" class="curva-qa-flow"></div>
             </div>
 
-            <!-- 6. SOURCES APPENDIX -->
+            <!-- SOURCES -->
             <div id="panel-sec-sources" class="curva-panel">
                 <div class="curva-section-heading">Research Sources & Archival References</div>
                 <div id="sources-grid" class="curva-sources-grid"></div>
             </div>
 
-            <!-- 7. MEDIA GALLERY -->
+            <!-- MEDIA -->
             <div id="panel-sec-media" class="curva-panel">
                 <div class="curva-section-heading">Associated Photographs & Videos</div>
                 <div id="media-grid" class="curva-grid"></div>
@@ -134,7 +130,7 @@
 
     </div>
 
-    <!-- FLOATING SAVE BAR -->
+    <!-- FLOATING STICKY SAVE BAR -->
     <div id="curvaSaveBar" class="curva-floating-bar" style="display: none;">
         <div class="curva-save-status">
             <span class="curva-save-indicator"></span>
@@ -143,6 +139,72 @@
         <div style="display: flex; gap: 8px;">
             <button class="curva-btn-discard" onclick="discardPendingEdits()">Discard</button>
             <button id="curvaSaveAllBtn" class="curva-btn-save" onclick="saveAllPendingEdits()">Save All Changes</button>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD SOURCE -->
+    <div id="modalAddSource" class="curva-modal-overlay" style="display: none;">
+        <div class="curva-modal-box">
+            <div class="curva-modal-header">
+                <h3>Add New Research Source</h3>
+                <button class="curva-modal-close" onclick="closeModal('modalAddSource')">&times;</button>
+            </div>
+            <div class="curva-form-group">
+                <label>Source Type</label>
+                <select id="newSrcType" class="curva-form-input">
+                    <option value="Academic">Academic</option>
+                    <option value="Journalism">Journalism</option>
+                    <option value="Official">Official</option>
+                    <option value="Documentary / Video">Documentary / Video</option>
+                    <option value="Social Media / Community">Social Media / Community</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="curva-form-group">
+                <label>Title / Name</label>
+                <input type="text" id="newSrcTitle" class="curva-form-input" placeholder="Title of article, book, or post">
+            </div>
+            <div class="curva-form-group">
+                <label>Source URL</label>
+                <input type="url" id="newSrcUrl" class="curva-form-input" placeholder="https://...">
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px;">
+                <button class="curva-btn-discard" onclick="closeModal('modalAddSource')">Cancel</button>
+                <button class="curva-btn-save" onclick="submitCreateSource()">Add Source</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD MEDIA -->
+    <div id="modalAddMedia" class="curva-modal-overlay" style="display: none;">
+        <div class="curva-modal-box">
+            <div class="curva-modal-header">
+                <h3>Add New Media Item</h3>
+                <button class="curva-modal-close" onclick="closeModal('modalAddMedia')">&times;</button>
+            </div>
+            <div class="curva-form-group">
+                <label>Media Type</label>
+                <select id="newMedType" class="curva-form-input">
+                    <option value="YouTube Video">YouTube Video</option>
+                    <option value="Image URL">Image URL</option>
+                </select>
+            </div>
+            <div class="curva-form-group">
+                <label>Title / Description</label>
+                <input type="text" id="newMedTitle" class="curva-form-input" placeholder="e.g. Derby Matchday Pyro Choreo">
+            </div>
+            <div class="curva-form-group">
+                <label>Media Link / URL</label>
+                <input type="url" id="newMedLink" class="curva-form-input" placeholder="YouTube or image direct URL">
+            </div>
+            <div class="curva-form-group">
+                <label>Tags (Comma separated)</label>
+                <input type="text" id="newMedTags" class="curva-form-input" placeholder="Tifo, Pyro, Derby">
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px;">
+                <button class="curva-btn-discard" onclick="closeModal('modalAddMedia')">Cancel</button>
+                <button class="curva-btn-save" onclick="submitCreateMedia()">Add Media</button>
+            </div>
         </div>
     </div>
 
@@ -178,7 +240,6 @@
         border-top-left-radius: 16px;
         border-top-right-radius: 16px;
     }
-
     .curva-back-btn {
         color: #cbd5e1;
         text-decoration: none;
@@ -187,7 +248,6 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        transition: color 0.15s;
     }
     .curva-back-btn:hover { color: #b3a369; }
 
@@ -227,7 +287,6 @@
         overflow: hidden;
         border-bottom: 1px solid #334155;
     }
-
     .curva-hero-backdrop {
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
@@ -238,7 +297,6 @@
         transform: scale(1.1);
         pointer-events: none;
     }
-
     .curva-hero-inner {
         position: relative;
         display: flex;
@@ -247,7 +305,6 @@
         gap: 32px;
         z-index: 1;
     }
-
     .curva-cover-wrap {
         position: relative;
         width: 170px;
@@ -260,7 +317,6 @@
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
     }
     .curva-cover-wrap img { width: 100%; height: 100%; object-fit: cover; }
-
     .curva-cover-edit-btn {
         position: absolute;
         bottom: 8px; right: 8px;
@@ -272,7 +328,6 @@
         cursor: pointer;
         display: none;
     }
-
     .curva-hero-details { flex: 1; }
     .curva-hero-club {
         font-size: 13px;
@@ -379,7 +434,7 @@
         transition: border-color 0.15s;
         position: relative;
     }
-    .curva-qa-card.is-dirty {
+    .curva-qa-card.is-dirty, .curva-source-card.is-dirty, .curva-card-media.is-dirty {
         border-color: #b3a369 !important;
         background: #fffdf5;
     }
@@ -435,7 +490,7 @@
     .curva-token-badge.token-yes { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
     .curva-token-badge.token-no { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
 
-    /* Text & Editable Areas */
+    /* Text & Editable Inputs */
     .curva-qa-body {
         font-size: 14px;
         color: #334155;
@@ -455,9 +510,22 @@
         resize: vertical;
         line-height: 1.5;
         outline: none;
-        transition: border-color 0.15s;
     }
-    .curva-inline-textarea:focus { border-color: #b3a369; box-shadow: 0 0 0 2px rgba(179, 163, 105, 0.2); }
+    .curva-inline-textarea:focus { border-color: #b3a369; }
+
+    .curva-inline-input {
+        width: 100%;
+        padding: 8px 10px;
+        font-size: 13px;
+        font-family: inherit;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        background: #ffffff;
+        outline: none;
+        color: #1e293b;
+        margin-bottom: 6px;
+    }
+    .curva-inline-input:focus { border-color: #b3a369; }
 
     .curva-qa-footer {
         display: flex;
@@ -477,7 +545,29 @@
         gap: 8px;
     }
 
-    /* SOURCES & MEDIA GRIDS */
+    /* CARD ADD (DASHED) */
+    .curva-card-add-box {
+        border: 2px dashed #cbd5e1;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 160px;
+        cursor: pointer;
+        background: #f8fafc;
+        transition: all 0.2s;
+        text-align: center;
+        padding: 20px;
+    }
+    .curva-card-add-box:hover {
+        border-color: #b3a369;
+        background: #fefce8;
+        transform: translateY(-2px);
+    }
+    .curva-card-add-box h4 { margin: 8px 0 0 0; font-size: 14px; font-weight: 600; color: #1e293b; }
+
+    /* SOURCES GRID */
     .curva-sources-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -491,7 +581,21 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        position: relative;
     }
+    .curva-card-del-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        color: #94a3b8;
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 4px;
+    }
+    .curva-card-del-btn:hover { color: #ef4444; background: #fee2e2; }
+
     .curva-source-type {
         font-size: 10px;
         font-weight: 700;
@@ -516,6 +620,7 @@
     }
     .curva-source-link:hover { text-decoration: underline; }
 
+    /* MEDIA GRID */
     .curva-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
@@ -528,11 +633,9 @@
         border-left: 3px solid #b3a369;
         border-radius: 12px;
         overflow: hidden;
-        cursor: pointer;
         background: #fff;
-        transition: transform 0.2s;
+        position: relative;
     }
-    .curva-card-media:hover { transform: translateY(-3px); }
     .media-top-section {
         display: flex;
         flex-direction: row;
@@ -571,7 +674,7 @@
     .media-thumb-right img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .media-bottom-section { padding: 10px 16px 12px; background: #f8fafc; border-top: 1px solid #f1f5f9; }
 
-    /* FLOATING STICKY SAVE BAR */
+    /* FLOATING SAVE BAR */
     .curva-floating-bar {
         position: fixed;
         bottom: 24px;
@@ -610,7 +713,6 @@
         font-size: 13px;
         font-weight: 700;
         cursor: pointer;
-        transition: background 0.15s;
     }
     .curva-btn-save:hover { background: #a39258; }
     .curva-btn-discard {
@@ -624,13 +726,65 @@
         cursor: pointer;
     }
     .curva-btn-discard:hover { color: #ffffff; background: #1e293b; }
+
+    /* MODAL */
+    .curva-modal-overlay {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999999;
+        padding: 20px;
+    }
+    .curva-modal-box {
+        background: #ffffff;
+        width: 100%;
+        max-width: 460px;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+    .curva-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+    .curva-modal-header h3 { margin: 0; font-size: 17px; color: #0f172a; }
+    .curva-modal-close {
+        background: none;
+        border: none;
+        font-size: 22px;
+        color: #94a3b8;
+        cursor: pointer;
+    }
+    .curva-form-group { margin-bottom: 14px; }
+    .curva-form-group label {
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+        color: #475569;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .curva-form-input {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+    }
+    .curva-form-input:focus { border-color: #b3a369; }
 </style>
 
 <script>
     (function () {
-        // ==========================================
-        // CONFIGURATION
-        // ==========================================
         const SHEET_ID = '1kn6ioZYQiyDaRjVWrisrVipOldxVCLyiBMOmf80mkqQ';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCuAQqe9X-lidTXDgmO93VZzLoVbapbOX2sZb0b1XAJU5buh0FY6mGKy1VhAtxEOC9Fg/exec';
         const MEDIA_BASE_URL = 'https://sites.gatech.edu/curva/media-item/';
@@ -642,6 +796,17 @@
             'Not applicable'
         ];
 
+        const SOURCE_TYPES = [
+            'Academic',
+            'Journalism',
+            'Official',
+            'Documentary / Video',
+            'Social Media / Community',
+            'Other'
+        ];
+
+        const MEDIA_TYPES = ['YouTube Video', 'Image URL'];
+
         const urlParams = new URLSearchParams(window.location.search);
         const currentGroupId = urlParams.get('groupId');
 
@@ -649,7 +814,7 @@
             document.getElementById('loading-state').style.display = 'none';
             const err = document.getElementById('error-state');
             err.style.display = 'block';
-            err.innerHTML = '<h3>No Group ID Specified</h3><p>Please select a profile from the main database gallery.</p>';
+            err.innerHTML = '<h3>No Group ID Specified</h3><p>Please select a profile from the database gallery.</p>';
             return;
         }
 
@@ -658,8 +823,10 @@
         let sourcesList = [];
         let mediaList = [];
 
-        // Staged edits: { [responseId]: { binary_or_choice?, answer_text?, confidence?, research_notes? } }
-        let pendingEdits = {};
+        // Staged edits dictionaries
+        let pendingResponseEdits = {};
+        let pendingSourceEdits = {};
+        let pendingMediaEdits = {};
 
         function parseGviz(text) {
             const start = text.indexOf('{');
@@ -677,10 +844,6 @@
             return (match && match[2].length === 11) ? match[2] : null;
         }
 
-        // ==========================================
-        // FETCH DATA
-        // ==========================================
-
         const GVIZ_URL = tab => `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${tab}`;
 
         function loadProfileData() {
@@ -696,9 +859,7 @@
                 const mRows = parseGviz(mTxt).table.rows || [];
 
                 const matchG = gRows.find(r => safeStr(r.c[0]) === currentGroupId);
-                if (!matchG) {
-                    throw new Error(`Group profile '${currentGroupId}' was not found in the database.`);
-                }
+                if (!matchG) throw new Error(`Group '${currentGroupId}' not found.`);
 
                 groupRecord = {
                     id: safeStr(matchG.c[0]),
@@ -757,10 +918,6 @@
             });
         }
 
-        // ==========================================
-        // RENDER PROFILE
-        // ==========================================
-
         function renderProfile() {
             const defaultCover = 'https://sites.gatech.edu/curva/files/2026/04/CURVAlogoCroppedWhite.png';
             const cover = groupRecord.image || defaultCover;
@@ -776,10 +933,8 @@
             `;
 
             const tagBadges = groupRecord.tags.split(',')
-                .map(t => t.trim())
-                .filter(Boolean)
-                .map(t => `<span class="curva-badge">${t}</span>`)
-                .join('');
+                .map(t => t.trim()).filter(Boolean)
+                .map(t => `<span class="curva-badge">${t}</span>`).join('');
             document.getElementById('hero-tags').innerHTML = tagBadges;
 
             const qLeague = responsesList.find(r => r.qNum === '1.3');
@@ -802,13 +957,8 @@
             renderMedia();
         }
 
-        // ==========================================
-        // EXTRACT PERMISSIBLE QUESTION TOKENS
-        // ==========================================
-
         function extractTokensForQuestion(questionText) {
             let options = [];
-
             if (questionText.includes('[Y/N]')) {
                 options = ['Yes', 'No'];
             } else if (questionText.includes('[MULTI:')) {
@@ -817,18 +967,15 @@
                     options = match[1].split('|').map(s => s.trim()).filter(Boolean);
                 }
             }
-
             if (options.length > 0) {
-                // Add controlled standard fallbacks
                 if (!options.includes('Not applicable')) options.push('Not applicable');
                 if (!options.includes('Not found with sufficient confidence')) options.push('Not found with sufficient confidence');
             }
-
             return options;
         }
 
         // ==========================================
-        // RENDER QUESTION CARDS
+        // RENDER QA CARDS
         // ==========================================
 
         function renderQA(containerId, items) {
@@ -842,24 +989,23 @@
 
             el.innerHTML = items.map(item => {
                 const options = extractTokensForQuestion(item.question);
-                const isDirty = !!pendingEdits[item.id];
-                const currentToken = isDirty && pendingEdits[item.id].binary_or_choice !== undefined
-                    ? pendingEdits[item.id].binary_or_choice
+                const isDirty = !!pendingResponseEdits[item.id];
+                const currentToken = isDirty && pendingResponseEdits[item.id].binary_or_choice !== undefined
+                    ? pendingResponseEdits[item.id].binary_or_choice
                     : item.token;
 
-                const currentAnswer = isDirty && pendingEdits[item.id].answer_text !== undefined
-                    ? pendingEdits[item.id].answer_text
+                const currentAnswer = isDirty && pendingResponseEdits[item.id].answer_text !== undefined
+                    ? pendingResponseEdits[item.id].answer_text
                     : item.answer;
 
-                const currentConf = isDirty && pendingEdits[item.id].confidence !== undefined
-                    ? pendingEdits[item.id].confidence
+                const currentConf = isDirty && pendingResponseEdits[item.id].confidence !== undefined
+                    ? pendingResponseEdits[item.id].confidence
                     : item.confidence;
 
-                const currentNotes = isDirty && pendingEdits[item.id].research_notes !== undefined
-                    ? pendingEdits[item.id].research_notes
+                const currentNotes = isDirty && pendingResponseEdits[item.id].research_notes !== undefined
+                    ? pendingResponseEdits[item.id].research_notes
                     : item.notesResearch;
 
-                // 1. Token representation (View vs Edit)
                 let tokenHtml = '';
                 if (adminActive && options.length > 0) {
                     tokenHtml = `<div class="curva-pill-selector">` + options.map(opt => {
@@ -876,15 +1022,13 @@
                     tokenHtml = `<span class="curva-token-badge ${tokenClass}">${currentToken}</span>`;
                 }
 
-                // 2. Answer text representation (View vs Edit)
                 let bodyHtml = '';
                 if (adminActive) {
-                    bodyHtml = `<textarea class="curva-inline-textarea" oninput="stageTextChange('${item.id}', 'answer_text', this.value)" placeholder="Enter research response text...">${currentAnswer || ''}</textarea>`;
+                    bodyHtml = `<textarea class="curva-inline-textarea" oninput="stageResponseTextChange('${item.id}', 'answer_text', this.value)" placeholder="Enter research response text...">${currentAnswer || ''}</textarea>`;
                 } else {
                     bodyHtml = `<div class="curva-qa-body">${currentAnswer || '<em style="color:#94a3b8;">No response text</em>'}</div>`;
                 }
 
-                // 3. Confidence & Notes representation
                 let footerHtml = '';
                 if (adminActive) {
                     const confPills = CONFIDENCE_VOCABULARY.map(c => {
@@ -898,7 +1042,7 @@
                             <div class="curva-pill-selector" style="margin-bottom:0;">${confPills}</div>
                         </div>
                         <div style="margin-top: 6px;">
-                            <textarea class="curva-inline-textarea" style="min-height:45px;" oninput="stageTextChange('${item.id}', 'research_notes', this.value)" placeholder="Research notes (optional)...">${currentNotes || ''}</textarea>
+                            <textarea class="curva-inline-textarea" style="min-height:45px;" oninput="stageResponseTextChange('${item.id}', 'research_notes', this.value)" placeholder="Research notes (optional)...">${currentNotes || ''}</textarea>
                         </div>
                     `;
                 } else {
@@ -927,119 +1071,272 @@
             }).join('');
         }
 
+        // ==========================================
+        // RENDER SOURCES (WITH INLINE EDIT & ADD)
+        // ==========================================
+
         function renderSources() {
             const grid = document.getElementById('sources-grid');
-            if (sourcesList.length === 0) {
+            const adminActive = isAdmin();
+            let html = '';
+
+            if (adminActive) {
+                html += `
+                    <div class="curva-card-add-box" onclick="openModal('modalAddSource')">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#b3a369" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <h4>+ Add New Source</h4>
+                    </div>
+                `;
+            }
+
+            if (sourcesList.length === 0 && !adminActive) {
                 grid.innerHTML = '<div style="color:#94a3b8; font-size:14px;">No archival sources cataloged for this group.</div>';
                 return;
             }
 
-            grid.innerHTML = sourcesList.map(s => `
-                <div class="curva-source-card">
-                    <div>
-                        <div class="curva-source-type">${s.type || 'Source'}</div>
-                        <div class="curva-source-title">${s.title || 'Untitled Reference'}</div>
+            sourcesList.forEach(s => {
+                const isDirty = !!pendingSourceEdits[s.id];
+                const currentType = isDirty && pendingSourceEdits[s.id].source_type !== undefined
+                    ? pendingSourceEdits[s.id].source_type
+                    : s.type;
+
+                const currentTitle = isDirty && pendingSourceEdits[s.id].title !== undefined
+                    ? pendingSourceEdits[s.id].title
+                    : s.title;
+
+                const currentUrl = isDirty && pendingSourceEdits[s.id].url !== undefined
+                    ? pendingSourceEdits[s.id].url
+                    : s.url;
+
+                let contentHtml = '';
+                if (adminActive) {
+                    const typePills = SOURCE_TYPES.map(t => {
+                        const isSel = currentType === t;
+                        return `<span class="curva-opt-pill ${isSel ? 'selected' : ''}" onclick="stageSourceTypeChange('${s.id}', '${t.replace(/'/g, "\\'")}', this)">${t}</span>`;
+                    }).join('');
+
+                    contentHtml = `
+                        <button class="curva-card-del-btn" onclick="deleteSourceItem('${s.id}')" title="Delete Source">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
+                        <div class="curva-pill-selector" style="margin-right: 28px;">${typePills}</div>
+                        <input type="text" class="curva-inline-input" placeholder="Source title" value="${currentTitle.replace(/"/g, '&quot;')}" oninput="stageSourceFieldChange('${s.id}', 'title', this.value)">
+                        <input type="url" class="curva-inline-input" placeholder="Source URL" value="${currentUrl.replace(/"/g, '&quot;')}" oninput="stageSourceFieldChange('${s.id}', 'url', this.value)">
+                    `;
+                } else {
+                    contentHtml = `
+                        <div>
+                            <div class="curva-source-type">${s.type || 'Source'}</div>
+                            <div class="curva-source-title">${s.title || 'Untitled Reference'}</div>
+                        </div>
+                        <div>
+                            ${s.url ? `<a href="${s.url}" target="_blank" rel="noopener" class="curva-source-link">View Source &nearr;</a>` : '<span style="font-size:12px; color:#94a3b8;">No URL provided</span>'}
+                        </div>
+                    `;
+                }
+
+                html += `
+                    <div class="curva-source-card ${isDirty ? 'is-dirty' : ''}" id="src-card-${s.id}">
+                        ${contentHtml}
                     </div>
-                    <div>
-                        ${s.url ? `<a href="${s.url}" target="_blank" rel="noopener" class="curva-source-link">View Source &nearr;</a>` : '<span style="font-size:12px; color:#94a3b8;">No URL provided</span>'}
-                    </div>
-                </div>
-            `).join('');
+                `;
+            });
+
+            grid.innerHTML = html;
         }
+
+        // ==========================================
+        // RENDER MEDIA (WITH INLINE EDIT & ADD)
+        // ==========================================
 
         function renderMedia() {
             const grid = document.getElementById('media-grid');
-            if (mediaList.length === 0) {
+            const adminActive = isAdmin();
+            let html = '';
+
+            if (adminActive) {
+                html += `
+                    <div class="curva-card-add-box" onclick="openModal('modalAddMedia')">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#b3a369" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <h4>+ Add New Media Item</h4>
+                    </div>
+                `;
+            }
+
+            if (mediaList.length === 0 && !adminActive) {
                 grid.innerHTML = '<div style="color:#94a3b8; font-size:14px;">No media items linked to this group yet.</div>';
                 return;
             }
 
-            grid.innerHTML = mediaList.map(m => {
-                const isYouTube = m.type.toLowerCase().includes('youtube');
-                const typeLabel = isYouTube ? 'YouTube Video' : 'Image';
+            mediaList.forEach(m => {
+                const isDirty = !!pendingMediaEdits[m.id];
+                const currentType = isDirty && pendingMediaEdits[m.id].media_type !== undefined
+                    ? pendingMediaEdits[m.id].media_type
+                    : m.type;
 
-                let thumbUrl = '';
-                if (isYouTube) {
-                    const vidId = getYouTubeId(m.link);
-                    thumbUrl = vidId ? `https://img.youtube.com/vi/${vidId}/mqdefault.jpg` : '';
+                const currentTitle = isDirty && pendingMediaEdits[m.id].media_title !== undefined
+                    ? pendingMediaEdits[m.id].media_title
+                    : m.title;
+
+                const currentLink = isDirty && pendingMediaEdits[m.id].media_link !== undefined
+                    ? pendingMediaEdits[m.id].media_link
+                    : m.link;
+
+                const currentTags = isDirty && pendingMediaEdits[m.id].tags !== undefined
+                    ? pendingMediaEdits[m.id].tags
+                    : m.tags;
+
+                let cardHtml = '';
+                if (adminActive) {
+                    const typePills = MEDIA_TYPES.map(t => {
+                        const isSel = currentType === t;
+                        return `<span class="curva-opt-pill ${isSel ? 'selected' : ''}" onclick="stageMediaTypeChange('${m.id}', '${t.replace(/'/g, "\\'")}', this)">${t}</span>`;
+                    }).join('');
+
+                    cardHtml = `
+                        <button class="curva-card-del-btn" onclick="deleteMediaItem('${m.id}')" title="Delete Media Item">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            </svg>
+                        </button>
+                        <div style="padding: 14px 16px 10px;">
+                            <div class="curva-pill-selector" style="margin-right: 28px;">${typePills}</div>
+                            <input type="text" class="curva-inline-input" placeholder="Media title" value="${currentTitle.replace(/"/g, '&quot;')}" oninput="stageMediaFieldChange('${m.id}', 'media_title', this.value)">
+                            <input type="url" class="curva-inline-input" placeholder="Media Link (YouTube/Image URL)" value="${currentLink.replace(/"/g, '&quot;')}" oninput="stageMediaFieldChange('${m.id}', 'media_link', this.value)">
+                            <input type="text" class="curva-inline-input" placeholder="Tags (comma separated)" value="${currentTags.replace(/"/g, '&quot;')}" oninput="stageMediaFieldChange('${m.id}', 'tags', this.value)">
+                        </div>
+                    `;
                 } else {
-                    thumbUrl = m.link;
+                    const isYouTube = m.type.toLowerCase().includes('youtube');
+                    const typeLabel = isYouTube ? 'YouTube Video' : 'Image';
+
+                    let thumbUrl = '';
+                    if (isYouTube) {
+                        const vidId = getYouTubeId(m.link);
+                        thumbUrl = vidId ? `https://img.youtube.com/vi/${vidId}/mqdefault.jpg` : '';
+                    } else {
+                        thumbUrl = m.link;
+                    }
+
+                    const thumb = thumbUrl ? `<div class="media-thumb-right"><img src="${thumbUrl}" alt="Media thumbnail" loading="lazy" /></div>` : '';
+                    const tags = m.tags.split(',').map(t => t.trim()).filter(Boolean).map(t => `<span class="curva-badge">${t}</span>`).join('');
+
+                    cardHtml = `
+                        <div onclick="window.location.href='${MEDIA_BASE_URL}?mediaId=${m.id}'" style="cursor:pointer;">
+                            <div class="media-top-section">
+                                <div class="media-info-left">
+                                    <div class="media-type-label">${typeLabel}</div>
+                                    <h4 class="media-title-large">${m.title || 'Untitled Media'}</h4>
+                                </div>
+                                ${thumb}
+                            </div>
+                            <div class="media-bottom-section">
+                                <div class="curva-tags">${tags}</div>
+                            </div>
+                        </div>
+                    `;
                 }
 
-                const thumb = thumbUrl ? `<div class="media-thumb-right"><img src="${thumbUrl}" alt="Media thumbnail" loading="lazy" /></div>` : '';
-                const tags = m.tags.split(',').map(t => t.trim()).filter(Boolean).map(t => `<span class="curva-badge">${t}</span>`).join('');
-
-                return `
-                    <div class="curva-card-media" onclick="window.location.href='${MEDIA_BASE_URL}?mediaId=${m.id}'">
-                        <div class="media-top-section">
-                            <div class="media-info-left">
-                                <div class="media-type-label">${typeLabel}</div>
-                                <h4 class="media-title-large">${m.title || 'Untitled Media'}</h4>
-                            </div>
-                            ${thumb}
-                        </div>
-                        <div class="media-bottom-section">
-                            <div class="curva-tags">${tags}</div>
-                        </div>
+                html += `
+                    <div class="curva-card-media ${isDirty ? 'is-dirty' : ''}" id="med-card-${m.id}">
+                        ${cardHtml}
                     </div>
                 `;
-            }).join('');
+            });
+
+            grid.innerHTML = html;
         }
 
         // ==========================================
-        // INLINE EDIT STAGING
+        // STAGING HANDLERS
         // ==========================================
 
-        window.stageTokenChange = function (responseId, token, el) {
-            if (!pendingEdits[responseId]) pendingEdits[responseId] = {};
-            pendingEdits[responseId].binary_or_choice = token;
-            
-            // Instantly toggle UI selected classes
+        window.stageTokenChange = function (id, token, el) {
+            if (!pendingResponseEdits[id]) pendingResponseEdits[id] = {};
+            pendingResponseEdits[id].binary_or_choice = token;
             if (el && el.parentElement) {
-                el.parentElement.querySelectorAll('.curva-opt-pill').forEach(p => {
-                    p.classList.remove('selected', 'token-yes', 'token-no');
-                });
+                el.parentElement.querySelectorAll('.curva-opt-pill').forEach(p => p.classList.remove('selected', 'token-yes', 'token-no'));
                 el.classList.add('selected');
                 if (token === 'Yes') el.classList.add('token-yes');
                 if (token === 'No') el.classList.add('token-no');
             }
-
-            markDirty(responseId);
+            markDirty(`card-${id}`);
         };
 
-        window.stageConfidenceChange = function (responseId, conf, el) {
-            if (!pendingEdits[responseId]) pendingEdits[responseId] = {};
-            pendingEdits[responseId].confidence = conf;
-
-            // Instantly toggle UI selected class
+        window.stageConfidenceChange = function (id, conf, el) {
+            if (!pendingResponseEdits[id]) pendingResponseEdits[id] = {};
+            pendingResponseEdits[id].confidence = conf;
             if (el && el.parentElement) {
-                el.parentElement.querySelectorAll('.curva-opt-pill').forEach(p => {
-                    p.classList.remove('selected');
-                });
+                el.parentElement.querySelectorAll('.curva-opt-pill').forEach(p => p.classList.remove('selected'));
                 el.classList.add('selected');
             }
-
-            markDirty(responseId);
+            markDirty(`card-${id}`);
         };
 
-        window.stageTextChange = function (responseId, field, value) {
-            if (!pendingEdits[responseId]) pendingEdits[responseId] = {};
-            pendingEdits[responseId][field] = value;
-            markDirty(responseId);
+        window.stageResponseTextChange = function (id, field, val) {
+            if (!pendingResponseEdits[id]) pendingResponseEdits[id] = {};
+            pendingResponseEdits[id][field] = val;
+            markDirty(`card-${id}`);
         };
 
-        function markDirty(responseId) {
-            const card = document.getElementById(`card-${responseId}`);
+        window.stageSourceTypeChange = function (id, type, el) {
+            if (!pendingSourceEdits[id]) pendingSourceEdits[id] = {};
+            pendingSourceEdits[id].source_type = type;
+            if (el && el.parentElement) {
+                el.parentElement.querySelectorAll('.curva-opt-pill').forEach(p => p.classList.remove('selected'));
+                el.classList.add('selected');
+            }
+            markDirty(`src-card-${id}`);
+        };
+
+        window.stageSourceFieldChange = function (id, field, val) {
+            if (!pendingSourceEdits[id]) pendingSourceEdits[id] = {};
+            pendingSourceEdits[id][field] = val;
+            markDirty(`src-card-${id}`);
+        };
+
+        window.stageMediaTypeChange = function (id, type, el) {
+            if (!pendingMediaEdits[id]) pendingMediaEdits[id] = {};
+            pendingMediaEdits[id].media_type = type;
+            if (el && el.parentElement) {
+                el.parentElement.querySelectorAll('.curva-opt-pill').forEach(p => p.classList.remove('selected'));
+                el.classList.add('selected');
+            }
+            markDirty(`med-card-${id}`);
+        };
+
+        window.stageMediaFieldChange = function (id, field, val) {
+            if (!pendingMediaEdits[id]) pendingMediaEdits[id] = {};
+            pendingMediaEdits[id][field] = val;
+            markDirty(`med-card-${id}`);
+        };
+
+        function markDirty(elementId) {
+            const card = document.getElementById(elementId);
             if (card) card.classList.add('is-dirty');
             updateSaveBar();
         }
 
         function updateSaveBar() {
             const bar = document.getElementById('curvaSaveBar');
-            const count = Object.keys(pendingEdits).length;
-            if (count > 0 && isAdmin()) {
+            const rCount = Object.keys(pendingResponseEdits).length;
+            const sCount = Object.keys(pendingSourceEdits).length;
+            const mCount = Object.keys(pendingMediaEdits).length;
+            const total = rCount + sCount + mCount;
+
+            if (total > 0 && isAdmin()) {
                 bar.style.display = 'flex';
-                document.getElementById('curvaPendingCount').textContent = `${count} unsaved ${count === 1 ? 'change' : 'changes'}`;
+                document.getElementById('curvaPendingCount').textContent = `${total} unsaved ${total === 1 ? 'change' : 'changes'}`;
             } else {
                 bar.style.display = 'none';
             }
@@ -1047,46 +1344,76 @@
 
         window.discardPendingEdits = function () {
             if (!confirm('Discard all unsaved edits?')) return;
-            pendingEdits = {};
+            pendingResponseEdits = {};
+            pendingSourceEdits = {};
+            pendingMediaEdits = {};
             updateSaveBar();
             renderProfile();
         };
 
         window.saveAllPendingEdits = async function () {
-            const keys = Object.keys(pendingEdits);
-            if (keys.length === 0) return;
+            const rKeys = Object.keys(pendingResponseEdits);
+            const sKeys = Object.keys(pendingSourceEdits);
+            const mKeys = Object.keys(pendingMediaEdits);
+            if (rKeys.length === 0 && sKeys.length === 0 && mKeys.length === 0) return;
 
             const btn = document.getElementById('curvaSaveAllBtn');
             btn.disabled = true;
             btn.textContent = 'Saving...';
 
-            const updates = keys.map(id => ({
-                response_id: id,
-                ...pendingEdits[id]
-            }));
-
             try {
-                await callBackend({
-                    action: 'batch_update_responses',
-                    passcode: sessionStorage.getItem('curva_admin_passcode'),
-                    updates: updates
-                });
+                const passcode = sessionStorage.getItem('curva_admin_passcode');
 
-                // Commit edits to local memory
-                updates.forEach(u => {
-                    const item = responsesList.find(r => r.id === u.response_id);
-                    if (item) {
-                        if (u.binary_or_choice !== undefined) item.token = u.binary_or_choice;
-                        if (u.answer_text !== undefined) item.answer = u.answer_text;
-                        if (u.confidence !== undefined) item.confidence = u.confidence;
-                        if (u.research_notes !== undefined) item.notesResearch = u.research_notes;
-                    }
-                });
+                // 1. Batch Responses
+                if (rKeys.length > 0) {
+                    const rUpdates = rKeys.map(id => ({ response_id: id, ...pendingResponseEdits[id] }));
+                    await callBackend({ action: 'batch_update_responses', passcode, updates: rUpdates });
+                    rUpdates.forEach(u => {
+                        const itm = responsesList.find(r => r.id === u.response_id);
+                        if (itm) {
+                            if (u.binary_or_choice !== undefined) itm.token = u.binary_or_choice;
+                            if (u.answer_text !== undefined) itm.answer = u.answer_text;
+                            if (u.confidence !== undefined) itm.confidence = u.confidence;
+                            if (u.research_notes !== undefined) itm.notesResearch = u.research_notes;
+                        }
+                    });
+                }
 
-                pendingEdits = {};
+                // 2. Batch Sources
+                if (sKeys.length > 0) {
+                    const sUpdates = sKeys.map(id => ({ source_id: id, ...pendingSourceEdits[id] }));
+                    await callBackend({ action: 'batch_update_sources', passcode, updates: sUpdates });
+                    sUpdates.forEach(u => {
+                        const itm = sourcesList.find(s => s.id === u.source_id);
+                        if (itm) {
+                            if (u.source_type !== undefined) itm.type = u.source_type;
+                            if (u.title !== undefined) itm.title = u.title;
+                            if (u.url !== undefined) itm.url = u.url;
+                        }
+                    });
+                }
+
+                // 3. Batch Media
+                if (mKeys.length > 0) {
+                    const mUpdates = mKeys.map(id => ({ media_id: id, ...pendingMediaEdits[id] }));
+                    await callBackend({ action: 'batch_update_media', passcode, updates: mUpdates });
+                    mUpdates.forEach(u => {
+                        const itm = mediaList.find(m => m.id === u.media_id);
+                        if (itm) {
+                            if (u.media_type !== undefined) itm.type = u.media_type;
+                            if (u.media_title !== undefined) itm.title = u.media_title;
+                            if (u.media_link !== undefined) itm.link = u.media_link;
+                            if (u.tags !== undefined) itm.tags = u.tags;
+                        }
+                    });
+                }
+
+                pendingResponseEdits = {};
+                pendingSourceEdits = {};
+                pendingMediaEdits = {};
                 updateSaveBar();
                 renderProfile();
-                alert(`Successfully saved ${updates.length} responses to Google Sheets.`);
+                alert('All changes saved successfully to Google Sheets.');
             } catch (err) {
                 alert('Save failed: ' + err.message);
             } finally {
@@ -1096,21 +1423,119 @@
         };
 
         // ==========================================
-        // TAB NAVIGATION
+        // CREATE & DELETE ITEMS
+        // ==========================================
+
+        window.openModal = function (id) {
+            document.getElementById(id).style.display = 'flex';
+        };
+
+        window.closeModal = function (id) {
+            document.getElementById(id).style.display = 'none';
+        };
+
+        window.submitCreateSource = async function () {
+            const type = document.getElementById('newSrcType').value;
+            const title = document.getElementById('newSrcTitle').value.trim();
+            const url = document.getElementById('newSrcUrl').value.trim();
+
+            if (!title) { alert('Please enter a source title'); return; }
+
+            try {
+                await callBackend({
+                    action: 'create_source',
+                    passcode: sessionStorage.getItem('curva_admin_passcode'),
+                    payload: {
+                        groupId: groupRecord.id,
+                        ultraGroup: groupRecord.name,
+                        sourceType: type,
+                        title: title,
+                        url: url
+                    }
+                });
+
+                closeModal('modalAddSource');
+                document.getElementById('newSrcTitle').value = '';
+                document.getElementById('newSrcUrl').value = '';
+                loadProfileData();
+            } catch (err) {
+                alert('Failed to add source: ' + err.message);
+            }
+        };
+
+        window.deleteSourceItem = async function (sourceId) {
+            if (!confirm(`Are you sure you want to delete source ${sourceId}?`)) return;
+            try {
+                await callBackend({
+                    action: 'delete_source',
+                    passcode: sessionStorage.getItem('curva_admin_passcode'),
+                    sourceId: sourceId
+                });
+                delete pendingSourceEdits[sourceId];
+                loadProfileData();
+            } catch (err) {
+                alert('Failed to delete source: ' + err.message);
+            }
+        };
+
+        window.submitCreateMedia = async function () {
+            const type = document.getElementById('newMedType').value;
+            const title = document.getElementById('newMedTitle').value.trim();
+            const link = document.getElementById('newMedLink').value.trim();
+            const tags = document.getElementById('newMedTags').value.trim();
+
+            if (!title || !link) { alert('Title and Link are required'); return; }
+
+            try {
+                await callBackend({
+                    action: 'create_media',
+                    passcode: sessionStorage.getItem('curva_admin_passcode'),
+                    payload: {
+                        groupId: groupRecord.id,
+                        ultraGroup: groupRecord.name,
+                        mediaType: type,
+                        mediaTitle: title,
+                        mediaLink: link,
+                        tags: tags
+                    }
+                });
+
+                closeModal('modalAddMedia');
+                document.getElementById('newMedTitle').value = '';
+                document.getElementById('newMedLink').value = '';
+                document.getElementById('newMedTags').value = '';
+                loadProfileData();
+            } catch (err) {
+                alert('Failed to add media item: ' + err.message);
+            }
+        };
+
+        window.deleteMediaItem = async function (mediaId) {
+            if (!confirm(`Are you sure you want to delete media item ${mediaId}?`)) return;
+            try {
+                await callBackend({
+                    action: 'delete_media',
+                    passcode: sessionStorage.getItem('curva_admin_passcode'),
+                    mediaId: mediaId
+                });
+                delete pendingMediaEdits[mediaId];
+                loadProfileData();
+            } catch (err) {
+                alert('Failed to delete media item: ' + err.message);
+            }
+        };
+
+        // ==========================================
+        // TABS & AUTH
         // ==========================================
 
         window.switchTab = function (tabId, btn) {
             document.querySelectorAll('.curva-tab').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.curva-panel').forEach(p => p.classList.remove('active'));
-
             btn.classList.add('active');
             const target = document.getElementById(`panel-${tabId}`);
             if (target) target.classList.add('active');
         };
-
-        // ==========================================
-        // ADMIN TOGGLE & AUTH
-        // ==========================================
 
         function isAdmin() {
             return !!sessionStorage.getItem('curva_admin_passcode');
@@ -1137,11 +1562,12 @@
 
         window.curvaToggleAdmin = async function () {
             if (isAdmin()) {
-                if (Object.keys(pendingEdits).length > 0) {
-                    if (!confirm('You have unsaved changes. Exiting admin mode will discard them. Continue?')) return;
-                }
+                const total = Object.keys(pendingResponseEdits).length + Object.keys(pendingSourceEdits).length + Object.keys(pendingMediaEdits).length;
+                if (total > 0 && !confirm('Discard unsaved edits and exit admin mode?')) return;
                 sessionStorage.removeItem('curva_admin_passcode');
-                pendingEdits = {};
+                pendingResponseEdits = {};
+                pendingSourceEdits = {};
+                pendingMediaEdits = {};
                 updateAdminUI();
                 renderProfile();
             } else {
@@ -1153,11 +1579,7 @@
                 btnText.textContent = 'Verifying...';
 
                 try {
-                    const res = await callBackend({
-                        action: 'verify_passcode',
-                        passcode: pass
-                    });
-
+                    const res = await callBackend({ action: 'verify_passcode', passcode: pass });
                     if (res && res.status === 'success') {
                         sessionStorage.setItem('curva_admin_passcode', pass);
                         updateAdminUI();
@@ -1209,7 +1631,6 @@
             return data;
         }
 
-        // Initialize
         loadProfileData();
     })();
 </script>
