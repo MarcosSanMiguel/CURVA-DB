@@ -14,7 +14,7 @@
             <div class="curva-top-bar-title">Georgia Tech &middot; CURVA Media Archive</div>
         </div>
         <div class="curva-admin-group">
-            <div class="curva-admin-badge" id="curvaAdminStatus">Public Mode</div>
+            <div class="curva-admin-badge" id="curvaAdminStatus" style="display: none;">Admin Mode</div>
             <button id="curvaAdminToggleBtn" class="curva-admin-btn" onclick="curvaToggleAdmin()">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -203,20 +203,19 @@
     }
 
     .curva-admin-badge {
+        display: none;
         font-size: 11px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.8px;
-        color: #cbd5e1;
+        color: #4ade80;
         padding: 4px 10px;
         border-radius: 6px;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(34, 197, 94, 0.18);
+        border: 1px solid rgba(74, 222, 128, 0.35);
     }
     .curva-admin-badge.active {
-        color: #4ade80;
-        background: rgba(34, 197, 94, 0.18);
-        border-color: rgba(74, 222, 128, 0.35);
+        display: inline-block;
     }
 
     .curva-admin-btn {
@@ -621,14 +620,23 @@
             document.getElementById('media-group-name').textContent = parentGroup ? parentGroup.name : (mediaItem.groupName || 'Ultra Group');
             document.getElementById('media-group-meta').textContent = grpMeta;
 
-            // Tags
-            const tagContainer = document.getElementById('media-tags-list');
-            const tags = mediaItem.tags.split(',').map(t => t.trim()).filter(Boolean);
-            if (tags.length > 0) {
-                tagContainer.innerHTML = tags.map(t => `<span class="curva-badge">${t}</span>`).join('');
-            } else {
-                tagContainer.innerHTML = '<span style="font-size:12px; color:#94a3b8;">No tags</span>';
-            }
+        function parseTags(tagString) {
+            if (!tagString || typeof tagString !== 'string') return [];
+            return tagString
+                .replace(/(\d),(\d)/g, (m, d1, d2) => d1 + '__COMMA__' + d2)
+                .split(',')
+                .map(t => t.replace(/__COMMA__/g, ',').trim())
+                .filter(Boolean);
+        }
+
+        // Tags
+        const tagContainer = document.getElementById('media-tags-list');
+        const tags = parseTags(mediaItem.tags);
+        if (tags.length > 0) {
+            tagContainer.innerHTML = tags.map(t => `<span class="curva-badge">${t}</span>`).join('');
+        } else {
+            tagContainer.innerHTML = '<span style="font-size:12px; color:#94a3b8;">No tags</span>';
+        }
         }
 
         window.goToGroupProfile = function () {
@@ -652,18 +660,24 @@
             const editPanel = document.getElementById('edit-mode-panel');
 
             if (isAdmin()) {
-                badge.textContent = 'Admin Mode';
-                badge.classList.add('active');
-                btnText.textContent = 'Lock / Exit';
-                viewPanel.style.display = 'none';
-                editPanel.style.display = 'block';
+                if (badge) {
+                    badge.textContent = 'Admin Mode';
+                    badge.classList.add('active');
+                    badge.style.display = 'inline-block';
+                }
+                if (btnText) btnText.textContent = 'Lock / Exit';
+                if (viewPanel) viewPanel.style.display = 'none';
+                if (editPanel) editPanel.style.display = 'block';
                 populateEditForm();
             } else {
-                badge.textContent = 'Public Mode';
-                badge.classList.remove('active');
-                btnText.textContent = 'Admin Access';
-                viewPanel.style.display = 'block';
-                editPanel.style.display = 'none';
+                if (badge) {
+                    badge.textContent = '';
+                    badge.classList.remove('active');
+                    badge.style.display = 'none';
+                }
+                if (btnText) btnText.textContent = 'Admin Access';
+                if (viewPanel) viewPanel.style.display = 'block';
+                if (editPanel) editPanel.style.display = 'none';
             }
         }
 

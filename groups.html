@@ -14,16 +14,18 @@
             <!-- TOP NAV BAR -->
             <div class="curva-top-bar">
                 <a href="https://sites.gatech.edu/curva/" class="curva-back-btn">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
                     Back to Database
                 </a>
                 <div class="curva-admin-group">
-                    <div class="curva-admin-badge" id="curvaAdminStatus">Public Mode</div>
+                    <div class="curva-admin-badge" id="curvaAdminStatus" style="display: none;">Admin Mode</div>
                     <button id="curvaAdminToggleBtn" class="curva-admin-btn" onclick="curvaToggleAdmin()">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                         </svg>
@@ -38,8 +40,10 @@
                 <div class="curva-hero-inner">
                     <div class="curva-cover-wrap">
                         <img id="group-cover-img" src="" alt="Ultra Group Cover" />
-                        <button class="curva-cover-edit-btn admin-only" onclick="editCoverUrl()" title="Edit Cover Image URL">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <button class="curva-cover-edit-btn admin-only" onclick="editCoverUrl()"
+                            title="Edit Cover Image URL">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
                             </svg>
                         </button>
@@ -71,7 +75,7 @@
 
         <!-- TAB PANELS -->
         <div class="curva-tab-body">
-            
+
             <!-- OVERVIEW -->
             <div id="panel-overview" class="curva-panel active">
                 <div class="curva-overview-grid">
@@ -141,7 +145,8 @@
         </div>
         <div style="display: flex; gap: 8px;">
             <button class="curva-btn-discard" onclick="discardPendingEdits()">Discard</button>
-            <button id="curvaSaveAllBtn" class="curva-btn-save" onclick="saveAllPendingEdits()">Save All Changes</button>
+            <button id="curvaSaveAllBtn" class="curva-btn-save" onclick="saveAllPendingEdits()">Save All
+                Changes</button>
         </div>
     </div>
 
@@ -165,7 +170,8 @@
             </div>
             <div class="curva-form-group">
                 <label>Title / Name</label>
-                <input type="text" id="newSrcTitle" class="curva-form-input" placeholder="Title of article, book, or post">
+                <input type="text" id="newSrcTitle" class="curva-form-input"
+                    placeholder="Title of article, book, or post">
             </div>
             <div class="curva-form-group">
                 <label>Source URL</label>
@@ -185,7 +191,7 @@
                 <h3>Add New Media Item</h3>
                 <button class="curva-modal-close" onclick="closeModal('modalAddMedia')">&times;</button>
             </div>
-            
+
             <div class="curva-form-group">
                 <label>Media Type</label>
                 <select id="newMedType" class="curva-form-input" onchange="handleMediaTypeChange(this.value)">
@@ -203,25 +209,30 @@
 
             <div class="curva-form-group">
                 <label>Description (Optional)</label>
-                <textarea id="newMedDesc" class="curva-inline-textarea" style="min-height: 70px;" placeholder="Add historical context, fixture details, or background on this media item..."></textarea>
+                <textarea id="newMedDesc" class="curva-inline-textarea" style="min-height: 70px;"
+                    placeholder="Add historical context, fixture details, or background on this media item..."></textarea>
             </div>
 
             <div class="curva-form-group">
                 <label>Media Link / URL</label>
-                <input type="url" id="newMedLink" class="curva-form-input" placeholder="YouTube, Tweet, TikTok, or direct URL">
+                <input type="url" id="newMedLink" class="curva-form-input"
+                    placeholder="YouTube, Tweet, TikTok, or direct URL">
             </div>
 
             <!-- DYNAMIC CUSTOM THUMBNAIL (Social Media & Other only) -->
             <div class="curva-form-group" id="customThumbGroup" style="display: none;">
                 <label>Custom Thumbnail Image URL (Optional)</label>
-                <input type="url" id="newMedThumb" class="curva-form-input" placeholder="https://example.com/screenshot.jpg">
-                <span style="font-size: 11px; color: #64748b; margin-top: 4px; display: block;">Paste an image link to serve as the card preview.</span>
+                <input type="url" id="newMedThumb" class="curva-form-input"
+                    placeholder="https://example.com/screenshot.jpg">
+                <span style="font-size: 11px; color: #64748b; margin-top: 4px; display: block;">Paste an image link to
+                    serve as the card preview.</span>
             </div>
 
             <!-- CONTROLLED TAG BANK SELECTOR -->
             <div class="curva-form-group">
                 <label>Tags</label>
-                <div id="mediaTagBankContainer" style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;"></div>
+                <div id="mediaTagBankContainer"
+                    style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;"></div>
             </div>
 
             <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:20px;">
@@ -243,13 +254,18 @@
         max-width: 1400px !important;
     }
 
-    #curva-profile-app * { box-sizing: border-box; }
+    #curva-profile-app * {
+        box-sizing: border-box;
+    }
+
     #navbar-main-btn-search {
         display: none !important;
     }
+
     #navbar-main {
         display: none !important;
     }
+
     #curva-profile-app {
         font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
         background: #ffffff;
@@ -270,7 +286,7 @@
     /* --- PROFILE SHELL: UNIFIED GEORGIA TECH CARD --- */
     .curva-profile-shell {
         background: radial-gradient(circle at 80% 20%, rgba(179, 163, 105, 0.12) 0%, transparent 60%),
-                    linear-gradient(180deg, #002244 0%, #003057 60%, #05264c 100%);
+            linear-gradient(180deg, #002244 0%, #003057 60%, #05264c 100%);
         border: 1px solid rgba(179, 163, 105, 0.32);
         border-top: none;
         border-radius: 0 0 24px 24px;
@@ -290,6 +306,7 @@
         background: transparent;
         border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
+
     .curva-back-btn {
         color: #cbd5e1;
         text-decoration: none;
@@ -300,6 +317,7 @@
         gap: 6px;
         transition: color 0.15s ease, transform 0.15s ease;
     }
+
     .curva-back-btn:hover {
         color: #b3a369;
         transform: translateX(-2px);
@@ -312,20 +330,20 @@
     }
 
     .curva-admin-badge {
+        display: none;
         font-size: 11px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.8px;
-        color: #cbd5e1;
+        color: #4ade80;
         padding: 4px 10px;
         border-radius: 6px;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    .curva-admin-badge.active {
-        color: #4ade80;
         background: rgba(34, 197, 94, 0.18);
-        border-color: rgba(74, 222, 128, 0.35);
+        border: 1px solid rgba(74, 222, 128, 0.35);
+    }
+
+    .curva-admin-badge.active {
+        display: inline-block;
     }
 
     .curva-admin-btn {
@@ -342,6 +360,7 @@
         gap: 6px;
         transition: all 0.2s ease;
     }
+
     .curva-admin-btn:hover {
         background: rgba(179, 163, 105, 0.2);
         color: #fff;
@@ -356,9 +375,13 @@
         padding: 28px 32px 30px;
         overflow: hidden;
     }
+
     .curva-hero-backdrop {
         position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         background-size: cover;
         background-position: center;
         opacity: 0.18;
@@ -366,6 +389,7 @@
         transform: scale(1.15);
         pointer-events: none;
     }
+
     .curva-hero-inner {
         position: relative;
         display: flex;
@@ -374,21 +398,31 @@
         gap: 32px;
         z-index: 1;
     }
+
     .curva-cover-wrap {
         position: relative;
-        width: 170px;
-        height: 170px;
-        border-radius: 16px;
+        width: 420px;
+        max-width: 100%;
+        aspect-ratio: 16 / 9;
+        height: auto;
+        border-radius: 14px;
         overflow: hidden;
-        border: 2px solid rgba(179, 163, 105, 0.5);
+        border: none;
         background: #001b33;
         flex-shrink: 0;
         box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
     }
-    .curva-cover-wrap img { width: 100%; height: 100%; object-fit: cover; }
+
+    .curva-cover-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
     .curva-cover-edit-btn {
         position: absolute;
-        bottom: 8px; right: 8px;
+        bottom: 8px;
+        right: 8px;
         background: rgba(0, 34, 68, 0.85);
         border: 1px solid #b3a369;
         color: #fff;
@@ -397,7 +431,11 @@
         cursor: pointer;
         display: none;
     }
-    .curva-hero-details { flex: 1; }
+
+    .curva-hero-details {
+        flex: 1;
+    }
+
     .curva-hero-club {
         font-size: 13px;
         text-transform: uppercase;
@@ -406,13 +444,15 @@
         font-weight: 700;
         margin-bottom: 6px;
     }
+
     .curva-hero-title {
         font-family: 'DM Serif Display', Georgia, serif;
-        font-size: 40px;
+        font-size: 58px;
         color: #ffffff;
         margin: 0 0 12px 0;
-        line-height: 1.12;
+        line-height: 1.1;
     }
+
     .curva-hero-meta {
         display: flex;
         flex-wrap: wrap;
@@ -421,7 +461,13 @@
         color: #cbd5e1;
         margin-bottom: 16px;
     }
-    .curva-tags-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .curva-tags-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
     .curva-tags {
         display: flex;
         flex-wrap: wrap;
@@ -458,6 +504,7 @@
         padding: 0 24px;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
+
     .curva-tab {
         background: none;
         border: none;
@@ -470,12 +517,28 @@
         transition: all 0.2s ease;
         font-family: inherit;
     }
-    .curva-tab:hover { color: #ffffff; }
-    .curva-tab.active { color: #b3a369; border-bottom-color: #b3a369; }
 
-    .curva-tab-body { padding: 0 4px 60px; background: transparent; }
-    .curva-panel { display: none; }
-    .curva-panel.active { display: block; }
+    .curva-tab:hover {
+        color: #ffffff;
+    }
+
+    .curva-tab.active {
+        color: #b3a369;
+        border-bottom-color: #b3a369;
+    }
+
+    .curva-tab-body {
+        padding: 0 4px 60px;
+        background: transparent;
+    }
+
+    .curva-panel {
+        display: none;
+    }
+
+    .curva-panel.active {
+        display: block;
+    }
 
     .curva-section-heading {
         font-size: 14px;
@@ -495,12 +558,14 @@
         gap: 16px;
         margin-bottom: 32px;
     }
+
     .curva-metric-card {
         background: #f8fafc;
         border: 1px solid #e2e8f0;
         border-radius: 10px;
         padding: 16px;
     }
+
     .curva-metric-label {
         font-size: 11px;
         font-weight: 600;
@@ -509,10 +574,20 @@
         color: #94a3b8;
         margin-bottom: 6px;
     }
-    .curva-metric-val { font-size: 16px; font-weight: 600; color: #0f172a; }
+
+    .curva-metric-val {
+        font-size: 16px;
+        font-weight: 600;
+        color: #0f172a;
+    }
 
     /* Q&A CARDS & INLINE CONTROLS */
-    .curva-qa-flow { display: flex; flex-direction: column; gap: 16px; }
+    .curva-qa-flow {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
     .curva-qa-card {
         border: 1px solid #e2e8f0;
         border-radius: 10px;
@@ -521,7 +596,10 @@
         transition: border-color 0.15s;
         position: relative;
     }
-    .curva-qa-card.is-dirty, .curva-source-card.is-dirty, .curva-card-media.is-dirty {
+
+    .curva-qa-card.is-dirty,
+    .curva-source-card.is-dirty,
+    .curva-card-media.is-dirty {
         border-color: #b3a369 !important;
         background: #fffdf5;
     }
@@ -533,8 +611,19 @@
         gap: 12px;
         margin-bottom: 10px;
     }
-    .curva-qa-title { font-size: 15px; font-weight: 600; color: #0f172a; line-height: 1.4; }
-    .curva-qa-num { color: #b3a369; font-weight: 700; margin-right: 6px; }
+
+    .curva-qa-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #0f172a;
+        line-height: 1.4;
+    }
+
+    .curva-qa-num {
+        color: #b3a369;
+        font-weight: 700;
+        margin-right: 6px;
+    }
 
     /* Pill Selection Bars */
     .curva-pill-selector {
@@ -543,6 +632,7 @@
         gap: 6px;
         margin-bottom: 12px;
     }
+
     .curva-opt-pill {
         background: #f1f5f9;
         color: #475569;
@@ -555,14 +645,26 @@
         transition: all 0.15s;
         user-select: none;
     }
-    .curva-opt-pill:hover { background: #e2e8f0; }
+
+    .curva-opt-pill:hover {
+        background: #e2e8f0;
+    }
+
     .curva-opt-pill.selected {
         background: #b3a369;
         color: #ffffff;
         border-color: #968652;
     }
-    .curva-opt-pill.selected.token-yes { background: #16a34a; border-color: #15803d; }
-    .curva-opt-pill.selected.token-no { background: #dc2626; border-color: #b91c1c; }
+
+    .curva-opt-pill.selected.token-yes {
+        background: #16a34a;
+        border-color: #15803d;
+    }
+
+    .curva-opt-pill.selected.token-no {
+        background: #dc2626;
+        border-color: #b91c1c;
+    }
 
     .curva-token-badge {
         background: #fefce8;
@@ -574,8 +676,18 @@
         font-weight: 700;
         white-space: nowrap;
     }
-    .curva-token-badge.token-yes { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
-    .curva-token-badge.token-no { background: #fef2f2; color: #991b1b; border-color: #fecaca; }
+
+    .curva-token-badge.token-yes {
+        background: #f0fdf4;
+        color: #166534;
+        border-color: #bbf7d0;
+    }
+
+    .curva-token-badge.token-no {
+        background: #fef2f2;
+        color: #991b1b;
+        border-color: #fecaca;
+    }
 
     /* Text & Editable Inputs */
     .curva-qa-body {
@@ -584,6 +696,7 @@
         line-height: 1.6;
         margin-bottom: 10px;
     }
+
     .curva-inline-textarea {
         width: 100%;
         min-height: 85px;
@@ -598,7 +711,10 @@
         line-height: 1.5;
         outline: none;
     }
-    .curva-inline-textarea:focus { border-color: #b3a369; }
+
+    .curva-inline-textarea:focus {
+        border-color: #b3a369;
+    }
 
     .curva-inline-input {
         width: 100%;
@@ -612,7 +728,10 @@
         color: #1e293b;
         margin-bottom: 6px;
     }
-    .curva-inline-input:focus { border-color: #b3a369; }
+
+    .curva-inline-input:focus {
+        border-color: #b3a369;
+    }
 
     .curva-qa-footer {
         display: flex;
@@ -625,6 +744,7 @@
         border-radius: 6px;
         margin-top: 10px;
     }
+
     .curva-footer-row {
         display: flex;
         flex-wrap: wrap;
@@ -647,12 +767,19 @@
         text-align: center;
         padding: 20px;
     }
+
     .curva-card-add-box:hover {
         border-color: #b3a369;
         background: #fefce8;
         transform: translateY(-2px);
     }
-    .curva-card-add-box h4 { margin: 8px 0 0 0; font-size: 14px; font-weight: 600; color: #1e293b; }
+
+    .curva-card-add-box h4 {
+        margin: 8px 0 0 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #1e293b;
+    }
 
     /* SOURCES GRID */
     .curva-sources-grid {
@@ -660,6 +787,7 @@
         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
         gap: 16px;
     }
+
     .curva-source-card {
         border: 1px solid #e2e8f0;
         border-radius: 10px;
@@ -670,6 +798,7 @@
         justify-content: space-between;
         position: relative;
     }
+
     .curva-card-del-btn {
         position: absolute;
         top: 10px;
@@ -681,7 +810,11 @@
         padding: 4px;
         border-radius: 4px;
     }
-    .curva-card-del-btn:hover { color: #ef4444; background: #fee2e2; }
+
+    .curva-card-del-btn:hover {
+        color: #ef4444;
+        background: #fee2e2;
+    }
 
     .curva-source-type {
         font-size: 10px;
@@ -691,6 +824,7 @@
         letter-spacing: 0.8px;
         margin-bottom: 6px;
     }
+
     .curva-source-title {
         font-size: 14px;
         font-weight: 600;
@@ -698,6 +832,7 @@
         line-height: 1.4;
         margin-bottom: 12px;
     }
+
     .curva-source-link {
         color: #2563eb;
         text-decoration: none;
@@ -705,7 +840,10 @@
         font-weight: 500;
         word-break: break-all;
     }
-    .curva-source-link:hover { text-decoration: underline; }
+
+    .curva-source-link:hover {
+        text-decoration: underline;
+    }
 
     /* MEDIA GRID */
     .curva-grid {
@@ -713,6 +851,7 @@
         grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
         gap: 16px;
     }
+
     .curva-card-media {
         display: flex;
         flex-direction: column;
@@ -723,6 +862,7 @@
         background: #fff;
         position: relative;
     }
+
     .media-top-section {
         display: flex;
         flex-direction: row;
@@ -730,7 +870,11 @@
         gap: 14px;
         align-items: flex-start;
     }
-    .media-info-left { flex: 1; }
+
+    .media-info-left {
+        flex: 1;
+    }
+
     .media-type-label {
         font-size: 10px;
         color: #b3a369;
@@ -739,6 +883,7 @@
         margin-bottom: 5px;
         font-weight: 700;
     }
+
     .media-title-large {
         margin: 0;
         font-size: 13px;
@@ -750,6 +895,7 @@
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
+
     .media-thumb-right {
         width: 100px;
         aspect-ratio: 16/9;
@@ -758,8 +904,19 @@
         overflow: hidden;
         background: #0f172a;
     }
-    .media-thumb-right img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .media-bottom-section { padding: 10px 16px 12px; background: #f8fafc; border-top: 1px solid #f1f5f9; }
+
+    .media-thumb-right img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .media-bottom-section {
+        padding: 10px 16px 12px;
+        background: #f8fafc;
+        border-top: 1px solid #f1f5f9;
+    }
 
     /* FLOATING SAVE BAR */
     .curva-floating-bar {
@@ -778,6 +935,7 @@
         gap: 20px;
         z-index: 999999;
     }
+
     .curva-save-status {
         display: flex;
         align-items: center;
@@ -785,12 +943,14 @@
         font-size: 13px;
         font-weight: 600;
     }
+
     .curva-save-indicator {
         width: 8px;
         height: 8px;
         border-radius: 50%;
         background: #eab308;
     }
+
     .curva-btn-save {
         background: #b3a369;
         color: #ffffff;
@@ -801,7 +961,11 @@
         font-weight: 700;
         cursor: pointer;
     }
-    .curva-btn-save:hover { background: #a39258; }
+
+    .curva-btn-save:hover {
+        background: #a39258;
+    }
+
     .curva-btn-discard {
         background: transparent;
         color: #94a3b8;
@@ -812,12 +976,19 @@
         font-weight: 600;
         cursor: pointer;
     }
-    .curva-btn-discard:hover { color: #ffffff; background: #1e293b; }
+
+    .curva-btn-discard:hover {
+        color: #ffffff;
+        background: #1e293b;
+    }
 
     /* MODAL */
     .curva-modal-overlay {
         position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         background: rgba(15, 23, 42, 0.7);
         backdrop-filter: blur(4px);
         display: flex;
@@ -826,6 +997,7 @@
         z-index: 999999;
         padding: 20px;
     }
+
     .curva-modal-box {
         background: #ffffff;
         width: 100%;
@@ -834,13 +1006,20 @@
         padding: 24px;
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
     }
+
     .curva-modal-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 16px;
     }
-    .curva-modal-header h3 { margin: 0; font-size: 17px; color: #0f172a; }
+
+    .curva-modal-header h3 {
+        margin: 0;
+        font-size: 17px;
+        color: #0f172a;
+    }
+
     .curva-modal-close {
         background: none;
         border: none;
@@ -848,7 +1027,11 @@
         color: #94a3b8;
         cursor: pointer;
     }
-    .curva-form-group { margin-bottom: 14px; }
+
+    .curva-form-group {
+        margin-bottom: 14px;
+    }
+
     .curva-form-group label {
         display: block;
         font-size: 12px;
@@ -858,6 +1041,7 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
+
     .curva-form-input {
         width: 100%;
         padding: 10px 12px;
@@ -867,7 +1051,10 @@
         font-family: inherit;
         outline: none;
     }
-    .curva-form-input:focus { border-color: #b3a369; }
+
+    .curva-form-input:focus {
+        border-color: #b3a369;
+    }
 </style>
 
 <script>
@@ -896,17 +1083,17 @@
 
         const MEDIA_TAG_BANK = {
             'Content Type': [
-                'Tifo', 'Chant', 'Pyro', 'Banner', 'Match footage', 
-                'Protest', 'March', 'Documentary', 'Interview', 
+                'Tifo', 'Chant', 'Pyro', 'Banner', 'Match footage',
+                'Protest', 'March', 'Documentary', 'Interview',
                 'Merchandise', 'Charity event', 'Historical archive'
             ],
             'Setting': [
                 'Home game', 'Away game', 'Derby', 'Street / March', 'Community event'
             ],
             'Subject / Theme': [
-                'Anti-fascist', 'Fascist / Far-right', 'Anti-racist', 'Racist', 
-                'Feminism', 'LGBTQ+', 'Palestine', 'Refugees', 'Environment', 
-                'Anti-modern-football', 'Fans\' rights', 'Anti-repression', 
+                'Anti-fascist', 'Fascist / Far-right', 'Anti-racist', 'Racist',
+                'Feminism', 'LGBTQ+', 'Palestine', 'Refugees', 'Environment',
+                'Anti-modern-football', 'Fans\' rights', 'Anti-repression',
                 'Violence', 'Charity', 'Volunteering'
             ]
         };
@@ -1037,11 +1224,9 @@
 
             document.getElementById('hero-meta-strip').innerHTML = `
                 <span><strong>City:</strong> ${groupRecord.city || '—'}</span>
-                <span><strong>ID:</strong> ${groupRecord.id}</span>
             `;
 
-            const tagBadges = groupRecord.tags.split(',')
-                .map(t => t.trim()).filter(Boolean)
+            const tagBadges = parseTags(groupRecord.tags)
                 .map(t => `<span class="curva-badge">${t}</span>`).join('');
             document.getElementById('hero-tags').innerHTML = tagBadges;
 
@@ -1063,6 +1248,20 @@
 
             renderSources();
             renderMedia();
+        }
+
+        function parseTags(tagString) {
+            if (!tagString || typeof tagString !== 'string') return [];
+            return tagString
+                .replace(/(\d),(\d)/g, (m, d1, d2) => d1 + '__COMMA__' + d2)
+                .split(',')
+                .map(t => t.replace(/__COMMA__/g, ',').trim())
+                .filter(Boolean);
+        }
+
+        function cleanQuestionText(questionText) {
+            if (!questionText || typeof questionText !== 'string') return '';
+            return questionText.replace(/^(\s*\[[^\]]+\]\s*)+/, '').trim();
         }
 
         function extractTokensForQuestion(questionText) {
@@ -1165,7 +1364,7 @@
                     <div class="curva-qa-card ${isDirty ? 'is-dirty' : ''}" id="card-${item.id}">
                         <div class="curva-qa-header">
                             <div class="curva-qa-title">
-                                <span class="curva-qa-num">${item.qNum}</span> ${item.question}
+                                <span class="curva-qa-num">${item.qNum}</span> ${cleanQuestionText(item.question)}
                             </div>
                             ${!adminActive ? tokenHtml : ''}
                         </div>
@@ -1328,7 +1527,7 @@
                             <input type="url" class="curva-inline-input" placeholder="Media Link (YouTube/Image URL)" value="${currentLink.replace(/"/g, '&quot;')}" oninput="stageMediaFieldChange('${m.id}', 'media_link', this.value)">
                             <input type="text" class="curva-inline-input" placeholder="Tags (comma separated)" value="${currentTags.replace(/"/g, '&quot;')}" oninput="stageMediaFieldChange('${m.id}', 'tags', this.value)">
                         </div>
-                    `;      
+                    `;
                 } else {
                     const isYouTube = m.type.toLowerCase().includes('youtube');
                     const typeLabel = isYouTube ? 'YouTube Video' : 'Image';
@@ -1345,7 +1544,7 @@
                     }
 
                     const thumb = thumbUrl ? `<div class="media-thumb-right"><img src="${thumbUrl}" alt="Media thumbnail" loading="lazy" /></div>` : '';
-                    const tags = m.tags.split(',').map(t => t.trim()).filter(Boolean).map(t => `<span class="curva-badge">${t}</span>`).join('');
+                    const tags = parseTags(m.tags).map(t => `<span class="curva-badge">${t}</span>`).join('');
 
                     cardHtml = `
                         <div onclick="window.location.href='${MEDIA_BASE_URL}?mediaId=${m.id}'" style="cursor:pointer;">
@@ -1651,7 +1850,7 @@
         // ==========================================
         // Tag bank and dynamic media input logic
         // ==========================================
-        window.handleMediaTypeChange = function(type) {
+        window.handleMediaTypeChange = function (type) {
             const thumbField = document.getElementById('customThumbGroup');
             const thumbInput = document.getElementById('newMedThumb');
             if (!thumbField) return;
@@ -1664,7 +1863,7 @@
             }
         };
 
-        window.initMediaTagBank = function() {
+        window.initMediaTagBank = function () {
             selectedModalMediaTags.clear();
             const container = document.getElementById('mediaTagBankContainer');
             if (!container) return;
@@ -1682,7 +1881,7 @@
             container.innerHTML = html;
         };
 
-        window.toggleModalMediaTag = function(tag, el) {
+        window.toggleModalMediaTag = function (tag, el) {
             if (selectedModalMediaTags.has(tag)) {
                 selectedModalMediaTags.delete(tag);
                 el.classList.remove('selected');
@@ -1694,7 +1893,7 @@
 
         // Open Modal Override to Initialize Tag Bank
         const origOpenModal = window.openModal;
-        window.openModal = function(id) {
+        window.openModal = function (id) {
             if (id === 'modalAddMedia') {
                 initMediaTagBank();
                 handleMediaTypeChange(document.getElementById('newMedType').value);
@@ -1724,14 +1923,20 @@
             const adminButtons = document.querySelectorAll('.admin-only');
 
             if (isAdmin()) {
-                badge.textContent = 'Admin Mode';
-                badge.classList.add('active');
-                btnText.textContent = 'Lock / Exit';
+                if (badge) {
+                    badge.textContent = 'Admin Mode';
+                    badge.classList.add('active');
+                    badge.style.display = 'inline-block';
+                }
+                if (btnText) btnText.textContent = 'Lock / Exit';
                 adminButtons.forEach(b => b.style.display = 'inline-flex');
             } else {
-                badge.textContent = 'Public Mode';
-                badge.classList.remove('active');
-                btnText.textContent = 'Admin Access';
+                if (badge) {
+                    badge.textContent = '';
+                    badge.classList.remove('active');
+                    badge.style.display = 'none';
+                }
+                if (btnText) btnText.textContent = 'Admin Access';
                 adminButtons.forEach(b => b.style.display = 'none');
             }
             updateSaveBar();
