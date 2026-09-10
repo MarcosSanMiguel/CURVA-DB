@@ -48,83 +48,85 @@
                 </button>
             </div>
 
-            <!-- INLINE EXPANDABLE FILTER PANEL -->
-            <div id="curvaInlineFilterPanel" class="curva-inline-filter-panel" style="display: none;">
-                <!-- Tab Navigation Bar -->
-                <div class="curva-filter-tabs-nav">
-                    <button type="button" class="curva-filter-tab-btn active" data-tab="basic" onclick="curvaSwitchFilterTab('basic')">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                        <span>Basic Dimensions</span>
-                        <span class="curva-tab-count-badge" id="tabCount-basic" style="display:none;">0</span>
-                    </button>
-                    <button type="button" class="curva-filter-tab-btn" data-tab="tags" onclick="curvaSwitchFilterTab('tags')">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
-                        <span>Tags &amp; Attributes</span>
-                        <span class="curva-tab-count-badge" id="tabCount-tags" style="display:none;">0</span>
-                    </button>
-                    <button type="button" class="curva-filter-tab-btn" data-tab="questions" onclick="curvaSwitchFilterTab('questions')">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-                        <span>Research Questions</span>
-                        <span class="curva-tab-count-badge" id="tabCount-questions" style="display:none;">0</span>
-                    </button>
-                </div>
+            <!-- INLINE EXPANDABLE FILTER WRAPPER -->
+            <div id="curvaInlineFilterWrapper" class="curva-inline-filter-wrapper">
+                <div id="curvaInlineFilterPanel" class="curva-inline-filter-panel">
+                    <!-- Tab Navigation Bar -->
+                    <div class="curva-filter-tabs-nav">
+                        <button type="button" class="curva-filter-tab-btn active" data-tab="basic" onclick="curvaSwitchFilterTab('basic')">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                            <span>Basic Dimensions</span>
+                            <span class="curva-tab-count-badge" id="tabCount-basic" style="display:none;">0</span>
+                        </button>
+                        <button type="button" class="curva-filter-tab-btn" data-tab="tags" onclick="curvaSwitchFilterTab('tags')">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><circle cx="7" cy="7" r="0.9" fill="currentColor" stroke="none"></circle></svg>
+                            <span>Tags &amp; Attributes</span>
+                            <span class="curva-tab-count-badge" id="tabCount-tags" style="display:none;">0</span>
+                        </button>
+                        <button type="button" class="curva-filter-tab-btn" data-tab="questions" onclick="curvaSwitchFilterTab('questions')">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><circle cx="12" cy="17" r="0.9" fill="currentColor" stroke="none"></circle></svg>
+                            <span>Research Questions</span>
+                            <span class="curva-tab-count-badge" id="tabCount-questions" style="display:none;">0</span>
+                        </button>
+                    </div>
 
-                <!-- Scrollable Filter Content -->
-                <div class="curva-filter-body">
-                    <!-- TAB 1: BASIC DIMENSIONS -->
-                    <div id="filterTab-basic" class="curva-filter-tab-content active">
-                        <div class="curva-filter-block">
-                            <div class="curva-filter-block-title">Country</div>
-                            <div class="curva-filter-pills-row" id="filterPillsCountry">
-                                <span style="color:#94a3b8; font-size:12px;">Loading countries...</span>
+                    <!-- Scrollable Filter Content -->
+                    <div class="curva-filter-body">
+                        <!-- TAB 1: BASIC DIMENSIONS -->
+                        <div id="filterTab-basic" class="curva-filter-tab-content active">
+                            <div class="curva-filter-block">
+                                <div class="curva-filter-block-title">Country</div>
+                                <div class="curva-filter-pills-row" id="filterPillsCountry">
+                                    <span style="color:#94a3b8; font-size:12px;">Loading countries...</span>
+                                </div>
+                            </div>
+
+                            <div class="curva-filter-block">
+                                <div class="curva-filter-block-title">Affiliated Club</div>
+                                <div class="curva-filter-pills-row" id="filterPillsClub">
+                                    <span style="color:#94a3b8; font-size:12px;">Loading clubs...</span>
+                                </div>
+                            </div>
+
+                            <div class="curva-filter-block">
+                                <div class="curva-filter-block-title">Ultra Group</div>
+                                <div class="curva-filter-pills-row" id="filterPillsGroup">
+                                    <span style="color:#94a3b8; font-size:12px;">Loading groups...</span>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="curva-filter-block">
-                            <div class="curva-filter-block-title">Affiliated Club</div>
-                            <div class="curva-filter-pills-row" id="filterPillsClub">
-                                <span style="color:#94a3b8; font-size:12px;">Loading clubs...</span>
+                        <!-- TAB 2: TAGS & ATTRIBUTES -->
+                        <div id="filterTab-tags" class="curva-filter-tab-content">
+                            <div style="font-size: 13px; font-weight: 700; color: #b3a369; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;">
+                                Ultra Group Controlled Vocabulary
                             </div>
-                        </div>
+                            <div id="filterGroupTagsCategories"></div>
 
-                        <div class="curva-filter-block">
-                            <div class="curva-filter-block-title">Ultra Group</div>
-                            <div class="curva-filter-pills-row" id="filterPillsGroup">
-                                <span style="color:#94a3b8; font-size:12px;">Loading groups...</span>
+                            <div style="font-size: 13px; font-weight: 700; color: #b3a369; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 10px 0;">
+                                Media Tag Vocabulary
                             </div>
+                            <div id="filterMediaTagsCategories"></div>
+                        </div>
+
+                        <!-- TAB 3: RESEARCH QUESTIONS -->
+                        <div id="filterTab-questions" class="curva-filter-tab-content">
+                            <div style="margin-bottom: 12px; font-size: 12.5px; color: #94a3b8;">
+                                Filter groups by binary <strong style="color:#e2e8f0;">[Y/N]</strong> and multiple-choice <strong style="color:#e2e8f0;">[MULTI]</strong> findings:
+                            </div>
+                            <div id="filterQuestionsContainer"></div>
                         </div>
                     </div>
 
-                    <!-- TAB 2: TAGS & ATTRIBUTES -->
-                    <div id="filterTab-tags" class="curva-filter-tab-content">
-                        <div style="font-size: 13px; font-weight: 700; color: #b3a369; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;">
-                            Ultra Group Controlled Vocabulary
+                    <!-- Footer Bar with Live Counts & Actions -->
+                    <div class="curva-filter-footer">
+                        <div class="curva-filter-footer-summary">
+                            <span id="curvaFilterLiveSummary">Showing all</span>
                         </div>
-                        <div id="filterGroupTagsCategories"></div>
-
-                        <div style="font-size: 13px; font-weight: 700; color: #b3a369; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 10px 0;">
-                            Media Tag Vocabulary
+                        <div class="curva-filter-footer-actions">
+                            <button type="button" class="curva-filter-btn-secondary" onclick="curvaResetAllFilters()">Clear All</button>
+                            <button type="button" class="curva-filter-btn-primary" onclick="curvaCloseFilterPanel()">Done</button>
                         </div>
-                        <div id="filterMediaTagsCategories"></div>
-                    </div>
-
-                    <!-- TAB 3: RESEARCH QUESTIONS -->
-                    <div id="filterTab-questions" class="curva-filter-tab-content">
-                        <div style="margin-bottom: 12px; font-size: 12.5px; color: #94a3b8;">
-                            Filter groups by binary <strong style="color:#e2e8f0;">[Y/N]</strong> and multiple-choice <strong style="color:#e2e8f0;">[MULTI]</strong> findings:
-                        </div>
-                        <div id="filterQuestionsContainer"></div>
-                    </div>
-                </div>
-
-                <!-- Footer Bar with Live Counts & Actions -->
-                <div class="curva-filter-footer">
-                    <div class="curva-filter-footer-summary">
-                        <span id="curvaFilterLiveSummary">Showing all items</span>
-                    </div>
-                    <div class="curva-filter-footer-actions">
-                        <button type="button" class="curva-filter-btn-secondary" onclick="curvaResetAllFilters()">Clear All</button>
-                        <button type="button" class="curva-filter-btn-primary" onclick="curvaCloseFilterPanel()">Done</button>
                     </div>
                 </div>
             </div>
@@ -823,9 +825,9 @@
         color: #fca5a5;
     }
 
-    /* INLINE EXPANDABLE FILTER PANEL IN HERO */
+    /* INLINE EXPANDABLE FILTER WRAPPER & PANEL IN HERO */
     .curva-filter-trigger-btn .curva-filter-chevron {
-        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
         margin-left: 2px;
         color: #b3a369;
     }
@@ -840,10 +842,27 @@
         box-shadow: 0 0 0 2px rgba(179, 163, 105, 0.45), 0 8px 24px rgba(0, 0, 0, 0.35);
     }
 
-    .curva-inline-filter-panel {
+    .curva-inline-filter-wrapper {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.38s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
         width: 100%;
         max-width: 860px;
-        margin: 18px auto 0 auto;
+        margin: 0 auto;
+        overflow: hidden;
+        visibility: hidden;
+    }
+
+    .curva-inline-filter-wrapper.open {
+        grid-template-rows: 1fr;
+        margin-top: 18px;
+        visibility: visible;
+        transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .curva-inline-filter-panel {
+        min-height: 0;
+        width: 100%;
         background: rgba(0, 24, 48, 0.94);
         border: 1.5px solid rgba(179, 163, 105, 0.45);
         border-radius: 16px;
@@ -853,13 +872,13 @@
         box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
         text-align: left;
         opacity: 0;
-        transform: translateY(-8px);
-        transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        transform: translateY(-12px);
+        transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         color: #f8fafc;
         box-sizing: border-box;
     }
 
-    .curva-inline-filter-panel.open {
+    .curva-inline-filter-wrapper.open .curva-inline-filter-panel {
         opacity: 1;
         transform: translateY(0);
     }
@@ -911,11 +930,13 @@
         text-align: center;
     }
 
-    /* Filter Panel Body */
+    /* Filter Panel Body - Static consistent height across all tabs */
     .curva-filter-body {
-        max-height: 460px;
+        height: 390px;
+        max-height: 390px;
         overflow-y: auto;
-        padding: 22px 24px;
+        padding: 20px 24px;
+        box-sizing: border-box;
     }
 
     .curva-filter-body::-webkit-scrollbar {
@@ -935,12 +956,20 @@
         background: #b3a369;
     }
 
+    @keyframes curvaTabFadeIn {
+        from { opacity: 0; transform: translateY(4px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
     .curva-filter-tab-content {
         display: none;
+        opacity: 0;
     }
 
     .curva-filter-tab-content.active {
         display: block;
+        opacity: 1;
+        animation: curvaTabFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
 
     /* Section Cards / Blocks within Filter Tabs */
@@ -1740,11 +1769,13 @@
         };
 
         window.curvaOpenFilterPanel = function () {
+            const wrapper = document.getElementById('curvaInlineFilterWrapper');
             const panel = document.getElementById('curvaInlineFilterPanel');
             const btn = document.getElementById('curvaFilterTriggerBtn');
+            if (wrapper) {
+                wrapper.classList.add('open');
+            }
             if (panel) {
-                panel.style.display = 'block';
-                panel.offsetHeight; // force reflow for smooth transition
                 panel.classList.add('open');
             }
             if (btn) {
@@ -1754,15 +1785,14 @@
         };
 
         window.curvaCloseFilterPanel = function () {
+            const wrapper = document.getElementById('curvaInlineFilterWrapper');
             const panel = document.getElementById('curvaInlineFilterPanel');
             const btn = document.getElementById('curvaFilterTriggerBtn');
+            if (wrapper) {
+                wrapper.classList.remove('open');
+            }
             if (panel) {
                 panel.classList.remove('open');
-                setTimeout(() => {
-                    if (!panel.classList.contains('open')) {
-                        panel.style.display = 'none';
-                    }
-                }, 280);
             }
             if (btn) {
                 btn.classList.remove('panel-open');
@@ -1771,8 +1801,8 @@
         };
 
         window.curvaToggleFilterPanel = function () {
-            const panel = document.getElementById('curvaInlineFilterPanel');
-            if (panel && panel.classList.contains('open')) {
+            const wrapper = document.getElementById('curvaInlineFilterWrapper');
+            if (wrapper && wrapper.classList.contains('open')) {
                 curvaCloseFilterPanel();
             } else {
                 curvaOpenFilterPanel();
