@@ -469,6 +469,173 @@
         gap: 6px;
     }
 
+    /* HERO ADMIN INLINE EDITING */
+    .curva-hero-edit-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 8px;
+    }
+
+    .curva-hero-edit-field {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        flex: 1;
+        min-width: 150px;
+    }
+
+    .curva-hero-edit-label {
+        font-size: 10.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #b3a369;
+    }
+
+    .curva-hero-input-meta {
+        font-size: 13.5px;
+        font-weight: 500;
+        color: #ffffff;
+        background: rgba(0, 24, 48, 0.75);
+        border: 1px solid rgba(179, 163, 105, 0.45);
+        border-radius: 6px;
+        padding: 5px 10px;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    .curva-hero-input-meta:focus {
+        border-color: #b3a369;
+        box-shadow: 0 0 0 2px rgba(179, 163, 105, 0.35);
+        background: #001e3d;
+    }
+
+    .curva-hero-edit-title-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 8px;
+    }
+
+    .curva-hero-input-title {
+        font-family: 'DM Serif Display', Georgia, serif;
+        font-size: 32px;
+        color: #ffffff;
+        background: rgba(0, 24, 48, 0.85);
+        border: 1.5px solid #b3a369;
+        border-radius: 8px;
+        padding: 6px 14px;
+        width: 100%;
+        max-width: 600px;
+        outline: none;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+        box-sizing: border-box;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .curva-hero-input-title:focus {
+        border-color: #e5d7a3;
+        box-shadow: 0 0 0 3px rgba(179, 163, 105, 0.4);
+        background: #001e3d;
+    }
+
+    /* HERO ADMIN TAG BANK */
+    .curva-tags-admin-container {
+        background: rgba(0, 24, 48, 0.65);
+        border: 1px solid rgba(179, 163, 105, 0.35);
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-top: 10px;
+        max-height: 260px;
+        overflow-y: auto;
+    }
+
+    .curva-tags-admin-container::-webkit-scrollbar {
+        width: 6px;
+    }
+    .curva-tags-admin-container::-webkit-scrollbar-track {
+        background: #001933;
+    }
+    .curva-tags-admin-container::-webkit-scrollbar-thumb {
+        background: rgba(179, 163, 105, 0.35);
+        border-radius: 4px;
+    }
+
+    .curva-tags-admin-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .curva-tags-admin-title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: #b3a369;
+    }
+
+    .curva-tags-admin-hint {
+        font-size: 11px;
+        color: #94a3b8;
+    }
+
+    .curva-tags-admin-cat {
+        margin-bottom: 10px;
+    }
+
+    .curva-tags-admin-cat-title {
+        font-size: 10.5px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #cbd5e1;
+        margin-bottom: 5px;
+    }
+
+    .curva-tags-admin-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .curva-tag-edit-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        border-radius: 16px;
+        font-size: 11.5px;
+        font-weight: 500;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.18s ease;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background: rgba(255, 255, 255, 0.06);
+        color: #94a3b8;
+    }
+
+    .curva-tag-edit-pill:hover {
+        border-color: #b3a369;
+        color: #ffffff;
+        background: rgba(179, 163, 105, 0.15);
+        transform: translateY(-1px);
+    }
+
+    .curva-tag-edit-pill.active {
+        background: #b3a369 !important;
+        border-color: #b3a369 !important;
+        color: #002244 !important;
+        font-weight: 700 !important;
+        box-shadow: 0 2px 8px rgba(179, 163, 105, 0.35);
+    }
+
     .curva-tags {
         display: flex;
         flex-wrap: wrap;
@@ -1153,6 +1320,47 @@
             ]
         };
 
+        const GROUP_TAG_VOCABULARY = {
+            "Ideology": [
+                "Anti-fascist", "Fascist / Far-right", "Anti-racist", "Racist",
+                "Left-wing", "Right-wing", "Nationalist", "Apolitical",
+                "Feminist", "LGBTQ+ inclusive", "LGBTQ+ exclusive", "Religious", "Secular"
+            ],
+            "Violence Posture": [
+                "Anti-violence", "Pro-violence / Hooligan-adjacent"
+            ],
+            "Passionate Causes": [
+                "Environment", "Refugees", "Palestine", "Regional autonomy",
+                "Anti-modern-football", "Anti-commercialization", "Fans' rights",
+                "Anti-repression", "Prisoner rights", "Women's rights", "Anti-police"
+            ],
+            "Behavior": [
+                "Charity / Volunteering", "Political activism", "Solidarity actions", "Cross-group alliances"
+            ],
+            "Representational Culture": [
+                "Tifo-heavy", "Pyro-heavy", "Politically charged chants", "Media-active"
+            ],
+            "Scale": [
+                "Small (<100)", "Medium (100–1,000)", "Large (1,000+)"
+            ],
+            "Relationship with Club": [
+                "Independent", "Club-coopted", "Adversarial with club"
+            ],
+            "Controversy": [
+                "Crime-linked", "Police clashes", "State repression target", "Stadium bans"
+            ]
+        };
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         let selectedModalMediaTags = new Set();
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -1175,6 +1383,7 @@
         let pendingResponseEdits = {};
         let pendingSourceEdits = {};
         let pendingMediaEdits = {};
+        let pendingGroupProfileEdits = null;
 
         function parseGviz(text) {
             const start = text.indexOf('{');
@@ -1268,27 +1477,171 @@
             });
         }
 
+        function getActiveProfileValue(field) {
+            if (pendingGroupProfileEdits && pendingGroupProfileEdits[field] !== undefined) {
+                return pendingGroupProfileEdits[field];
+            }
+            if (field === 'ultra_group') return groupRecord ? groupRecord.name : '';
+            if (field === 'associated_club') return groupRecord ? groupRecord.club : '';
+            if (field === 'country') return groupRecord ? groupRecord.country : '';
+            if (field === 'city') return groupRecord ? groupRecord.city : '';
+            if (field === 'group_tags') return groupRecord ? groupRecord.tags : '';
+            return '';
+        }
+
+        window.handleGroupProfileFieldChange = function (field, value) {
+            if (!pendingGroupProfileEdits) pendingGroupProfileEdits = {};
+            pendingGroupProfileEdits[field] = value;
+
+            if (field === 'associated_club') {
+                const mc = document.getElementById('meta-club');
+                if (mc) mc.textContent = value || '—';
+            } else if (field === 'city') {
+                const mc = document.getElementById('meta-city');
+                if (mc) mc.textContent = value || '—';
+            }
+
+            updateSaveBar();
+        };
+
+        window.toggleGroupTag = function (tag) {
+            const currentTagsStr = getActiveProfileValue('group_tags');
+            const currentList = parseTags(currentTagsStr);
+            const tagSet = new Set(currentList);
+
+            if (tagSet.has(tag)) {
+                tagSet.delete(tag);
+            } else {
+                tagSet.add(tag);
+            }
+
+            const newTagsStr = Array.from(tagSet).join(', ');
+            if (!pendingGroupProfileEdits) pendingGroupProfileEdits = {};
+            pendingGroupProfileEdits.group_tags = newTagsStr;
+
+            renderHeroTags();
+            updateSaveBar();
+        };
+
+        function renderHeroTags() {
+            const tagsContainer = document.getElementById('hero-tags');
+            if (!tagsContainer) return;
+
+            const currentTagsStr = getActiveProfileValue('group_tags');
+            const activeList = parseTags(currentTagsStr);
+            const activeSet = new Set(activeList);
+
+            if (!isAdmin()) {
+                tagsContainer.className = 'curva-tags-row';
+                tagsContainer.innerHTML = activeList.map(t => `<span class="curva-badge">${escapeHtml(t)}</span>`).join('');
+                return;
+            }
+
+            // In Admin Mode: render controlled vocabulary with toggleable active/inactive pills
+            tagsContainer.className = 'curva-tags-admin-container';
+            let html = `
+                <div class="curva-tags-admin-header">
+                    <span class="curva-tags-admin-title">Controlled Group Vocabulary</span>
+                    <span class="curva-tags-admin-hint">Click tags to toggle active (${activeSet.size} selected)</span>
+                </div>
+            `;
+
+            for (const [category, tags] of Object.entries(GROUP_TAG_VOCABULARY)) {
+                html += `
+                    <div class="curva-tags-admin-cat">
+                        <div class="curva-tags-admin-cat-title">${escapeHtml(category)}</div>
+                        <div class="curva-tags-admin-pills">
+                            ${tags.map(t => {
+                                const isActive = activeSet.has(t);
+                                return `<span class="curva-tag-edit-pill ${isActive ? 'active' : 'inactive'}" onclick="toggleGroupTag('${t.replace(/'/g, "\\'")}')">
+                                    ${isActive ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
+                                    ${escapeHtml(t)}
+                                </span>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Any extra custom tags on this group not in standard vocabulary
+            const knownTags = new Set(Object.values(GROUP_TAG_VOCABULARY).flat());
+            const customTags = activeList.filter(t => !knownTags.has(t));
+            if (customTags.length > 0) {
+                html += `
+                    <div class="curva-tags-admin-cat">
+                        <div class="curva-tags-admin-cat-title">Other / Custom Tags</div>
+                        <div class="curva-tags-admin-pills">
+                            ${customTags.map(t => `
+                                <span class="curva-tag-edit-pill active" onclick="toggleGroupTag('${t.replace(/'/g, "\\'")}')">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    ${escapeHtml(t)}
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            tagsContainer.innerHTML = html;
+        }
+
+        function renderHeroDetails() {
+            const clubCountryEl = document.getElementById('hero-club-country');
+            const titleEl = document.getElementById('hero-group-name');
+            const metaStripEl = document.getElementById('hero-meta-strip');
+
+            const currentName = getActiveProfileValue('ultra_group');
+            const currentClub = getActiveProfileValue('associated_club');
+            const currentCountry = getActiveProfileValue('country');
+            const currentCity = getActiveProfileValue('city');
+
+            if (!isAdmin()) {
+                clubCountryEl.innerHTML = `${escapeHtml(currentClub)} &middot; ${escapeHtml(currentCountry)}`;
+                titleEl.innerHTML = escapeHtml(currentName);
+                metaStripEl.innerHTML = `<span><strong>City:</strong> ${escapeHtml(currentCity || '—')}</span>`;
+            } else {
+                clubCountryEl.innerHTML = `
+                    <div class="curva-hero-edit-row">
+                        <div class="curva-hero-edit-field">
+                            <label class="curva-hero-edit-label">Affiliated Club</label>
+                            <input type="text" class="curva-hero-input-meta" value="${escapeHtml(currentClub)}" oninput="handleGroupProfileFieldChange('associated_club', this.value)" placeholder="e.g. Celtic FC" />
+                        </div>
+                        <div class="curva-hero-edit-field">
+                            <label class="curva-hero-edit-label">Country</label>
+                            <input type="text" class="curva-hero-input-meta" value="${escapeHtml(currentCountry)}" oninput="handleGroupProfileFieldChange('country', this.value)" placeholder="e.g. Scotland" />
+                        </div>
+                    </div>
+                `;
+                titleEl.innerHTML = `
+                    <div class="curva-hero-edit-title-wrap">
+                        <label class="curva-hero-edit-label">Ultra Group Name</label>
+                        <input type="text" class="curva-hero-input-title" value="${escapeHtml(currentName)}" oninput="handleGroupProfileFieldChange('ultra_group', this.value)" placeholder="Ultra Group Name" />
+                    </div>
+                `;
+                metaStripEl.innerHTML = `
+                    <div class="curva-hero-edit-field" style="max-width: 280px; margin-top: 4px;">
+                        <label class="curva-hero-edit-label">City / Region</label>
+                        <input type="text" class="curva-hero-input-meta" value="${escapeHtml(currentCity)}" oninput="handleGroupProfileFieldChange('city', this.value)" placeholder="e.g. Glasgow" />
+                    </div>
+                `;
+            }
+
+            renderHeroTags();
+        }
+
         function renderProfile() {
             const defaultCover = 'https://sites.gatech.edu/curva/files/2026/04/CURVAlogoCroppedWhite.png';
             const cover = groupRecord.image || defaultCover;
 
             document.getElementById('group-cover-img').src = cover;
             document.getElementById('hero-backdrop').style.backgroundImage = `url('${cover}')`;
-            document.getElementById('hero-group-name').textContent = groupRecord.name;
-            document.getElementById('hero-club-country').textContent = `${groupRecord.club} \u2022 ${groupRecord.country}`;
 
-            document.getElementById('hero-meta-strip').innerHTML = `
-                <span><strong>City:</strong> ${groupRecord.city || '—'}</span>
-            `;
-
-            const tagBadges = parseTags(groupRecord.tags)
-                .map(t => `<span class="curva-badge">${t}</span>`).join('');
-            document.getElementById('hero-tags').innerHTML = tagBadges;
+            renderHeroDetails();
 
             const qLeague = responsesList.find(r => r.qNum === '1.3');
             const qFounded = responsesList.find(r => r.qNum === '1.6');
-            document.getElementById('meta-club').textContent = groupRecord.club || '—';
-            document.getElementById('meta-city').textContent = groupRecord.city || '—';
+            document.getElementById('meta-club').textContent = getActiveProfileValue('associated_club') || '—';
+            document.getElementById('meta-city').textContent = getActiveProfileValue('city') || '—';
             document.getElementById('meta-league').textContent = qLeague ? (qLeague.token || qLeague.answer) : '—';
             document.getElementById('meta-founded').textContent = qFounded ? qFounded.answer : '—';
 
@@ -1752,12 +2105,18 @@
             updateSaveBar();
         }
 
+        function getPendingProfileCount() {
+            if (!pendingGroupProfileEdits) return 0;
+            return Object.keys(pendingGroupProfileEdits).length > 0 ? 1 : 0;
+        }
+
         function updateSaveBar() {
             const bar = document.getElementById('curvaSaveBar');
             const rCount = Object.keys(pendingResponseEdits).length;
             const sCount = Object.keys(pendingSourceEdits).length;
             const mCount = Object.keys(pendingMediaEdits).length;
-            const total = rCount + sCount + mCount;
+            const pCount = getPendingProfileCount();
+            const total = rCount + sCount + mCount + pCount;
 
             if (total > 0 && isAdmin()) {
                 bar.style.display = 'flex';
@@ -1772,6 +2131,7 @@
             pendingResponseEdits = {};
             pendingSourceEdits = {};
             pendingMediaEdits = {};
+            pendingGroupProfileEdits = null;
             updateSaveBar();
             renderProfile();
         };
@@ -1780,7 +2140,8 @@
             const rKeys = Object.keys(pendingResponseEdits);
             const sKeys = Object.keys(pendingSourceEdits);
             const mKeys = Object.keys(pendingMediaEdits);
-            if (rKeys.length === 0 && sKeys.length === 0 && mKeys.length === 0) return;
+            const hasProfileEdits = pendingGroupProfileEdits && Object.keys(pendingGroupProfileEdits).length > 0;
+            if (rKeys.length === 0 && sKeys.length === 0 && mKeys.length === 0 && !hasProfileEdits) return;
 
             const btn = document.getElementById('curvaSaveAllBtn');
             btn.disabled = true;
@@ -1788,6 +2149,32 @@
 
             try {
                 const passcode = sessionStorage.getItem('curva_admin_passcode');
+
+                // 0. Update Group Profile Basic Dimensions & Tags
+                if (hasProfileEdits) {
+                    await callBackend({
+                        action: 'update_group_profile',
+                        passcode,
+                        groupId: groupRecord.id,
+                        profile: pendingGroupProfileEdits
+                    });
+
+                    if (pendingGroupProfileEdits.ultra_group !== undefined) {
+                        groupRecord.name = pendingGroupProfileEdits.ultra_group;
+                    }
+                    if (pendingGroupProfileEdits.associated_club !== undefined) {
+                        groupRecord.club = pendingGroupProfileEdits.associated_club;
+                    }
+                    if (pendingGroupProfileEdits.country !== undefined) {
+                        groupRecord.country = pendingGroupProfileEdits.country;
+                    }
+                    if (pendingGroupProfileEdits.city !== undefined) {
+                        groupRecord.city = pendingGroupProfileEdits.city;
+                    }
+                    if (pendingGroupProfileEdits.group_tags !== undefined) {
+                        groupRecord.tags = pendingGroupProfileEdits.group_tags;
+                    }
+                }
 
                 // 1. Batch Responses
                 if (rKeys.length > 0) {
@@ -1837,6 +2224,7 @@
                 pendingResponseEdits = {};
                 pendingSourceEdits = {};
                 pendingMediaEdits = {};
+                pendingGroupProfileEdits = null;
                 updateSaveBar();
                 renderProfile();
                 alert('All changes saved successfully to Google Sheets.');
@@ -2054,12 +2442,13 @@
 
         window.curvaToggleAdmin = async function () {
             if (isAdmin()) {
-                const total = Object.keys(pendingResponseEdits).length + Object.keys(pendingSourceEdits).length + Object.keys(pendingMediaEdits).length;
+                const total = Object.keys(pendingResponseEdits).length + Object.keys(pendingSourceEdits).length + Object.keys(pendingMediaEdits).length + getPendingProfileCount();
                 if (total > 0 && !confirm('Discard unsaved edits and exit admin mode?')) return;
                 sessionStorage.removeItem('curva_admin_passcode');
                 pendingResponseEdits = {};
                 pendingSourceEdits = {};
                 pendingMediaEdits = {};
+                pendingGroupProfileEdits = null;
                 updateAdminUI();
                 renderProfile();
             } else {

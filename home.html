@@ -485,11 +485,41 @@
         transition: transform 0.2s, box-shadow 0.2s;
         display: flex;
         flex-direction: column;
+        position: relative;
     }
 
     .curva-card:hover {
         transform: translateY(-3px);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .curva-card-delete-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+        background: rgba(15, 23, 42, 0.8);
+        color: #f87171;
+        border: 1.5px solid rgba(239, 68, 68, 0.5);
+        border-radius: 8px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .curva-card-delete-btn:hover {
+        background: #ef4444;
+        color: #ffffff;
+        border-color: #ef4444;
+        transform: scale(1.12);
+        box-shadow: 0 6px 18px rgba(239, 68, 68, 0.55);
     }
 
     .curva-card img {
@@ -1993,6 +2023,52 @@
             }
         };
 
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        window.curvaDeleteGroup = async function (e, groupId, groupName) {
+            if (e) e.stopPropagation();
+            if (!isAdmin()) {
+                alert('Admin authentication required.');
+                return;
+            }
+
+            const confirmMsg = `Are you sure you want to permanently delete "${groupName}"?\n\nThis will remove the ultra group and all attached media and research records from the CURVA database. This cannot be undone.`;
+            if (!confirm(confirmMsg)) return;
+
+            const passcode = sessionStorage.getItem('curva_admin_passcode');
+            try {
+                const res = await callBackend({
+                    action: 'delete_group',
+                    passcode: passcode,
+                    groupId: groupId
+                });
+
+                if (res && res.status === 'success') {
+                    // Remove from in-memory cache
+                    globalGroups = globalGroups.filter(g => g.id !== groupId);
+                    globalMedia = globalMedia.filter(m => m.groupId !== groupId);
+                    delete globalGroupResponses[groupId];
+
+                    // Update filters and live grids
+                    populateBasicDimensionsFilters();
+                    window.curvaHandleSearch();
+                    alert(`"${groupName}" has been successfully deleted.`);
+                } else {
+                    alert('Failed to delete group: ' + (res.message || 'Unknown error'));
+                }
+            } catch (err) {
+                alert('Delete failed: ' + err.message);
+            }
+        };
+
         window.curvaHandleSearch = function () {
             const q = (document.getElementById('curvaSearchInput').value || '').toLowerCase().trim();
 
@@ -2064,11 +2140,23 @@
                 const defaultFallback = 'https://sites.gatech.edu/curva/files/2026/04/CURVAlogoCroppedWhite.png';
                 const imgSrc = g.image || defaultFallback;
 
+                const deleteBtnHtml = isAdmin() ? `
+                    <button type="button" class="curva-card-delete-btn" onclick="curvaDeleteGroup(event, '${g.id}', '${escapeHtml(g.name).replace(/'/g, "\\'")}')" title="Delete Ultra Group &amp; attached media">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    </button>
+                ` : '';
+
                 html += `
                     <div class="curva-card" onclick="window.location.href='${PROFILE_BASE_URL}?groupId=${g.id}'">
-                        <img src="${imgSrc}" alt="${g.name}" loading="lazy" />
+                        ${deleteBtnHtml}
+                        <img src="${imgSrc}" alt="${escapeHtml(g.name)}" loading="lazy" />
                         <div class="curva-card-body">
-                            <h4>${g.name}</h4>
+                            <h4>${escapeHtml(g.name)}</h4>
                             <p class="curva-card-location">${loc}</p>
                             <div class="curva-tags">${tagBadges}</div>
                         </div>

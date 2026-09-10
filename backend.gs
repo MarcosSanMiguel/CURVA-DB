@@ -45,6 +45,12 @@ function doPost(e) {
       case "delete_media": // Delete Media Item
         return jsonResponse(deleteRowById("Media", "media_id", data.mediaId));
 
+      case "delete_group": // Delete Ultra Group & Cascading Dependents
+        return jsonResponse(deleteGroup(data.groupId));
+
+      case "update_group_profile": // Update Ultra Group Basic Dimensions & Tags
+        return jsonResponse(updateGroupProfile(data.groupId, data.profile));
+
       case "create_source": // Add Manual Source Item
         return jsonResponse(createSourceItem(data.payload));
 
@@ -511,6 +517,170 @@ function deleteRowById(tabName, idColumn, idValue) {
   }
 
   throw new Error(`Record with ${idColumn} = ${idValue} not found`);
+}
+
+function deleteGroup(groupId) {
+  if (!groupId) throw new Error("groupId is required for deletion");
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // 1. Delete from Groups sheet
+  const groupsSheet = ss.getSheetByName("Groups");
+  if (groupsSheet) {
+    const gData = groupsSheet.getDataRange().getValues();
+    const gIdCol = gData[0].indexOf("group_id");
+    if (gIdCol !== -1) {
+      for (let r = gData.length - 1; r >= 1; r--) {
+        if (String(gData[r][gIdCol]) === String(groupId)) {
+          groupsSheet.deleteRow(r + 1);
+        }
+      }
+    }
+  }
+
+  // 2. Cascading delete from Media sheet
+  const mediaSheet = ss.getSheetByName("Media");
+  if (mediaSheet) {
+    const mData = mediaSheet.getDataRange().getValues();
+    const mIdCol = mData[0].indexOf("group_id");
+    if (mIdCol !== -1) {
+      for (let r = mData.length - 1; r >= 1; r--) {
+        if (String(mData[r][mIdCol]) === String(groupId)) {
+          mediaSheet.deleteRow(r + 1);
+        }
+      }
+    }
+  }
+
+  // 3. Cascading delete from Responses sheet
+  const respSheet = ss.getSheetByName("Responses");
+  if (respSheet) {
+    const rData = respSheet.getDataRange().getValues();
+    const rIdCol = rData[0].indexOf("group_id");
+    if (rIdCol !== -1) {
+      for (let r = rData.length - 1; r >= 1; r--) {
+        if (String(rData[r][rIdCol]) === String(groupId)) {
+          respSheet.deleteRow(r + 1);
+        }
+      }
+    }
+  }
+
+  // 4. Cascading delete from Sources sheet
+  const srcSheet = ss.getSheetByName("Sources");
+  if (srcSheet) {
+    const sData = srcSheet.getDataRange().getValues();
+    const sIdCol = sData[0].indexOf("group_id");
+    if (sIdCol !== -1) {
+      for (let r = sData.length - 1; r >= 1; r--) {
+        if (String(sData[r][sIdCol]) === String(groupId)) {
+          srcSheet.deleteRow(r + 1);
+        }
+      }
+    }
+  }
+
+  return { status: "success", deletedGroupId: groupId };
+}
+
+function updateGroupProfile(groupId, profile) {
+  if (!groupId) throw new Error("groupId is required for profile update");
+  if (!profile) return { status: "success", updated: false };
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const groupsSheet = ss.getSheetByName("Groups");
+  if (!groupsSheet) throw new Error("Groups sheet not found");
+
+  const gData = groupsSheet.getDataRange().getValues();
+  const headers = gData[0];
+  const gIdCol = headers.indexOf("group_id");
+  const nameCol = headers.indexOf("ultra_group");
+  const clubCol = headers.indexOf("associated_club");
+  const cityCol = headers.indexOf("city");
+  const countryCol = headers.indexOf("country");
+  const tagsCol = headers.indexOf("group_tags");
+
+  let targetRow = -1;
+  let oldGroupName = "";
+
+  for (let r = 1; r < gData.length; r++) {
+    if (String(gData[r][gIdCol]) === String(groupId)) {
+      targetRow = r + 1;
+      oldGroupName = String(gData[r][nameCol] || "");
+      break;
+    }
+  }
+
+  if (targetRow === -1) {
+    throw new Error(`Group with group_id = ${groupId} not found`);
+  }
+
+  if (profile.ultra_group !== undefined && nameCol !== -1) {
+    groupsSheet.getRange(targetRow, nameCol + 1).setValue(profile.ultra_group);
+  }
+  if (profile.associated_club !== undefined && clubCol !== -1) {
+    groupsSheet.getRange(targetRow, clubCol + 1).setValue(profile.associated_club);
+  }
+  if (profile.city !== undefined && cityCol !== -1) {
+    groupsSheet.getRange(targetRow, cityCol + 1).setValue(profile.city);
+  }
+  if (profile.country !== undefined && countryCol !== -1) {
+    groupsSheet.getRange(targetRow, countryCol + 1).setValue(profile.country);
+  }
+  if (profile.group_tags !== undefined && tagsCol !== -1) {
+    groupsSheet.getRange(targetRow, tagsCol + 1).setValue(profile.group_tags);
+  }
+
+  // If group name changed, sync denormalized ultra_group in Media, Responses, and Sources
+  if (profile.ultra_group && profile.ultra_group !== oldGroupName) {
+    const newName = profile.ultra_group;
+
+    // Sync Media
+    const mediaSheet = ss.getSheetByName("Media");
+    if (mediaSheet) {
+      const mData = mediaSheet.getDataRange().getValues();
+      const mIdCol = mData[0].indexOf("group_id");
+      const mNameCol = mData[0].indexOf("ultra_group");
+      if (mIdCol !== -1 && mNameCol !== -1) {
+        for (let r = 1; r < mData.length; r++) {
+          if (String(mData[r][mIdCol]) === String(groupId)) {
+            mediaSheet.getRange(r + 1, mNameCol + 1).setValue(newName);
+          }
+        }
+      }
+    }
+
+    // Sync Responses
+    const respSheet = ss.getSheetByName("Responses");
+    if (respSheet) {
+      const rData = respSheet.getDataRange().getValues();
+      const rIdCol = rData[0].indexOf("group_id");
+      const rNameCol = rData[0].indexOf("ultra_group");
+      if (rIdCol !== -1 && rNameCol !== -1) {
+        for (let r = 1; r < rData.length; r++) {
+          if (String(rData[r][rIdCol]) === String(groupId)) {
+            respSheet.getRange(r + 1, rNameCol + 1).setValue(newName);
+          }
+        }
+      }
+    }
+
+    // Sync Sources
+    const srcSheet = ss.getSheetByName("Sources");
+    if (srcSheet) {
+      const sData = srcSheet.getDataRange().getValues();
+      const sIdCol = sData[0].indexOf("group_id");
+      const sNameCol = sData[0].indexOf("ultra_group");
+      if (sIdCol !== -1 && sNameCol !== -1) {
+        for (let r = 1; r < sData.length; r++) {
+          if (String(sData[r][sIdCol]) === String(groupId)) {
+            srcSheet.getRange(r + 1, sNameCol + 1).setValue(newName);
+          }
+        }
+      }
+    }
+  }
+
+  return { status: "success", groupId: groupId, updated: true };
 }
 
 // ==========================================
