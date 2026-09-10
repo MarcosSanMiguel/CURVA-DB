@@ -28,6 +28,106 @@
                 </svg>
                 <input type="text" id="curvaSearchInput" class="curva-search" placeholder="Search by team, country, theme, group name..." onkeyup="curvaHandleSearch()">
             </div>
+            
+            <!-- FILTER TRIGGER ROW -->
+            <div class="curva-filter-trigger-row">
+                <button type="button" class="curva-filter-trigger-btn" id="curvaFilterTriggerBtn" onclick="curvaToggleFilterPanel()" aria-expanded="false" aria-label="Toggle Filter Archive" title="Filter Archive">
+                    <span class="curva-filter-icon-cone">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                    </span>
+                    <span id="curvaFilterBtnLabel">Filter Archive</span>
+                    <span class="curva-filter-active-pill" id="curvaFilterActiveCount" style="display: none;">0</span>
+                    <svg class="curva-filter-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </button>
+                <button type="button" class="curva-filter-clear-quick" id="curvaFilterClearQuick" onclick="curvaResetAllFilters()" style="display: none;" title="Reset all active filters">
+                    Clear filters
+                </button>
+            </div>
+
+            <!-- INLINE EXPANDABLE FILTER PANEL -->
+            <div id="curvaInlineFilterPanel" class="curva-inline-filter-panel" style="display: none;">
+                <!-- Tab Navigation Bar -->
+                <div class="curva-filter-tabs-nav">
+                    <button type="button" class="curva-filter-tab-btn active" data-tab="basic" onclick="curvaSwitchFilterTab('basic')">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        <span>Basic Dimensions</span>
+                        <span class="curva-tab-count-badge" id="tabCount-basic" style="display:none;">0</span>
+                    </button>
+                    <button type="button" class="curva-filter-tab-btn" data-tab="tags" onclick="curvaSwitchFilterTab('tags')">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                        <span>Tags &amp; Attributes</span>
+                        <span class="curva-tab-count-badge" id="tabCount-tags" style="display:none;">0</span>
+                    </button>
+                    <button type="button" class="curva-filter-tab-btn" data-tab="questions" onclick="curvaSwitchFilterTab('questions')">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        <span>Research Questions</span>
+                        <span class="curva-tab-count-badge" id="tabCount-questions" style="display:none;">0</span>
+                    </button>
+                </div>
+
+                <!-- Scrollable Filter Content -->
+                <div class="curva-filter-body">
+                    <!-- TAB 1: BASIC DIMENSIONS -->
+                    <div id="filterTab-basic" class="curva-filter-tab-content active">
+                        <div class="curva-filter-block">
+                            <div class="curva-filter-block-title">Country</div>
+                            <div class="curva-filter-pills-row" id="filterPillsCountry">
+                                <span style="color:#94a3b8; font-size:12px;">Loading countries...</span>
+                            </div>
+                        </div>
+
+                        <div class="curva-filter-block">
+                            <div class="curva-filter-block-title">Affiliated Club</div>
+                            <div class="curva-filter-pills-row" id="filterPillsClub">
+                                <span style="color:#94a3b8; font-size:12px;">Loading clubs...</span>
+                            </div>
+                        </div>
+
+                        <div class="curva-filter-block">
+                            <div class="curva-filter-block-title">Ultra Group</div>
+                            <div class="curva-filter-pills-row" id="filterPillsGroup">
+                                <span style="color:#94a3b8; font-size:12px;">Loading groups...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: TAGS & ATTRIBUTES -->
+                    <div id="filterTab-tags" class="curva-filter-tab-content">
+                        <div style="font-size: 13px; font-weight: 700; color: #b3a369; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;">
+                            Ultra Group Controlled Vocabulary
+                        </div>
+                        <div id="filterGroupTagsCategories"></div>
+
+                        <div style="font-size: 13px; font-weight: 700; color: #b3a369; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 10px 0;">
+                            Media Tag Vocabulary
+                        </div>
+                        <div id="filterMediaTagsCategories"></div>
+                    </div>
+
+                    <!-- TAB 3: RESEARCH QUESTIONS -->
+                    <div id="filterTab-questions" class="curva-filter-tab-content">
+                        <div style="margin-bottom: 12px; font-size: 12.5px; color: #94a3b8;">
+                            Filter groups by binary <strong style="color:#e2e8f0;">[Y/N]</strong> and multiple-choice <strong style="color:#e2e8f0;">[MULTI]</strong> findings:
+                        </div>
+                        <div id="filterQuestionsContainer"></div>
+                    </div>
+                </div>
+
+                <!-- Footer Bar with Live Counts & Actions -->
+                <div class="curva-filter-footer">
+                    <div class="curva-filter-footer-summary">
+                        <span id="curvaFilterLiveSummary">Showing all items</span>
+                    </div>
+                    <div class="curva-filter-footer-actions">
+                        <button type="button" class="curva-filter-btn-secondary" onclick="curvaResetAllFilters()">Clear All</button>
+                        <button type="button" class="curva-filter-btn-primary" onclick="curvaCloseFilterPanel()">Done</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- INTEGRATED STATS DOCK -->
@@ -625,6 +725,470 @@
         background: #b3a369;
         transition: width 0.3s;
     }
+
+    /* ==========================================================================
+       CURVA COMPREHENSIVE FILTER SYSTEM (GT PALETTE)
+       ========================================================================== */
+    
+    /* Filter Trigger Row */
+    .curva-filter-trigger-row {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 14px;
+        flex-wrap: wrap;
+    }
+
+    .curva-filter-trigger-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(0, 34, 68, 0.85);
+        color: #f1f5f9;
+        border: 1.5px solid rgba(179, 163, 105, 0.45);
+        border-radius: 30px;
+        padding: 7px 16px 7px 12px;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .curva-filter-trigger-btn:hover {
+        background: #002244;
+        border-color: #b3a369;
+        color: #ffffff;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 2px rgba(179, 163, 105, 0.3);
+    }
+
+    .curva-filter-trigger-btn.has-filters {
+        background: #002244;
+        border-color: #b3a369;
+        box-shadow: 0 0 0 2px rgba(179, 163, 105, 0.5), 0 6px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .curva-filter-icon-cone {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: rgba(179, 163, 105, 0.2);
+        color: #b3a369;
+        flex-shrink: 0;
+        transition: transform 0.3s ease, background 0.25s ease;
+    }
+
+    .curva-filter-trigger-btn:hover .curva-filter-icon-cone {
+        background: #b3a369;
+        color: #002244;
+        transform: rotate(15deg) scale(1.08);
+    }
+
+    .curva-filter-active-pill {
+        background: #b3a369;
+        color: #002244;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 10px;
+        min-width: 16px;
+        text-align: center;
+        line-height: 1.2;
+    }
+
+    .curva-filter-clear-quick {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        color: #e2e8f0;
+        border-radius: 20px;
+        padding: 6px 14px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        transition: all 0.2s;
+    }
+
+    .curva-filter-clear-quick:hover {
+        background: rgba(239, 68, 68, 0.25);
+        border-color: rgba(239, 68, 68, 0.5);
+        color: #fca5a5;
+    }
+
+    /* INLINE EXPANDABLE FILTER PANEL IN HERO */
+    .curva-filter-trigger-btn .curva-filter-chevron {
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        margin-left: 2px;
+        color: #b3a369;
+    }
+
+    .curva-filter-trigger-btn.panel-open .curva-filter-chevron {
+        transform: rotate(180deg);
+    }
+
+    .curva-filter-trigger-btn.panel-open {
+        background: #002244;
+        border-color: #b3a369;
+        box-shadow: 0 0 0 2px rgba(179, 163, 105, 0.45), 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .curva-inline-filter-panel {
+        width: 100%;
+        max-width: 860px;
+        margin: 18px auto 0 auto;
+        background: rgba(0, 24, 48, 0.94);
+        border: 1.5px solid rgba(179, 163, 105, 0.45);
+        border-radius: 16px;
+        overflow: hidden;
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+        text-align: left;
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        color: #f8fafc;
+        box-sizing: border-box;
+    }
+
+    .curva-inline-filter-panel.open {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Tab Navigation */
+    .curva-filter-tabs-nav {
+        display: flex;
+        background: #001933;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 0 16px;
+        flex-shrink: 0;
+        overflow-x: auto;
+    }
+
+    .curva-filter-tab-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: none;
+        border: none;
+        border-bottom: 2.5px solid transparent;
+        color: #94a3b8;
+        font-size: 13.5px;
+        font-weight: 600;
+        padding: 13px 18px;
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+    }
+
+    .curva-filter-tab-btn:hover {
+        color: #e2e8f0;
+    }
+
+    .curva-filter-tab-btn.active {
+        color: #b3a369;
+        border-bottom-color: #b3a369;
+        background: rgba(179, 163, 105, 0.06);
+    }
+
+    .curva-tab-count-badge {
+        background: #b3a369;
+        color: #002244;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 10px;
+        min-width: 14px;
+        text-align: center;
+    }
+
+    /* Filter Panel Body */
+    .curva-filter-body {
+        max-height: 460px;
+        overflow-y: auto;
+        padding: 22px 24px;
+    }
+
+    .curva-filter-body::-webkit-scrollbar {
+        width: 7px;
+    }
+
+    .curva-filter-body::-webkit-scrollbar-track {
+        background: #001933;
+    }
+
+    .curva-filter-body::-webkit-scrollbar-thumb {
+        background: rgba(179, 163, 105, 0.35);
+        border-radius: 4px;
+    }
+
+    .curva-filter-body::-webkit-scrollbar-thumb:hover {
+        background: #b3a369;
+    }
+
+    .curva-filter-tab-content {
+        display: none;
+    }
+
+    .curva-filter-tab-content.active {
+        display: block;
+    }
+
+    /* Section Cards / Blocks within Filter Tabs */
+    .curva-filter-block {
+        background: rgba(0, 30, 60, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 18px;
+    }
+
+    .curva-filter-block-title {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #b3a369;
+        margin: 0 0 12px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .curva-filter-block-sub {
+        font-size: 11.5px;
+        font-weight: 400;
+        text-transform: none;
+        letter-spacing: normal;
+        color: #94a3b8;
+    }
+
+    .curva-filter-pills-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    /* Selectable Filter Pill */
+    .curva-filter-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #e2e8f0;
+        font-size: 12.5px;
+        font-weight: 500;
+        padding: 6px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .curva-filter-pill:hover {
+        background: rgba(179, 163, 105, 0.15);
+        border-color: rgba(179, 163, 105, 0.45);
+        color: #ffffff;
+        transform: translateY(-1px);
+    }
+
+    .curva-filter-pill.active {
+        background: #b3a369 !important;
+        border-color: #b3a369 !important;
+        color: #002244 !important;
+        font-weight: 700 !important;
+        box-shadow: 0 2px 8px rgba(179, 163, 105, 0.4) !important;
+    }
+
+    .curva-filter-pill-count {
+        font-size: 11px;
+        opacity: 0.75;
+        font-weight: 600;
+    }
+
+    .curva-filter-pill.active .curva-filter-pill-count {
+        opacity: 0.95;
+    }
+
+    /* Question Filter Accordions */
+    .curva-qa-accordion {
+        background: rgba(0, 30, 60, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        margin-bottom: 12px;
+        overflow: hidden;
+        transition: border-color 0.2s;
+    }
+
+    .curva-qa-accordion.has-active {
+        border-color: rgba(179, 163, 105, 0.4);
+    }
+
+    .curva-qa-accordion-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 18px;
+        cursor: pointer;
+        background: rgba(0, 24, 48, 0.5);
+        transition: background 0.2s;
+        user-select: none;
+    }
+
+    .curva-qa-accordion-header:hover {
+        background: rgba(0, 40, 80, 0.6);
+    }
+
+    .curva-qa-accordion-header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .curva-qa-sec-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #ffffff;
+    }
+
+    .curva-qa-accordion-header-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .curva-qa-chevron {
+        color: #94a3b8;
+        transition: transform 0.25s ease;
+    }
+
+    .curva-qa-accordion.open .curva-qa-chevron {
+        transform: rotate(180deg);
+        color: #b3a369;
+    }
+
+    .curva-qa-accordion-body {
+        display: none;
+        padding: 16px 18px 20px 18px;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .curva-qa-accordion.open .curva-qa-accordion-body {
+        display: block;
+    }
+
+    .curva-qa-question-card {
+        padding: 12px 14px;
+        background: rgba(0, 18, 38, 0.5);
+        border-radius: 8px;
+        margin-bottom: 10px;
+        border-left: 3px solid rgba(179, 163, 105, 0.3);
+        transition: border-left-color 0.2s;
+    }
+
+    .curva-qa-question-card.active-q {
+        border-left-color: #b3a369;
+        background: rgba(179, 163, 105, 0.08);
+    }
+
+    .curva-qa-q-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+
+    .curva-qa-qnum {
+        display: inline-block;
+        background: rgba(179, 163, 105, 0.2);
+        color: #e5d7a3;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 4px;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .curva-qa-qtitle {
+        font-size: 13px;
+        font-weight: 600;
+        color: #e2e8f0;
+        line-height: 1.4;
+    }
+
+    /* Modal Footer */
+    .curva-filter-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 24px;
+        background: #001933;
+        border-top: 1px solid rgba(179, 163, 105, 0.25);
+        flex-shrink: 0;
+    }
+
+    .curva-filter-footer-summary {
+        font-size: 13.5px;
+        color: #cbd5e1;
+        font-weight: 500;
+    }
+
+    .curva-filter-footer-summary strong {
+        color: #b3a369;
+    }
+
+    .curva-filter-footer-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .curva-filter-btn-secondary {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: #cbd5e1;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 9px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .curva-filter-btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: #ffffff;
+    }
+
+    .curva-filter-btn-primary {
+        background: #b3a369;
+        border: 1px solid #b3a369;
+        color: #002244;
+        font-size: 13.5px;
+        font-weight: 700;
+        padding: 9px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(179, 163, 105, 0.3);
+        transition: all 0.2s;
+    }
+
+    .curva-filter-btn-primary:hover {
+        background: #c5b57f;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(179, 163, 105, 0.45);
+    }
 </style>
 
 <script>
@@ -637,11 +1201,157 @@
 
         const GROUPS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Groups`;
         const MEDIA_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Media`;
+        const RESPONSES_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=Responses`;
 
         let globalGroups = [];
         let globalMedia = [];
+        let globalGroupResponses = {}; // map: groupId -> { [qNum]: token }
         let selectedFileBase64 = null;
         let selectedFileName = '';
+
+        // CONTROLLED VOCABULARIES (from CURVA Specification)
+        const GROUP_TAG_VOCABULARY = {
+            "Ideology": [
+                "Anti-fascist", "Fascist / Far-right", "Anti-racist", "Racist",
+                "Left-wing", "Right-wing", "Nationalist", "Apolitical",
+                "Feminist", "LGBTQ+ inclusive", "LGBTQ+ exclusive", "Religious", "Secular"
+            ],
+            "Violence Posture": [
+                "Anti-violence", "Pro-violence / Hooligan-adjacent"
+            ],
+            "Passionate Causes": [
+                "Environment", "Refugees", "Palestine", "Regional autonomy",
+                "Anti-modern-football", "Anti-commercialization", "Fans' rights",
+                "Anti-repression", "Prisoner rights", "Women's rights", "Anti-police"
+            ],
+            "Behavior": [
+                "Charity / Volunteering", "Political activism", "Solidarity actions", "Cross-group alliances"
+            ],
+            "Representational Culture": [
+                "Tifo-heavy", "Pyro-heavy", "Politically charged chants", "Media-active"
+            ],
+            "Scale": [
+                "Small (<100)", "Medium (100–1,000)", "Large (1,000+)"
+            ],
+            "Relationship with Club": [
+                "Independent", "Club-coopted", "Adversarial with club"
+            ],
+            "Controversy": [
+                "Crime-linked", "Police clashes", "State repression target", "Stadium bans"
+            ]
+        };
+
+        const MEDIA_TAG_VOCABULARY = {
+            "Content Type": [
+                "Tifo", "Chant", "Pyro", "Banner", "Match footage", "Protest",
+                "March", "Documentary", "Interview", "Merchandise", "Charity event", "Historical archive"
+            ],
+            "Setting": [
+                "Home game", "Away game", "Derby", "Street / March", "Community event"
+            ],
+            "Subject / Theme": [
+                "Anti-fascist", "Fascist / Far-right", "Anti-racist", "Racist",
+                "Feminism", "LGBTQ+", "Palestine", "Refugees", "Environment",
+                "Anti-modern-football", "Fans' rights", "Anti-repression",
+                "Violence", "Charity", "Volunteering"
+            ]
+        };
+
+        const QUESTION_FILTER_CONFIG = [
+            {
+                secNum: 1,
+                secTitle: "Section 1 &mdash; Group Identification",
+                questions: [
+                    { qNum: "1.3", title: "League Level", type: "MULTI", options: ["Top tier", "Second tier", "Third tier", "Lower tier", "Amateur"] }
+                ]
+            },
+            {
+                secNum: 2,
+                secTitle: "Section 2 &mdash; Historical Dimension",
+                questions: [
+                    { qNum: "2.2", title: "Formed in response to specific event, movement, or conflict?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "2.3", title: "Founding Type", type: "MULTI", options: ["Spontaneous", "Organized", "Mixed"] },
+                    { qNum: "2.5", title: "Connected to larger social, political, or cultural movements?", type: "YN", options: ["Yes", "No"] }
+                ]
+            },
+            {
+                secNum: 3,
+                secTitle: "Section 3 &mdash; Behavioral Dimension",
+                questions: [
+                    { qNum: "3.1", title: "Engages in non-profit, social movement, or civil activities?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "3.3", title: "Engaged in political protest unrelated to football?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "3.5", title: "Social Capital Exhibit", type: "MULTI", options: ["Bonding", "Bridging", "Both", "Neither"] },
+                    { qNum: "3.6", title: "Was protest group-sanctioned?", type: "YN", options: ["Yes", "No"] }
+                ]
+            },
+            {
+                secNum: 4,
+                secTitle: "Section 4 &mdash; Ideological Dimension",
+                questions: [
+                    { qNum: "4.1", title: "Explicitly anti-violence?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "4.2", title: "Explicitly anti-racist?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "4.3", title: "Explicitly anti-fascist?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "4.4", title: "Can women be leaders?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "4.5", title: "Women in group", type: "MULTI", options: ["Excluded", "Tolerated", "Actively accepted"] },
+                    { qNum: "4.6", title: "Part of larger social movements for gender equality?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "4.8", title: "Can LGBTQ+ members be leaders?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "4.9", title: "Part of larger social movements for LGBTQ+ issues?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "4.11", title: "Members with different sociopolitical views", type: "MULTI", options: ["Accepted", "Excluded", "Mixed"] },
+                    { qNum: "4.12", title: "Allied with other ultra groups due to geography/issues?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "4.14", title: "Allegiance priority (Club vs Politics)", type: "MULTI", options: ["Club allegiance", "Political stance", "Balanced"] },
+                    { qNum: "4.15", title: "Dominant political, social, or cultural objective?", type: "YN", options: ["Yes", "No"] }
+                ]
+            },
+            {
+                secNum: 5,
+                secTitle: "Section 5 &mdash; Organizational Dimension",
+                questions: [
+                    { qNum: "5.1", title: "Explicitly identifies itself as a collective?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "5.3", title: "How often leadership changes", type: "MULTI", options: ["Rarely", "Occasionally", "Frequently", "Never"] },
+                    { qNum: "5.5", title: "Leaders compensated differently from members?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "5.9", title: "Do capos / leaders make a living from this?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "5.10", title: "Has a written charter or constitution?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "5.11", title: "Ultras formal members with ID/registry?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "5.12", title: "Members come and go informally?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "5.13", title: "Independence from club management", type: "MULTI", options: ["Fully independent", "Somewhat independent", "Not independent"] },
+                    { qNum: "5.15", title: "Club governance relationship", type: "MULTI", options: ["Co-opted", "Self-governing", "Mixed"] },
+                    { qNum: "5.16", title: "Club provides financial support or protection?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "5.18", title: "Group grown or shrunk significantly?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "5.20", title: "Primary interaction venue", type: "MULTI", options: ["Online", "Neighborhood", "Stadium", "Multiple / Other"] }
+                ]
+            },
+            {
+                secNum: 6,
+                secTitle: "Section 6 &mdash; Representational Dimension",
+                questions: [
+                    { qNum: "6.1", title: "Merchandise producers", type: "MULTI", options: ["Members", "Professionals", "Club", "Combination"] },
+                    { qNum: "6.3", title: "Merchandise proceeds allocation", type: "MULTI", options: ["Reinvested", "Pocketed", "Mixed"] },
+                    { qNum: "6.5", title: "Tifo creation frequency", type: "MULTI", options: ["Every game", "Big games", "Anniversaries", "Protests", "Rarely"] },
+                    { qNum: "6.6", title: "Tifo craftsmanship", type: "MULTI", options: ["Volunteer", "Paid", "Both"] },
+                    { qNum: "6.7", title: "Tifo fabrication", type: "MULTI", options: ["Handmade", "Printed", "Both"] },
+                    { qNum: "6.10", title: "Club sponsors, coordinates, or censors tifos?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "6.13", title: "Chant lyric nature", type: "MULTI", options: ["Inspirational", "Humorous", "Political/protest", "Mixed"] },
+                    { qNum: "6.14", title: "People on streets borrow chants in protest?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "6.17", title: "Pyrotechnic character", type: "MULTI", options: ["Artistic / cold", "Violent / hot", "Mixed", "None"] },
+                    { qNum: "6.19", title: "Manage social media accounts?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "6.20", title: "Issue statements or engage journalists?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "6.21", title: "Organize songs?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "6.22", title: "Organize tifo creation?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "6.23", title: "Organize away travel?", type: "YN", options: ["Yes", "No"] },
+                    { qNum: "6.24", title: "Matchday behavior coordination", type: "MULTI", options: ["Highly coordinated", "Moderately coordinated", "Loosely coordinated"] }
+                ]
+            }
+        ];
+
+        // Active filter state
+        const activeFilters = {
+            countries: new Set(),
+            clubs: new Set(),
+            groups: new Set(),
+            groupTags: new Set(),
+            mediaTags: new Set(),
+            questions: {} // map of qNum -> Set of selected options
+        };
 
         function parseGviz(text) {
             const start = text.indexOf('{');
@@ -662,10 +1372,12 @@
         function loadCurvaDatabase() {
             Promise.all([
                 fetch(GROUPS_URL).then(res => res.text()),
-                fetch(MEDIA_URL).then(res => res.text())
-            ]).then(([groupsText, mediaText]) => {
+                fetch(MEDIA_URL).then(res => res.text()),
+                fetch(RESPONSES_URL).then(res => res.text())
+            ]).then(([groupsText, mediaText, responsesText]) => {
                 const groupsJson = parseGviz(groupsText);
                 const mediaJson = parseGviz(mediaText);
+                const responsesJson = parseGviz(responsesText);
 
                 globalGroups = (groupsJson.table.rows || []).map(row => ({
                     id: safeStr(row.c[0]),
@@ -686,6 +1398,20 @@
                     title: safeStr(row.c[6])
                 })).filter(m => m.id !== '' && m.id.toLowerCase() !== 'media_id');
 
+                // Map of responses by group
+                globalGroupResponses = {};
+                (responsesJson.table.rows || []).forEach(row => {
+                    const gId = safeStr(row.c[1]);
+                    const qNum = safeStr(row.c[5]);
+                    const token = safeStr(row.c[7]); // Column H: binary_or_choice
+                    if (gId && qNum && token) {
+                        if (!globalGroupResponses[gId]) {
+                            globalGroupResponses[gId] = {};
+                        }
+                        globalGroupResponses[gId][qNum] = token;
+                    }
+                });
+
                 const uniqueCountries = new Set(globalGroups.map(g => g.country).filter(Boolean));
                 document.getElementById('stat-groups').textContent = globalGroups.length;
                 document.getElementById('stat-countries').textContent = uniqueCountries.size;
@@ -694,9 +1420,488 @@
                 document.getElementById('loading-state').style.display = 'none';
                 document.getElementById('app-content').style.display = 'block';
 
+                // Initialize the filter panel with dynamic options from the database
+                initCurvaFilterControls();
+
                 window.curvaHandleSearch();
             }).catch(err => {
                 document.getElementById('loading-state').innerHTML = `<p style="color:#ef4444;">Error connecting to database: ${err.message}</p>`;
+            });
+        }
+
+        // Initialize Filter Controls (Tabs 1, 2, and 3)
+        function initCurvaFilterControls() {
+            // TAB 1: BASIC DIMENSIONS
+            // Countries (dynamically from database)
+            const uniqueCountries = [...new Set(globalGroups.map(g => g.country).filter(Boolean))].sort();
+            const countryEl = document.getElementById('filterPillsCountry');
+            if (countryEl) {
+                if (uniqueCountries.length === 0) {
+                    countryEl.innerHTML = '<span style="color:#94a3b8; font-size:12px;">No countries currently in database</span>';
+                } else {
+                    countryEl.innerHTML = uniqueCountries.map(c => {
+                        const count = globalGroups.filter(g => g.country === c).length;
+                        const isAct = activeFilters.countries.has(c) ? 'active' : '';
+                        return `<button type="button" class="curva-filter-pill ${isAct}" data-filter-type="country" data-filter-val="${c}" onclick="curvaToggleFilter('country', '${c}')"><span>${c}</span> <span class="curva-filter-pill-count">(${count})</span></button>`;
+                    }).join('');
+                }
+            }
+
+            // Clubs (dynamically from database)
+            const uniqueClubs = [...new Set(globalGroups.map(g => g.club).filter(Boolean))].sort();
+            const clubEl = document.getElementById('filterPillsClub');
+            if (clubEl) {
+                if (uniqueClubs.length === 0) {
+                    clubEl.innerHTML = '<span style="color:#94a3b8; font-size:12px;">No clubs currently in database</span>';
+                } else {
+                    clubEl.innerHTML = uniqueClubs.map(cl => {
+                        const count = globalGroups.filter(g => g.club === cl).length;
+                        const isAct = activeFilters.clubs.has(cl) ? 'active' : '';
+                        return `<button type="button" class="curva-filter-pill ${isAct}" data-filter-type="club" data-filter-val="${cl}" onclick="curvaToggleFilter('club', '${cl}')"><span>${cl}</span> <span class="curva-filter-pill-count">(${count})</span></button>`;
+                    }).join('');
+                }
+            }
+
+            // Groups (dynamically from database)
+            const groupEl = document.getElementById('filterPillsGroup');
+            if (groupEl) {
+                if (globalGroups.length === 0) {
+                    groupEl.innerHTML = '<span style="color:#94a3b8; font-size:12px;">No ultra groups currently in database</span>';
+                } else {
+                    groupEl.innerHTML = globalGroups.map(g => {
+                        const isAct = activeFilters.groups.has(g.id) ? 'active' : '';
+                        const sub = g.club || g.country;
+                        return `<button type="button" class="curva-filter-pill ${isAct}" data-filter-type="group" data-filter-val="${g.id}" onclick="curvaToggleFilter('group', '${g.id}')"><span>${g.name}</span> <span class="curva-filter-pill-count">(${sub})</span></button>`;
+                    }).join('');
+                }
+            }
+
+            // TAB 2: TAGS & ATTRIBUTES
+            // Group Tag Vocabulary
+            const gTagsEl = document.getElementById('filterGroupTagsCategories');
+            if (gTagsEl) {
+                let gHtml = '';
+                for (const cat of Object.keys(GROUP_TAG_VOCABULARY)) {
+                    const tags = GROUP_TAG_VOCABULARY[cat];
+                    gHtml += `
+                        <div class="curva-filter-block">
+                            <div class="curva-filter-block-title">${cat}</div>
+                            <div class="curva-filter-pills-row">
+                                ${tags.map(tag => {
+                                    const isAct = activeFilters.groupTags.has(tag) ? 'active' : '';
+                                    return `<button type="button" class="curva-filter-pill ${isAct}" data-filter-type="groupTag" data-filter-val="${tag}" onclick="curvaToggleFilter('groupTag', '${tag}')"><span>${tag}</span></button>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                gTagsEl.innerHTML = gHtml;
+            }
+
+            // Media Tag Vocabulary
+            const mTagsEl = document.getElementById('filterMediaTagsCategories');
+            if (mTagsEl) {
+                let mHtml = '';
+                for (const cat of Object.keys(MEDIA_TAG_VOCABULARY)) {
+                    const tags = MEDIA_TAG_VOCABULARY[cat];
+                    mHtml += `
+                        <div class="curva-filter-block">
+                            <div class="curva-filter-block-title">${cat}</div>
+                            <div class="curva-filter-pills-row">
+                                ${tags.map(tag => {
+                                    const isAct = activeFilters.mediaTags.has(tag) ? 'active' : '';
+                                    return `<button type="button" class="curva-filter-pill ${isAct}" data-filter-type="mediaTag" data-filter-val="${tag}" onclick="curvaToggleFilter('mediaTag', '${tag}')"><span>${tag}</span></button>`;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                mTagsEl.innerHTML = mHtml;
+            }
+
+            // TAB 3: RESEARCH QUESTIONS
+            const qEl = document.getElementById('filterQuestionsContainer');
+            if (qEl) {
+                let qHtml = '';
+                QUESTION_FILTER_CONFIG.forEach(sec => {
+                    qHtml += `
+                        <div class="curva-qa-accordion" id="secAccordion-${sec.secNum}">
+                            <div class="curva-qa-accordion-header" onclick="curvaToggleAccordion(this)">
+                                <div class="curva-qa-accordion-header-left">
+                                    <span class="curva-qa-sec-title">${sec.secTitle}</span>
+                                </div>
+                                <div class="curva-qa-accordion-header-right">
+                                    <span class="curva-tab-count-badge" id="secBadge-${sec.secNum}" style="display: none;">0</span>
+                                    <svg class="curva-qa-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="curva-qa-accordion-body">
+                                ${sec.questions.map(q => {
+                                    return `
+                                        <div class="curva-qa-question-card" data-qnum="${q.qNum}">
+                                            <div class="curva-qa-q-header">
+                                                <span class="curva-qa-qnum">${q.qNum}</span>
+                                                <span class="curva-qa-qtitle">${q.title}</span>
+                                            </div>
+                                            <div class="curva-filter-pills-row">
+                                                ${q.options.map(opt => {
+                                                    const isAct = (activeFilters.questions[q.qNum] && activeFilters.questions[q.qNum].has(opt)) ? 'active' : '';
+                                                    return `<button type="button" class="curva-filter-pill ${isAct}" data-filter-type="question" data-qnum="${q.qNum}" data-filter-val="${opt}" onclick="curvaToggleFilter('question', '${opt}', '${q.qNum}')"><span>${opt}</span></button>`;
+                                                }).join('')}
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    `;
+                });
+                qEl.innerHTML = qHtml;
+            }
+        }
+
+        // Toggle filter selection
+        window.curvaToggleFilter = function (filterType, value, qNum = null) {
+            let targetSet = null;
+            if (filterType === 'country') targetSet = activeFilters.countries;
+            else if (filterType === 'club') targetSet = activeFilters.clubs;
+            else if (filterType === 'group') targetSet = activeFilters.groups;
+            else if (filterType === 'groupTag') targetSet = activeFilters.groupTags;
+            else if (filterType === 'mediaTag') targetSet = activeFilters.mediaTags;
+            else if (filterType === 'question' && qNum) {
+                if (!activeFilters.questions[qNum]) {
+                    activeFilters.questions[qNum] = new Set();
+                }
+                targetSet = activeFilters.questions[qNum];
+            }
+
+            if (!targetSet) return;
+
+            if (targetSet.has(value)) {
+                targetSet.delete(value);
+                if (filterType === 'question' && qNum && targetSet.size === 0) {
+                    delete activeFilters.questions[qNum];
+                }
+            } else {
+                targetSet.add(value);
+            }
+
+            updatePillVisualState(filterType, value, qNum);
+            updateFilterUIBadges();
+            window.curvaHandleSearch();
+        };
+
+        function updatePillVisualState(filterType, val, qNum) {
+            let selector = `button.curva-filter-pill[data-filter-type="${filterType}"][data-filter-val="${val}"]`;
+            if (qNum) {
+                selector += `[data-qnum="${qNum}"]`;
+            }
+            const pills = document.querySelectorAll(selector);
+            let isActive = false;
+            if (filterType === 'country') isActive = activeFilters.countries.has(val);
+            else if (filterType === 'club') isActive = activeFilters.clubs.has(val);
+            else if (filterType === 'group') isActive = activeFilters.groups.has(val);
+            else if (filterType === 'groupTag') isActive = activeFilters.groupTags.has(val);
+            else if (filterType === 'mediaTag') isActive = activeFilters.mediaTags.has(val);
+            else if (filterType === 'question' && qNum) {
+                isActive = activeFilters.questions[qNum] && activeFilters.questions[qNum].has(val);
+            }
+
+            pills.forEach(pill => {
+                if (isActive) pill.classList.add('active');
+                else pill.classList.remove('active');
+            });
+
+            if (filterType === 'question' && qNum) {
+                const qCard = document.querySelector(`.curva-qa-question-card[data-qnum="${qNum}"]`);
+                if (qCard) {
+                    const isQActive = activeFilters.questions[qNum] && activeFilters.questions[qNum].size > 0;
+                    if (isQActive) qCard.classList.add('active-q');
+                    else qCard.classList.remove('active-q');
+                }
+            }
+        }
+
+        function getTotalActiveFilterCount() {
+            let count = 0;
+            count += activeFilters.countries.size;
+            count += activeFilters.clubs.size;
+            count += activeFilters.groups.size;
+            count += activeFilters.groupTags.size;
+            count += activeFilters.mediaTags.size;
+            for (const qNum of Object.keys(activeFilters.questions)) {
+                count += activeFilters.questions[qNum].size;
+            }
+            return count;
+        }
+
+        function updateFilterUIBadges() {
+            const total = getTotalActiveFilterCount();
+            const btn = document.getElementById('curvaFilterTriggerBtn');
+            const btnLabel = document.getElementById('curvaFilterBtnLabel');
+            const btnCount = document.getElementById('curvaFilterActiveCount');
+            const quickClear = document.getElementById('curvaFilterClearQuick');
+
+            if (total > 0) {
+                if (btn) btn.classList.add('has-filters');
+                if (btnLabel) btnLabel.textContent = 'Filters Active';
+                if (btnCount) {
+                    btnCount.textContent = total;
+                    btnCount.style.display = 'inline-block';
+                }
+                if (quickClear) quickClear.style.display = 'inline-block';
+            } else {
+                if (btn) btn.classList.remove('has-filters');
+                if (btnLabel) btnLabel.textContent = 'Filter Archive';
+                if (btnCount) btnCount.style.display = 'none';
+                if (quickClear) quickClear.style.display = 'none';
+            }
+
+            // Tab 1 Count Badge
+            const basicCount = activeFilters.countries.size + activeFilters.clubs.size + activeFilters.groups.size;
+            const bBadge = document.getElementById('tabCount-basic');
+            if (bBadge) {
+                bBadge.textContent = basicCount;
+                bBadge.style.display = basicCount > 0 ? 'inline-block' : 'none';
+            }
+
+            // Tab 2 Count Badge
+            const tagsCount = activeFilters.groupTags.size + activeFilters.mediaTags.size;
+            const tBadge = document.getElementById('tabCount-tags');
+            if (tBadge) {
+                tBadge.textContent = tagsCount;
+                tBadge.style.display = tagsCount > 0 ? 'inline-block' : 'none';
+            }
+
+            // Tab 3 Count Badge
+            let qTotal = 0;
+            for (const k of Object.keys(activeFilters.questions)) {
+                qTotal += (activeFilters.questions[k] ? activeFilters.questions[k].size : 0);
+            }
+            const qBadge = document.getElementById('tabCount-questions');
+            if (qBadge) {
+                qBadge.textContent = qTotal;
+                qBadge.style.display = qTotal > 0 ? 'inline-block' : 'none';
+            }
+
+            // Section Accordion Badges in Tab 3
+            QUESTION_FILTER_CONFIG.forEach(sec => {
+                let secActive = 0;
+                sec.questions.forEach(q => {
+                    if (activeFilters.questions[q.qNum]) {
+                        secActive += activeFilters.questions[q.qNum].size;
+                    }
+                });
+                const acc = document.getElementById('secAccordion-' + sec.secNum);
+                const sBadge = document.getElementById('secBadge-' + sec.secNum);
+                if (acc) {
+                    if (secActive > 0) acc.classList.add('has-active');
+                    else acc.classList.remove('has-active');
+                }
+                if (sBadge) {
+                    sBadge.textContent = secActive;
+                    sBadge.style.display = secActive > 0 ? 'inline-block' : 'none';
+                }
+            });
+        }
+
+        function updateFilterSummaryCounts(groupsCount, mediaCount) {
+            const sumEl = document.getElementById('curvaFilterLiveSummary');
+            if (!sumEl) return;
+            const totalFilters = getTotalActiveFilterCount();
+            if (totalFilters === 0) {
+                sumEl.innerHTML = `Showing all &middot; <strong>${groupsCount}</strong> groups, <strong>${mediaCount}</strong> media`;
+            } else {
+                sumEl.innerHTML = `Matches: <strong>${groupsCount}</strong> groups, <strong>${mediaCount}</strong> media (${totalFilters} active filter${totalFilters === 1 ? '' : 's'})`;
+            }
+        }
+
+        window.curvaResetAllFilters = function () {
+            activeFilters.countries.clear();
+            activeFilters.clubs.clear();
+            activeFilters.groups.clear();
+            activeFilters.groupTags.clear();
+            activeFilters.mediaTags.clear();
+            activeFilters.questions = {};
+
+            const activePills = document.querySelectorAll('.curva-filter-pill.active');
+            activePills.forEach(p => p.classList.remove('active'));
+
+            const activeCards = document.querySelectorAll('.curva-qa-question-card.active-q');
+            activeCards.forEach(c => c.classList.remove('active-q'));
+
+            const activeAccs = document.querySelectorAll('.curva-qa-accordion.has-active');
+            activeAccs.forEach(a => a.classList.remove('has-active'));
+
+            updateFilterUIBadges();
+            window.curvaHandleSearch();
+        };
+
+        window.curvaOpenFilterPanel = function () {
+            const panel = document.getElementById('curvaInlineFilterPanel');
+            const btn = document.getElementById('curvaFilterTriggerBtn');
+            if (panel) {
+                panel.style.display = 'block';
+                panel.offsetHeight; // force reflow for smooth transition
+                panel.classList.add('open');
+            }
+            if (btn) {
+                btn.classList.add('panel-open');
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        };
+
+        window.curvaCloseFilterPanel = function () {
+            const panel = document.getElementById('curvaInlineFilterPanel');
+            const btn = document.getElementById('curvaFilterTriggerBtn');
+            if (panel) {
+                panel.classList.remove('open');
+                setTimeout(() => {
+                    if (!panel.classList.contains('open')) {
+                        panel.style.display = 'none';
+                    }
+                }, 280);
+            }
+            if (btn) {
+                btn.classList.remove('panel-open');
+                btn.setAttribute('aria-expanded', 'false');
+            }
+        };
+
+        window.curvaToggleFilterPanel = function () {
+            const panel = document.getElementById('curvaInlineFilterPanel');
+            if (panel && panel.classList.contains('open')) {
+                curvaCloseFilterPanel();
+            } else {
+                curvaOpenFilterPanel();
+            }
+        };
+
+        // Aliases for backwards compatibility
+        window.curvaOpenFilterModal = window.curvaOpenFilterPanel;
+        window.curvaCloseFilterModal = window.curvaCloseFilterPanel;
+        window.curvaToggleFilterModal = window.curvaToggleFilterPanel;
+
+        window.curvaSwitchFilterTab = function (tabKey) {
+            const tabBtns = document.querySelectorAll('.curva-filter-tab-btn');
+            tabBtns.forEach(btn => {
+                if (btn.getAttribute('data-tab') === tabKey) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            const tabContents = document.querySelectorAll('.curva-filter-tab-content');
+            tabContents.forEach(content => {
+                if (content.id === 'filterTab-' + tabKey) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        };
+
+        window.curvaToggleAccordion = function (headerEl) {
+            const parent = headerEl.closest('.curva-qa-accordion');
+            if (parent) {
+                parent.classList.toggle('open');
+            }
+        };
+
+        function getFilteredGroups(searchQuery) {
+            const q = (searchQuery || '').toLowerCase().trim();
+
+            return globalGroups.filter(g => {
+                // 1. Text search query
+                if (q) {
+                    const matchText = g.name.toLowerCase().includes(q) ||
+                        g.club.toLowerCase().includes(q) ||
+                        g.country.toLowerCase().includes(q) ||
+                        g.city.toLowerCase().includes(q) ||
+                        g.tags.toLowerCase().includes(q);
+                    if (!matchText) return false;
+                }
+
+                // 2. Country filter
+                if (activeFilters.countries.size > 0) {
+                    if (!activeFilters.countries.has(g.country)) return false;
+                }
+
+                // 3. Club filter
+                if (activeFilters.clubs.size > 0) {
+                    if (!activeFilters.clubs.has(g.club)) return false;
+                }
+
+                // 4. Ultra group filter
+                if (activeFilters.groups.size > 0) {
+                    if (!activeFilters.groups.has(g.id)) return false;
+                }
+
+                // 5. Group tags filter
+                if (activeFilters.groupTags.size > 0) {
+                    const gTags = new Set(parseTags(g.tags).map(t => normalizeTag(t)));
+                    for (const reqTag of activeFilters.groupTags) {
+                        if (!gTags.has(normalizeTag(reqTag))) return false;
+                    }
+                }
+
+                // 6. Question answers filter
+                const qKeys = Object.keys(activeFilters.questions);
+                for (const qNum of qKeys) {
+                    const selectedOpts = activeFilters.questions[qNum];
+                    if (selectedOpts && selectedOpts.size > 0) {
+                        const ans = (globalGroupResponses[g.id] && globalGroupResponses[g.id][qNum]) || '';
+                        let matched = false;
+                        for (const opt of selectedOpts) {
+                            if (ans.toLowerCase() === opt.toLowerCase()) {
+                                matched = true;
+                                break;
+                            }
+                        }
+                        if (!matched) return false;
+                    }
+                }
+
+                return true;
+            });
+        }
+
+        function normalizeTag(str) {
+            return (str || '').toLowerCase().replace(/[\u2013\u2014]/g, '-').trim();
+        }
+
+        function getFilteredMedia(searchQuery, matchingGroups) {
+            const q = (searchQuery || '').toLowerCase().trim();
+            const matchingGroupIds = new Set(matchingGroups.map(g => g.id));
+
+            return globalMedia.filter(m => {
+                // 1. Parent group must be among currently matching groups
+                if (!matchingGroupIds.has(m.groupId)) {
+                    return false;
+                }
+
+                // 2. Text search query
+                if (q) {
+                    const parent = globalGroups.find(g => g.id === m.groupId);
+                    const parentName = parent ? parent.name.toLowerCase() : '';
+                    const matchText = m.title.toLowerCase().includes(q) ||
+                        m.tags.toLowerCase().includes(q) ||
+                        parentName.includes(q);
+                    if (!matchText) return false;
+                }
+
+                // 3. Media tags filter
+                if (activeFilters.mediaTags.size > 0) {
+                    const mTags = new Set(parseTags(m.tags).map(t => normalizeTag(t)));
+                    for (const reqTag of activeFilters.mediaTags) {
+                        if (!mTags.has(normalizeTag(reqTag))) return false;
+                    }
+                }
+
+                return true;
             });
         }
 
@@ -761,29 +1966,16 @@
         window.curvaHandleSearch = function () {
             const q = (document.getElementById('curvaSearchInput').value || '').toLowerCase().trim();
 
-            const filteredGroups = globalGroups.filter(g => {
-                return !q ||
-                    g.name.toLowerCase().includes(q) ||
-                    g.club.toLowerCase().includes(q) ||
-                    g.country.toLowerCase().includes(q) ||
-                    g.city.toLowerCase().includes(q) ||
-                    g.tags.toLowerCase().includes(q);
-            });
-
-            const filteredMedia = globalMedia.filter(m => {
-                const parent = globalGroups.find(g => g.id === m.groupId);
-                const parentName = parent ? parent.name.toLowerCase() : '';
-                return !q ||
-                    m.title.toLowerCase().includes(q) ||
-                    m.tags.toLowerCase().includes(q) ||
-                    parentName.includes(q);
-            });
+            const filteredGroups = getFilteredGroups(q);
+            const filteredMedia = getFilteredMedia(q, filteredGroups);
 
             renderGroups(filteredGroups);
             renderMedia(filteredMedia);
 
             const hasResults = filteredGroups.length > 0 || filteredMedia.length > 0 || isAdmin();
             document.getElementById('curvaNoResults').style.display = hasResults ? 'none' : 'block';
+
+            updateFilterSummaryCounts(filteredGroups.length, filteredMedia.length);
         };
 
         function parseTags(tagString) {
@@ -836,7 +2028,7 @@
             document.getElementById('groups-label').style.display = 'block';
 
             groups.forEach(g => {
-                const loc = g.club ? `${g.club} · ${g.country}` : g.country;
+                const loc = g.club ? `${g.club} &middot; ${g.country}` : g.country;
                 const tagBadges = renderTagBadges(g.tags, 8);
 
                 const defaultFallback = 'https://sites.gatech.edu/curva/files/2026/04/CURVAlogoCroppedWhite.png';
@@ -898,7 +2090,7 @@
                             ${thumb}
                         </div>
                         <div class="media-bottom-section">
-                            <h5 class="group-name-small">${parentName} ${parentLoc ? '· ' + parentLoc : ''}</h5>
+                            <h5 class="group-name-small">${parentName} ${parentLoc ? '&middot; ' + parentLoc : ''}</h5>
                             <div class="curva-tags">${tags}</div>
                         </div>
                     </div>
@@ -978,7 +2170,7 @@
 
                 const fileId = stageRes.fileId;
 
-                updateStep(30, 'Extracting Group Profile & Sections 1–2...');
+                updateStep(30, 'Extracting Group Profile & Sections 1-2...');
                 const c1 = await callBackend({
                     action: 'ingest_chunk_1',
                     passcode: passcode,
