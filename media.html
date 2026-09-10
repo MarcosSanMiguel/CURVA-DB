@@ -89,8 +89,8 @@
                     </div>
 
                     <div class="curva-form-group">
-                        <label>Tags (Comma Separated)</label>
-                        <input type="text" id="editMedTags" class="curva-form-input">
+                        <label>Tags</label>
+                        <div id="mediaTagBankContainer" style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;"></div>
                     </div>
 
                     <div style="display: flex; gap: 8px; margin-top: 20px;">
@@ -468,6 +468,37 @@
         font-weight: 600;
         margin-top: 12px;
     }
+
+    /* Pill Selection Bars */
+    .curva-pill-selector {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+
+    .curva-opt-pill {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 4px 11px;
+        border-radius: 14px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.15s;
+        user-select: none;
+    }
+
+    .curva-opt-pill:hover {
+        background: #e2e8f0;
+    }
+
+    .curva-opt-pill.selected {
+        background: #b3a369;
+        color: #ffffff;
+        border-color: #968652;
+    }
     .curva-external-btn:hover { background: #334155; }
 
     @media (max-width: 860px) {
@@ -507,6 +538,24 @@
 
         let mediaItem = null;
         let parentGroup = null;
+        let selectedMediaTags = new Set();
+
+        const MEDIA_TAG_BANK = {
+            'Content Type': [
+                'Tifo', 'Chant', 'Pyro', 'Banner', 'Match footage',
+                'Protest', 'March', 'Documentary', 'Interview',
+                'Merchandise', 'Charity event', 'Historical archive'
+            ],
+            'Setting': [
+                'Home game', 'Away game', 'Derby', 'Street / March', 'Community event'
+            ],
+            'Subject / Theme': [
+                'Anti-fascist', 'Fascist / Far-right', 'Anti-racist', 'Racist',
+                'Feminism', 'LGBTQ+', 'Palestine', 'Refugees', 'Environment',
+                'Anti-modern-football', 'Fans\' rights', 'Anti-repression',
+                'Violence', 'Charity', 'Volunteering'
+            ]
+        };
 
         function parseGviz(text) {
             const start = text.indexOf('{');
@@ -686,8 +735,58 @@
             document.getElementById('editMedDesc').value = mediaItem.description || '';
             document.getElementById('editMedLink').value = mediaItem.link || '';
             document.getElementById('editMedThumb').value = mediaItem.thumbnailUrl || '';
-            document.getElementById('editMedTags').value = mediaItem.tags || '';
+            selectedMediaTags = new Set(parseTags(mediaItem.tags));
+            initMediaTagBank();
         }
+
+        window.initMediaTagBank = function () {
+            const container = document.getElementById('mediaTagBankContainer');
+            if (!container) return;
+
+            const bankTags = new Set();
+            for (const tags of Object.values(MEDIA_TAG_BANK)) {
+                tags.forEach(t => bankTags.add(t));
+            }
+
+            const customTags = [];
+            selectedMediaTags.forEach(t => {
+                if (!bankTags.has(t)) customTags.push(t);
+            });
+
+            let html = '';
+            for (const [category, tags] of Object.entries(MEDIA_TAG_BANK)) {
+                html += `<div>
+                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">${category}</div>
+                    <div class="curva-pill-selector" style="margin-bottom: 0;">`;
+                tags.forEach(t => {
+                    const isSel = selectedMediaTags.has(t);
+                    html += `<span class="curva-opt-pill ${isSel ? 'selected' : ''}" onclick="toggleMediaTag('${t.replace(/'/g, "\\'")}', this)">${t}</span>`;
+                });
+                html += `</div></div>`;
+            }
+
+            if (customTags.length > 0) {
+                html += `<div>
+                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">Custom / Existing</div>
+                    <div class="curva-pill-selector" style="margin-bottom: 0;">`;
+                customTags.forEach(t => {
+                    html += `<span class="curva-opt-pill selected" onclick="toggleMediaTag('${t.replace(/'/g, "\\'")}', this)">${t}</span>`;
+                });
+                html += `</div></div>`;
+            }
+
+            container.innerHTML = html;
+        };
+
+        window.toggleMediaTag = function (tag, el) {
+            if (selectedMediaTags.has(tag)) {
+                selectedMediaTags.delete(tag);
+                el.classList.remove('selected');
+            } else {
+                selectedMediaTags.add(tag);
+                el.classList.add('selected');
+            }
+        };
 
         window.cancelEditMode = function () {
             populateEditForm();
@@ -732,7 +831,7 @@
             const newDesc = document.getElementById('editMedDesc').value.trim();
             const newLink = document.getElementById('editMedLink').value.trim();
             const newThumb = document.getElementById('editMedThumb').value.trim();
-            const newTags = document.getElementById('editMedTags').value.trim();
+            const newTags = Array.from(selectedMediaTags).join(', ');
 
             const updates = [{
                 media_id: mediaItem.id,

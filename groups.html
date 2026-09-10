@@ -124,6 +124,7 @@
             <!-- SOURCES -->
             <div id="panel-sec-sources" class="curva-panel">
                 <div class="curva-section-heading">Research Sources & Archival References</div>
+                <div class="curva-source-filter-bar" id="sourcesFilterBar"></div>
                 <div id="sources-grid" class="curva-sources-grid"></div>
             </div>
 
@@ -781,6 +782,60 @@
         color: #1e293b;
     }
 
+    /* SOURCES FILTER BAR */
+    .curva-source-filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 22px;
+        padding-bottom: 4px;
+    }
+
+    .curva-filter-pill {
+        background: #f8fafc;
+        color: #475569;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid #e2e8f0;
+        transition: all 0.15s ease;
+        user-select: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: inherit;
+    }
+
+    .curva-filter-pill:hover {
+        background: #f1f5f9;
+        color: #0f172a;
+        border-color: #cbd5e1;
+    }
+
+    .curva-filter-pill.active {
+        background: #002244;
+        color: #ffffff;
+        border-color: #002244;
+        box-shadow: 0 2px 8px rgba(0, 34, 68, 0.18);
+    }
+
+    .curva-filter-count {
+        background: rgba(0, 0, 0, 0.07);
+        color: inherit;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 1px 7px;
+        border-radius: 10px;
+    }
+
+    .curva-filter-pill.active .curva-filter-count {
+        background: #b3a369;
+        color: #002244;
+    }
+
     /* SOURCES GRID */
     .curva-sources-grid {
         display: grid;
@@ -1379,10 +1434,61 @@
         }
 
         // ==========================================
-        // RENDER SOURCES (WITH INLINE EDIT & ADD)
+        // RENDER SOURCES (WITH INLINE EDIT, ADD & FILTER)
         // ==========================================
 
+        let activeSourceFilter = 'all';
+
+        function renderSourceFilterBar() {
+            const bar = document.getElementById('sourcesFilterBar');
+            if (!bar) return;
+
+            const counts = { 'all': sourcesList.length };
+            SOURCE_TYPES.forEach(t => { counts[t] = 0; });
+
+            sourcesList.forEach(s => {
+                const sType = (s.type || '').trim();
+                const matched = SOURCE_TYPES.find(t => t.toLowerCase() === sType.toLowerCase()) || (sType || 'Other');
+                counts[matched] = (counts[matched] || 0) + 1;
+            });
+
+            let html = `
+                <button class="curva-filter-pill ${activeSourceFilter === 'all' ? 'active' : ''}" onclick="setSourceFilter('all')">
+                    All <span class="curva-filter-count">${counts['all']}</span>
+                </button>
+            `;
+
+            SOURCE_TYPES.forEach(t => {
+                const count = counts[t] || 0;
+                if (count > 0 || isAdmin()) {
+                    html += `
+                        <button class="curva-filter-pill ${activeSourceFilter.toLowerCase() === t.toLowerCase() ? 'active' : ''}" onclick="setSourceFilter('${t.replace(/'/g, "\\'")}')">
+                            ${t} <span class="curva-filter-count">${count}</span>
+                        </button>
+                    `;
+                }
+            });
+
+            Object.keys(counts).forEach(k => {
+                if (k !== 'all' && !SOURCE_TYPES.some(st => st.toLowerCase() === k.toLowerCase()) && counts[k] > 0) {
+                    html += `
+                        <button class="curva-filter-pill ${activeSourceFilter.toLowerCase() === k.toLowerCase() ? 'active' : ''}" onclick="setSourceFilter('${k.replace(/'/g, "\\'")}')">
+                            ${k} <span class="curva-filter-count">${counts[k]}</span>
+                        </button>
+                    `;
+                }
+            });
+
+            bar.innerHTML = html;
+        }
+
+        window.setSourceFilter = function (type) {
+            activeSourceFilter = type;
+            renderSources();
+        };
+
         function renderSources() {
+            renderSourceFilterBar();
             const grid = document.getElementById('sources-grid');
             const adminActive = isAdmin();
             let html = '';
@@ -1399,12 +1505,16 @@
                 `;
             }
 
-            if (sourcesList.length === 0 && !adminActive) {
-                grid.innerHTML = '<div style="color:#94a3b8; font-size:14px;">No archival sources cataloged for this group.</div>';
+            const filteredSources = activeSourceFilter === 'all'
+                ? sourcesList
+                : sourcesList.filter(s => (s.type || '').trim().toLowerCase() === activeSourceFilter.toLowerCase());
+
+            if (filteredSources.length === 0 && !adminActive) {
+                grid.innerHTML = `<div style="color:#94a3b8; font-size:14px; grid-column: 1 / -1; padding: 20px 0;">No archival sources found under "${activeSourceFilter}".</div>`;
                 return;
             }
 
-            sourcesList.forEach(s => {
+            filteredSources.forEach(s => {
                 const isDirty = !!pendingSourceEdits[s.id];
                 const currentType = isDirty && pendingSourceEdits[s.id].source_type !== undefined
                     ? pendingSourceEdits[s.id].source_type
