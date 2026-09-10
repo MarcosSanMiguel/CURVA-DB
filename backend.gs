@@ -48,6 +48,9 @@ function doPost(e) {
       case "delete_group": // Delete Ultra Group & Cascading Dependents
         return jsonResponse(deleteGroup(data.groupId));
 
+      case "abort_ingestion": // Rollback staged PDF file & incomplete group
+        return jsonResponse(abortIngestion(data.fileId, data.groupId));
+
       case "update_group_profile": // Update Ultra Group Basic Dimensions & Tags
         return jsonResponse(updateGroupProfile(data.groupId, data.profile));
 
@@ -100,6 +103,28 @@ function cleanupStagedFile(fileId) {
   try {
     DriveApp.getFileById(fileId).setTrashed(true);
   } catch (e) {}
+}
+
+function abortIngestion(fileId, groupId) {
+  var driveCleaned = false;
+  var groupDeleted = false;
+  if (fileId) {
+    try {
+      cleanupStagedFile(fileId);
+      driveCleaned = true;
+    } catch (e) {
+      logError("ROLLBACK", "cleanupStagedFile", e.toString(), fileId);
+    }
+  }
+  if (groupId) {
+    try {
+      deleteGroup(groupId);
+      groupDeleted = true;
+    } catch (e) {
+      logError("ROLLBACK", "deleteGroup", e.toString(), groupId);
+    }
+  }
+  return { status: "success", aborted: true, driveCleaned: driveCleaned, groupDeleted: groupDeleted };
 }
 
 // ==========================================
@@ -519,65 +544,42 @@ function deleteRowById(tabName, idColumn, idValue) {
   throw new Error(`Record with ${idColumn} = ${idValue} not found`);
 }
 
+function deleteRowsMatchingValue(sheet, colName, matchVal) {
+  if (!sheet) return 0;
+  const data = sheet.getDataRange().getValues();
+  if (data.length <= 1) return 0;
+
+  const colIndex = data[0].indexOf(colName);
+  if (colIndex === -1) return 0;
+
+  const filtered = [data[0]]; // preserve header row
+  let deletedCount = 0;
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][colIndex]) === String(matchVal)) {
+      deletedCount++;
+    } else {
+      filtered.push(data[i]);
+    }
+  }
+
+  if (deletedCount > 0) {
+    sheet.clearContents();
+    sheet.getRange(1, 1, filtered.length, filtered[0].length).setValues(filtered);
+  }
+
+  return deletedCount;
+}
+
 function deleteGroup(groupId) {
   if (!groupId) throw new Error("groupId is required for deletion");
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
-  // 1. Delete from Groups sheet
-  const groupsSheet = ss.getSheetByName("Groups");
-  if (groupsSheet) {
-    const gData = groupsSheet.getDataRange().getValues();
-    const gIdCol = gData[0].indexOf("group_id");
-    if (gIdCol !== -1) {
-      for (let r = gData.length - 1; r >= 1; r--) {
-        if (String(gData[r][gIdCol]) === String(groupId)) {
-          groupsSheet.deleteRow(r + 1);
-        }
-      }
-    }
-  }
-
-  // 2. Cascading delete from Media sheet
-  const mediaSheet = ss.getSheetByName("Media");
-  if (mediaSheet) {
-    const mData = mediaSheet.getDataRange().getValues();
-    const mIdCol = mData[0].indexOf("group_id");
-    if (mIdCol !== -1) {
-      for (let r = mData.length - 1; r >= 1; r--) {
-        if (String(mData[r][mIdCol]) === String(groupId)) {
-          mediaSheet.deleteRow(r + 1);
-        }
-      }
-    }
-  }
-
-  // 3. Cascading delete from Responses sheet
-  const respSheet = ss.getSheetByName("Responses");
-  if (respSheet) {
-    const rData = respSheet.getDataRange().getValues();
-    const rIdCol = rData[0].indexOf("group_id");
-    if (rIdCol !== -1) {
-      for (let r = rData.length - 1; r >= 1; r--) {
-        if (String(rData[r][rIdCol]) === String(groupId)) {
-          respSheet.deleteRow(r + 1);
-        }
-      }
-    }
-  }
-
-  // 4. Cascading delete from Sources sheet
-  const srcSheet = ss.getSheetByName("Sources");
-  if (srcSheet) {
-    const sData = srcSheet.getDataRange().getValues();
-    const sIdCol = sData[0].indexOf("group_id");
-    if (sIdCol !== -1) {
-      for (let r = sData.length - 1; r >= 1; r--) {
-        if (String(sData[r][sIdCol]) === String(groupId)) {
-          srcSheet.deleteRow(r + 1);
-        }
-      }
-    }
-  }
+  // Fast batch deletion across Groups, Media, Responses, and Sources
+  deleteRowsMatchingValue(ss.getSheetByName("Groups"), "group_id", groupId);
+  deleteRowsMatchingValue(ss.getSheetByName("Media"), "group_id", groupId);
+  deleteRowsMatchingValue(ss.getSheetByName("Responses"), "group_id", groupId);
+  deleteRowsMatchingValue(ss.getSheetByName("Sources"), "group_id", groupId);
 
   return { status: "success", deletedGroupId: groupId };
 }

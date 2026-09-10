@@ -205,7 +205,7 @@
             </div>
 
             <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
-                <button class="curva-btn-secondary" onclick="closeUploadModal()">Cancel</button>
+                <button id="curvaCancelUploadBtn" class="curva-btn-secondary" onclick="closeUploadModal()">Cancel</button>
                 <button id="curvaStartUploadBtn" class="curva-btn-primary" onclick="startPdfIngestion()" disabled>Start Ingestion</button>
             </div>
         </div>
@@ -2221,7 +2221,16 @@
             resetUploadForm();
         };
 
+        let activeIngestion = null; // { fileId: null, groupId: null, isRunning: false, abortController: null }
+
         window.closeUploadModal = function () {
+            if (activeIngestion && activeIngestion.isRunning) {
+                if (!confirm('PDF ingestion is currently in progress.\n\nAre you sure you want to cancel? All partial database changes and staged files will be cleanly rolled back.')) {
+                    return;
+                }
+                cancelPdfIngestion();
+                return;
+            }
             document.getElementById('curvaUploadModal').style.display = 'none';
             resetUploadForm();
         };
@@ -2229,11 +2238,31 @@
         function resetUploadForm() {
             selectedFileBase64 = null;
             selectedFileName = '';
+            activeIngestion = null;
             document.getElementById('curvaFileInput').value = '';
             document.getElementById('curvaDropZoneText').textContent = 'Click to browse or drop PDF here';
-            document.getElementById('curvaStartUploadBtn').disabled = true;
-            document.getElementById('uploadProgressContainer').style.display = 'none';
-            document.getElementById('curvaProgressBar').style.width = '0%';
+            const startBtn = document.getElementById('curvaStartUploadBtn');
+            if (startBtn) {
+                startBtn.disabled = true;
+                startBtn.textContent = 'Start Ingestion';
+            }
+            const cancelBtn = document.getElementById('curvaCancelUploadBtn');
+            if (cancelBtn) {
+                cancelBtn.disabled = false;
+                cancelBtn.textContent = 'Cancel';
+            }
+            const progressContainer = document.getElementById('uploadProgressContainer');
+            if (progressContainer) progressContainer.style.display = 'none';
+            const progressBar = document.getElementById('curvaProgressBar');
+            if (progressBar) {
+                progressBar.style.width = '0%';
+                progressBar.style.backgroundColor = 'var(--gt-gold, #B3A369)';
+            }
+            const progressStatus = document.getElementById('curvaProgressStatus');
+            if (progressStatus) {
+                progressStatus.textContent = 'Preparing upload...';
+                progressStatus.style.color = '#64748b';
+            }
         }
 
         window.handleFileSelected = function (files) {
@@ -2255,6 +2284,64 @@
             reader.readAsDataURL(file);
         };
 
+        window.cancelPdfIngestion = async function () {
+            if (!activeIngestion || !activeIngestion.isRunning) {
+                document.getElementById('curvaUploadModal').style.display = 'none';
+                resetUploadForm();
+                return;
+            }
+
+            const passcode = sessionStorage.getItem('curva_admin_passcode');
+            const fileId = activeIngestion.fileId;
+            const groupId = activeIngestion.groupId;
+            const abortController = activeIngestion.abortController;
+
+            // Signal abort to active in-flight fetch
+            if (abortController) {
+                try { abortController.abort(); } catch (e) {}
+            }
+            activeIngestion.isRunning = false;
+
+            const progressBar = document.getElementById('curvaProgressBar');
+            const progressStatus = document.getElementById('curvaProgressStatus');
+            const startBtn = document.getElementById('curvaStartUploadBtn');
+            const cancelBtn = document.getElementById('curvaCancelUploadBtn');
+
+            if (progressBar) {
+                progressBar.style.width = '100%';
+                progressBar.style.backgroundColor = '#e11d48';
+            }
+            if (progressStatus) {
+                progressStatus.innerHTML = '<span style="color:#e11d48; font-weight:600;">Cancelling and rolling back changes...</span>';
+            }
+            if (startBtn) startBtn.disabled = true;
+            if (cancelBtn) cancelBtn.disabled = true;
+
+            // Rollback staged file in Google Drive & delete half-created ultra group rows
+            if (fileId || groupId) {
+                try {
+                    await fetch(APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            action: 'abort_ingestion',
+                            passcode: passcode,
+                            fileId: fileId,
+                            groupId: groupId
+                        })
+                    });
+                } catch (e) {
+                    console.warn('Rollback request error:', e);
+                }
+            }
+
+            alert('Ingestion was cancelled. Any partial database records and temporary files have been cleanly deleted.');
+            activeIngestion = null;
+            document.getElementById('curvaUploadModal').style.display = 'none';
+            resetUploadForm();
+            loadCurvaDatabase();
+        };
+
         window.startPdfIngestion = async function () {
             if (!selectedFileBase64) return;
 
@@ -2265,12 +2352,26 @@
             }
 
             const btn = document.getElementById('curvaStartUploadBtn');
+            const cancelBtn = document.getElementById('curvaCancelUploadBtn');
             const progressContainer = document.getElementById('uploadProgressContainer');
             const progressBar = document.getElementById('curvaProgressBar');
             const progressStatus = document.getElementById('curvaProgressStatus');
 
             btn.disabled = true;
+            if (cancelBtn) {
+                cancelBtn.textContent = 'Cancel & Rollback';
+                cancelBtn.disabled = false;
+            }
             progressContainer.style.display = 'block';
+            progressBar.style.backgroundColor = 'var(--gt-gold, #B3A369)';
+
+            const abortController = new AbortController();
+            activeIngestion = {
+                fileId: null,
+                groupId: null,
+                isRunning: true,
+                abortController: abortController
+            };
 
             function updateStep(percent, message) {
                 progressBar.style.width = percent + '%';
@@ -2284,17 +2385,20 @@
                     passcode: passcode,
                     base64Data: selectedFileBase64,
                     fileName: selectedFileName
-                });
+                }, abortController.signal);
 
-                const fileId = stageRes.fileId;
+                if (!activeIngestion || !activeIngestion.isRunning) return;
+                activeIngestion.fileId = stageRes.fileId;
 
                 updateStep(30, 'Extracting Group Profile & Sections 1-2...');
                 const c1 = await callBackend({
                     action: 'ingest_chunk_1',
                     passcode: passcode,
-                    fileId: fileId
-                });
+                    fileId: activeIngestion.fileId
+                }, abortController.signal);
 
+                if (!activeIngestion || !activeIngestion.isRunning) return;
+                activeIngestion.groupId = c1.groupId;
                 const groupId = c1.groupId;
                 const ultraGroup = c1.ultraGroup;
 
@@ -2302,49 +2406,134 @@
                 await callBackend({
                     action: 'ingest_chunk_2',
                     passcode: passcode,
-                    fileId: fileId,
+                    fileId: activeIngestion.fileId,
                     groupId: groupId,
                     ultraGroup: ultraGroup
-                });
+                }, abortController.signal);
+
+                if (!activeIngestion || !activeIngestion.isRunning) return;
 
                 updateStep(75, 'Extracting Sections 5 & 6 (Organization & Representation)...');
                 await callBackend({
                     action: 'ingest_chunk_3',
                     passcode: passcode,
-                    fileId: fileId,
+                    fileId: activeIngestion.fileId,
                     groupId: groupId,
                     ultraGroup: ultraGroup
-                });
+                }, abortController.signal);
+
+                if (!activeIngestion || !activeIngestion.isRunning) return;
 
                 updateStep(90, 'Extracting Sources Appendix & final cleanup...');
                 await callBackend({
                     action: 'ingest_chunk_4',
                     passcode: passcode,
-                    fileId: fileId,
+                    fileId: activeIngestion.fileId,
                     groupId: groupId,
                     ultraGroup: ultraGroup
-                });
+                }, abortController.signal);
+
+                if (!activeIngestion || !activeIngestion.isRunning) return;
+
+                activeIngestion.isRunning = false;
+                activeIngestion = null;
 
                 updateStep(100, 'Ingestion complete!');
                 setTimeout(() => {
-                    closeUploadModal();
+                    document.getElementById('curvaUploadModal').style.display = 'none';
+                    resetUploadForm();
                     loadCurvaDatabase();
                 }, 1000);
 
             } catch (err) {
-                alert('Ingestion failed: ' + err.message);
+                // If the operation was aborted by user cancellation, cancelPdfIngestion handles rollback
+                if (err.name === 'AbortError' || !activeIngestion || !activeIngestion.isRunning) {
+                    return;
+                }
+
+                const failedFileId = activeIngestion.fileId;
+                const failedGroupId = activeIngestion.groupId;
+                activeIngestion.isRunning = false;
+
+                progressBar.style.backgroundColor = '#e11d48';
+                progressStatus.innerHTML = '<span style="color:#e11d48; font-weight:600;">Ingestion encountered an error. Rolling back changes...</span>';
+                if (cancelBtn) cancelBtn.disabled = true;
+
+                // Automatic rollback of partial state
+                if (failedFileId || failedGroupId) {
+                    try {
+                        await fetch(APPS_SCRIPT_URL, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                            body: JSON.stringify({
+                                action: 'abort_ingestion',
+                                passcode: passcode,
+                                fileId: failedFileId,
+                                groupId: failedGroupId
+                            })
+                        });
+                    } catch (cleanupErr) {
+                        console.warn('Auto-rollback cleanup error:', cleanupErr);
+                    }
+                }
+
+                alert('Ingestion failed: ' + err.message + '\n\nAll partial changes and temporary files were automatically rolled back.');
+                activeIngestion = null;
                 btn.disabled = false;
-                progressStatus.textContent = 'Error during ingestion: ' + err.message;
+                if (cancelBtn) {
+                    cancelBtn.textContent = 'Cancel';
+                    cancelBtn.disabled = false;
+                }
+                progressStatus.textContent = 'Error during ingestion: ' + err.message + ' (Rolled back)';
             }
         };
 
-        async function callBackend(payload) {
-            const res = await fetch(APPS_SCRIPT_URL, {
+        // Window beforeunload safeguard: warns user & triggers background beacon rollback if closed mid-ingestion
+        window.addEventListener('beforeunload', function (e) {
+            if (activeIngestion && activeIngestion.isRunning) {
+                const passcode = sessionStorage.getItem('curva_admin_passcode');
+                const fileId = activeIngestion.fileId;
+                const groupId = activeIngestion.groupId;
+
+                if (fileId || groupId) {
+                    const rollbackPayload = JSON.stringify({
+                        action: 'abort_ingestion',
+                        passcode: passcode,
+                        fileId: fileId,
+                        groupId: groupId
+                    });
+                    try {
+                        if (navigator.sendBeacon) {
+                            const blob = new Blob([rollbackPayload], { type: 'text/plain;charset=utf-8' });
+                            navigator.sendBeacon(APPS_SCRIPT_URL, blob);
+                        } else {
+                            fetch(APPS_SCRIPT_URL, {
+                                method: 'POST',
+                                keepalive: true,
+                                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                                body: rollbackPayload
+                            });
+                        }
+                    } catch (err) {}
+                }
+
+                e.preventDefault();
+                e.returnValue = 'Ingestion is in progress. Leaving this page will cancel ingestion and roll back partial data.';
+                return e.returnValue;
+            }
+        });
+
+        async function callBackend(payload, signal) {
+            const fetchOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payload)
-            });
+            };
+            if (signal) {
+                fetchOptions.signal = signal;
+            }
 
+            const res = await fetch(APPS_SCRIPT_URL, fetchOptions);
             const data = await res.json();
             if (data.status === 'error') {
                 throw new Error(data.message || 'Unknown server error');
