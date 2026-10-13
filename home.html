@@ -4,11 +4,20 @@
     <div class="curva-hero-shell">
         <!-- TOP BAR: BRANDING + ADMIN ACCESS -->
         <div class="curva-top-bar">
-            <div class="curva-hero-eyebrow">Georgia Tech &middot; Research Project</div>
+            <div class="curva-hero-eyebrow">Georgia Tech · Research Project</div>
             <div class="curva-admin-group">
+                <a href="https://sites.gatech.edu/curva/about/" class="curva-about-nav-btn" title="About the CURVA Project">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                    <span>About CURVA</span>
+                </a>
                 <div class="curva-admin-badge" id="curvaAdminStatus" style="display: none;">Admin Mode</div>
                 <button id="curvaAdminToggleBtn" class="curva-admin-btn" onclick="curvaToggleAdmin()">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                     </svg>
@@ -19,31 +28,39 @@
 
         <!-- HERO CORE -->
         <div class="curva-hero">
-            <img src="https://sites.gatech.edu/curva/files/2026/04/CURVAlogoCroppedWhite.png" alt="CURVA Database" class="curva-hero-logo">
-            <p class="curva-hero-sub">An archive of ultra groups around the world</p>
+            <img src="https://sites.gatech.edu/curva/files/2026/04/CURVAlogoCroppedWhite.png" alt="CURVA Database"
+                class="curva-hero-logo">
+            <p class="curva-hero-sub">An archive of ultra groups around the world · <a href="https://sites.gatech.edu/curva/about/" class="curva-hero-about-link">Learn more &rarr;</a></p>
             <div class="curva-search-wrapper">
-                <svg class="curva-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="curva-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <input type="text" id="curvaSearchInput" class="curva-search" placeholder="Search by team, country, theme, group name..." onkeyup="curvaHandleSearch()">
+                <input type="text" id="curvaSearchInput" class="curva-search"
+                    placeholder="Search by team, country, theme, group name..." onkeyup="curvaHandleSearch()">
             </div>
-            
+
             <!-- FILTER TRIGGER ROW -->
             <div class="curva-filter-trigger-row">
-                <button type="button" class="curva-filter-trigger-btn" id="curvaFilterTriggerBtn" onclick="curvaToggleFilterPanel()" aria-expanded="false" aria-label="Toggle Filter Archive" title="Filter Archive">
+                <button type="button" class="curva-filter-trigger-btn" id="curvaFilterTriggerBtn"
+                    onclick="curvaToggleFilterPanel()" aria-expanded="false" aria-label="Toggle Filter Archive"
+                    title="Filter Archive">
                     <span class="curva-filter-icon-cone">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
                         </svg>
                     </span>
                     <span id="curvaFilterBtnLabel">Filter Archive</span>
                     <span class="curva-filter-active-pill" id="curvaFilterActiveCount" style="display: none;">0</span>
-                    <svg class="curva-filter-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="curva-filter-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
                 </button>
-                <button type="button" class="curva-filter-clear-quick" id="curvaFilterClearQuick" onclick="curvaResetAllFilters()" style="display: none;" title="Reset all active filters">
+                <button type="button" class="curva-filter-clear-quick" id="curvaFilterClearQuick"
+                    onclick="curvaResetAllFilters()" style="display: none;" title="Reset all active filters">
                     Clear filters
                 </button>
             </div>
@@ -53,18 +70,38 @@
                 <div id="curvaInlineFilterPanel" class="curva-inline-filter-panel">
                     <!-- Tab Navigation Bar -->
                     <div class="curva-filter-tabs-nav">
-                        <button type="button" class="curva-filter-tab-btn active" data-tab="basic" onclick="curvaSwitchFilterTab('basic')">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+                        <button type="button" class="curva-filter-tab-btn active" data-tab="basic"
+                            onclick="curvaSwitchFilterTab('basic')">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path
+                                    d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                                </path>
+                            </svg>
                             <span>Basic Dimensions</span>
                             <span class="curva-tab-count-badge" id="tabCount-basic" style="display:none;">0</span>
                         </button>
-                        <button type="button" class="curva-filter-tab-btn" data-tab="tags" onclick="curvaSwitchFilterTab('tags')">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><circle cx="7" cy="7" r="0.9" fill="currentColor" stroke="none"></circle></svg>
+                        <button type="button" class="curva-filter-tab-btn" data-tab="tags"
+                            onclick="curvaSwitchFilterTab('tags')">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z">
+                                </path>
+                                <circle cx="7" cy="7" r="0.9" fill="currentColor" stroke="none"></circle>
+                            </svg>
                             <span>Tags &amp; Attributes</span>
                             <span class="curva-tab-count-badge" id="tabCount-tags" style="display:none;">0</span>
                         </button>
-                        <button type="button" class="curva-filter-tab-btn" data-tab="questions" onclick="curvaSwitchFilterTab('questions')">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><circle cx="12" cy="17" r="0.9" fill="currentColor" stroke="none"></circle></svg>
+                        <button type="button" class="curva-filter-tab-btn" data-tab="questions"
+                            onclick="curvaSwitchFilterTab('questions')">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <circle cx="12" cy="17" r="0.9" fill="currentColor" stroke="none"></circle>
+                            </svg>
                             <span>Research Questions</span>
                             <span class="curva-tab-count-badge" id="tabCount-questions" style="display:none;">0</span>
                         </button>
@@ -98,12 +135,14 @@
 
                         <!-- TAB 2: TAGS & ATTRIBUTES -->
                         <div id="filterTab-tags" class="curva-filter-tab-content">
-                            <div style="font-size: 13px; font-weight: 700; color: #b3a369; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;">
+                            <div
+                                style="font-size: 13px; font-weight: 700; color: #b3a369; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px;">
                                 Ultra Group Controlled Vocabulary
                             </div>
                             <div id="filterGroupTagsCategories"></div>
 
-                            <div style="font-size: 13px; font-weight: 700; color: #b3a369; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 10px 0;">
+                            <div
+                                style="font-size: 13px; font-weight: 700; color: #b3a369; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 10px 0;">
                                 Media Tag Vocabulary
                             </div>
                             <div id="filterMediaTagsCategories"></div>
@@ -112,7 +151,8 @@
                         <!-- TAB 3: RESEARCH QUESTIONS -->
                         <div id="filterTab-questions" class="curva-filter-tab-content">
                             <div style="margin-bottom: 12px; font-size: 12.5px; color: #94a3b8;">
-                                Filter groups by binary <strong style="color:#e2e8f0;">[Y/N]</strong> and multiple-choice <strong style="color:#e2e8f0;">[MULTI]</strong> findings:
+                                Filter groups by binary <strong style="color:#e2e8f0;">[Y/N]</strong> and
+                                multiple-choice <strong style="color:#e2e8f0;">[MULTI]</strong> findings:
                             </div>
                             <div id="filterQuestionsContainer"></div>
                         </div>
@@ -124,8 +164,10 @@
                             <span id="curvaFilterLiveSummary">Showing all</span>
                         </div>
                         <div class="curva-filter-footer-actions">
-                            <button type="button" class="curva-filter-btn-secondary" onclick="curvaResetAllFilters()">Clear All</button>
-                            <button type="button" class="curva-filter-btn-primary" onclick="curvaCloseFilterPanel()">Done</button>
+                            <button type="button" class="curva-filter-btn-secondary"
+                                onclick="curvaResetAllFilters()">Clear All</button>
+                            <button type="button" class="curva-filter-btn-primary"
+                                onclick="curvaCloseFilterPanel()">Done</button>
                         </div>
                     </div>
                 </div>
@@ -151,6 +193,39 @@
         </div>
     </div>
 
+    <!-- MAP TOGGLE BUTTON -->
+    <div class="curva-map-toggle-row">
+        <button type="button" class="curva-map-toggle-btn" id="curvaMapToggleBtn" onclick="curvaToggleMap()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4z"></path>
+                <line x1="8" y1="2" x2="8" y2="18"></line>
+                <line x1="16" y1="6" x2="16" y2="22"></line>
+            </svg>
+            <span id="curvaMapToggleLabel">Show map</span>
+            <svg class="curva-map-toggle-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <!-- WORLD MAP (collapsible) -->
+    <div id="curvaMapCollapseWrapper" class="curva-map-collapse-wrapper">
+        <div class="curva-map-section">
+            <div class="curva-map-header">
+                <span class="curva-map-title">Browse by country</span>
+                <span class="curva-map-hint" id="curvaMapHint">Click a country to filter</span>
+            </div>
+            <div class="curva-map-wrapper">
+                <img class="curva-map-bg"
+                    src="https://upload.wikimedia.org/wikipedia/commons/8/83/Equirectangular_projection_SW.jpg"
+                    alt="World map" id="curvaMapBg">
+                <div class="curva-map-pins" id="curvaMapPins"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- LOADING -->
     <div id="loading-state" style="padding: 40px; text-align: center; color: #64748b; font-size: 15px;">
         Connecting to the CURVA database...
@@ -167,7 +242,8 @@
         <div class="curva-section-label" id="media-label" style="margin-top: 20px;">Media</div>
         <div id="curvaMediaGrid" class="curva-grid"></div>
 
-        <div id="curvaNoResults" style="display:none; padding: 40px; text-align: center; color: #64748b; font-size: 15px;">
+        <div id="curvaNoResults"
+            style="display:none; padding: 40px; text-align: center; color: #64748b; font-size: 15px;">
             No results match your search query.
         </div>
     </div>
@@ -177,36 +253,43 @@
         <div class="curva-modal-box">
             <div class="curva-modal-header">
                 <h3>Ingest Deep Research PDF</h3>
-                <button class="curva-modal-close" onclick="closeUploadModal()">&times;</button>
+                <button class="curva-modal-close" onclick="closeUploadModal()">×</button>
             </div>
             <p class="curva-modal-desc">
-                Select a Gemini Deep Research PDF report. The system will automatically stage the file and trigger the 4-stage extraction pipeline into Google Sheets.
+                Select a Gemini Deep Research PDF report. The system will automatically stage the file and trigger the
+                4-stage extraction pipeline into Google Sheets.
             </p>
-            
+
             <div class="curva-drop-zone" id="curvaDropZone" onclick="document.getElementById('curvaFileInput').click()">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                     <polyline points="17 8 12 3 7 8"></polyline>
                     <line x1="12" y1="3" x2="12" y2="15"></line>
                 </svg>
-                <div id="curvaDropZoneText" style="margin-top: 10px; font-size: 14px; color: #475569; font-weight: 500;">
+                <div id="curvaDropZoneText"
+                    style="margin-top: 10px; font-size: 14px; color: #475569; font-weight: 500;">
                     Click to browse or drop PDF here
                 </div>
-                <input type="file" id="curvaFileInput" accept="application/pdf" style="display:none;" onchange="handleFileSelected(this.files)">
+                <input type="file" id="curvaFileInput" accept="application/pdf" style="display:none;"
+                    onchange="handleFileSelected(this.files)">
             </div>
 
             <div id="uploadProgressContainer" style="display: none; margin-top: 20px;">
                 <div class="curva-progress-bar-bg">
                     <div id="curvaProgressBar" class="curva-progress-bar-fill"></div>
                 </div>
-                <div id="curvaProgressStatus" style="font-size: 12px; color: #64748b; margin-top: 8px; text-align: center;">
+                <div id="curvaProgressStatus"
+                    style="font-size: 12px; color: #64748b; margin-top: 8px; text-align: center;">
                     Preparing upload...
                 </div>
             </div>
 
             <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px;">
-                <button id="curvaCancelUploadBtn" class="curva-btn-secondary" onclick="closeUploadModal()">Cancel</button>
-                <button id="curvaStartUploadBtn" class="curva-btn-primary" onclick="startPdfIngestion()" disabled>Start Ingestion</button>
+                <button id="curvaCancelUploadBtn" class="curva-btn-secondary"
+                    onclick="closeUploadModal()">Cancel</button>
+                <button id="curvaStartUploadBtn" class="curva-btn-primary" onclick="startPdfIngestion()"
+                    disabled="">Start Ingestion</button>
             </div>
         </div>
     </div>
@@ -240,6 +323,7 @@
     #navbar-main-btn-search {
         display: none !important;
     }
+
     #navbar-main {
         display: none !important;
     }
@@ -247,7 +331,7 @@
     /* --- HERO SHELL: UNIFIED GEORGIA TECH COMMAND CENTER --- */
     .curva-hero-shell {
         background: radial-gradient(circle at 50% 40%, rgba(179, 163, 105, 0.12) 0%, transparent 65%),
-                    linear-gradient(180deg, #002244 0%, #003057 60%, #05264c 100%);
+            linear-gradient(180deg, #002244 0%, #003057 60%, #05264c 100%);
         border: 1px solid rgba(179, 163, 105, 0.32);
         border-top: none;
         border-radius: 0 0 24px 24px;
@@ -319,6 +403,43 @@
         color: #ffffff;
         border-color: #b3a369;
         transform: translateY(-1px);
+    }
+
+    .curva-about-nav-btn {
+        background: rgba(179, 163, 105, 0.16);
+        border: 1px solid rgba(179, 163, 105, 0.45);
+        color: #f8fafc;
+        padding: 5px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        text-decoration: none;
+        transition: all 0.2s ease;
+    }
+
+    .curva-about-nav-btn:hover {
+        background: #b3a369;
+        color: #002244;
+        border-color: #b3a369;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(179, 163, 105, 0.3);
+    }
+
+    .curva-hero-about-link {
+        color: #b3a369;
+        text-decoration: none;
+        font-weight: 600;
+        margin-left: 4px;
+        transition: color 0.15s ease, text-decoration 0.15s ease;
+    }
+
+    .curva-hero-about-link:hover {
+        color: #ffffff;
+        text-decoration: underline;
     }
 
     /* --- HERO CORE --- */
@@ -761,7 +882,7 @@
     /* ==========================================================================
        CURVA COMPREHENSIVE FILTER SYSTEM (GT PALETTE)
        ========================================================================== */
-    
+
     /* Filter Trigger Row */
     .curva-filter-trigger-row {
         display: flex;
@@ -987,8 +1108,15 @@
     }
 
     @keyframes curvaTabFadeIn {
-        from { opacity: 0; transform: translateY(4px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(4px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .curva-filter-tab-content {
@@ -1248,6 +1376,253 @@
         transform: translateY(-1px);
         box-shadow: 0 6px 16px rgba(179, 163, 105, 0.45);
     }
+
+    /* ==========================================================================
+       MAP TOGGLE BUTTON
+       ========================================================================== */
+    .curva-map-toggle-row {
+        display: flex;
+        justify-content: center;
+        margin: 0 24px 16px;
+    }
+
+    .curva-map-toggle-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #ffffff;
+        color: #1e293b;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 30px;
+        padding: 9px 18px;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        transition: all 0.2s ease;
+    }
+
+    .curva-map-toggle-btn:hover {
+        border-color: #b3a369;
+        background: #fefce8;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    }
+
+    .curva-map-toggle-btn.map-open {
+        background: #002244;
+        border-color: #002244;
+        color: #ffffff;
+    }
+
+    .curva-map-toggle-btn.map-open:hover {
+        background: #003057;
+    }
+
+    .curva-map-toggle-chevron {
+        transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        margin-left: 2px;
+    }
+
+    .curva-map-toggle-btn.map-open .curva-map-toggle-chevron {
+        transform: rotate(180deg);
+    }
+
+    /* --- COLLAPSIBLE MAP WRAPPER --- */
+    .curva-map-collapse-wrapper {
+        display: grid;
+        grid-template-rows: 0fr;
+        overflow: hidden;
+        transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        visibility: hidden;
+    }
+
+    .curva-map-collapse-wrapper.open {
+        grid-template-rows: 1fr;
+        visibility: visible;
+        margin-bottom: 8px;
+    }
+
+    .curva-map-collapse-wrapper>.curva-map-section {
+        min-height: 0;
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .curva-map-collapse-wrapper.open>.curva-map-section {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* ==========================================================================
+       WORLD MAP SECTION
+       ========================================================================== */
+    .curva-map-section {
+        margin: 0 24px;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        overflow: hidden;
+        background: #f8fafc;
+    }
+
+    .curva-map-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 20px;
+        background: #ffffff;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .curva-map-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: #1e293b;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+    }
+
+    .curva-map-hint {
+        font-size: 12px;
+        color: #94a3b8;
+        font-weight: 500;
+    }
+
+    .curva-map-wrapper {
+        position: relative;
+        width: 100%;
+        /* Standard equirectangular aspect ratio is 2:1 */
+        aspect-ratio: 2 / 1;
+        background: #dbeafe;
+        overflow: hidden;
+    }
+
+    .curva-map-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        user-select: none;
+        pointer-events: none;
+    }
+
+    .curva-map-pins {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .curva-map-pin {
+        position: absolute;
+        transform: translate(-50%, -100%);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        z-index: 2;
+        transition: transform 0.15s ease, z-index 0s;
+    }
+
+    .curva-map-pin:hover,
+    .curva-map-pin.active {
+        z-index: 10;
+        transform: translate(-50%, -100%) scale(1.15);
+    }
+
+    .curva-map-pin-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 50% 50% 50% 0;
+        background: #003057;
+        border: 2px solid #ffffff;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+        transform: rotate(-45deg);
+        transition: background 0.15s ease;
+    }
+
+    .curva-map-pin:hover .curva-map-pin-dot {
+        background: #b3a369;
+    }
+
+    .curva-map-pin.active .curva-map-pin-dot {
+        background: #b3a369;
+        box-shadow: 0 0 0 4px rgba(179, 163, 105, 0.35), 0 2px 6px rgba(0, 0, 0, 0.35);
+    }
+
+    .curva-map-pin-count {
+        position: absolute;
+        top: -9px;
+        right: -9px;
+        background: #ef4444;
+        color: #fff;
+        font-size: 9.5px;
+        font-weight: 800;
+        min-width: 15px;
+        height: 15px;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 3px;
+        border: 1.5px solid #fff;
+    }
+
+    .curva-map-pin-label {
+        position: absolute;
+        top: 100%;
+        margin-top: 4px;
+        background: #0f172a;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 4px 8px;
+        border-radius: 6px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.15s ease;
+    }
+
+    .curva-map-pin:hover .curva-map-pin-label {
+        opacity: 1;
+    }
+
+    @media (max-width: 640px) {
+        .curva-top-bar {
+            padding: 12px 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .curva-admin-group {
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .curva-about-nav-btn, .curva-admin-btn {
+            padding: 4px 11px;
+            font-size: 11.5px;
+        }
+
+        .curva-map-toggle-row {
+            margin: 0 12px 12px;
+        }
+
+        .curva-map-section {
+            margin: 0 12px;
+        }
+
+        .curva-map-pin-dot {
+            width: 12px;
+            height: 12px;
+        }
+    }
 </style>
 
 <script>
@@ -1267,6 +1642,30 @@
         let globalGroupResponses = {}; // map: groupId -> { [qNum]: token }
         let selectedFileBase64 = null;
         let selectedFileName = '';
+
+        // Country name -> [lat, lng] centroid lookup.
+        // Add/adjust entries to match whatever country strings appear in your Groups sheet.
+        const COUNTRY_COORDS = {
+            "Algeria": [28.0, 1.7],
+            "Brazil": [-14.2, -51.9],
+            "Chile": [-35.7, -71.5],
+            "Colombia": [4.6, -74.1],
+            "Costa Rica": [9.7, -83.8],
+            "Ecuador": [-1.8, -78.2],
+            "Egypt": [26.8, 30.8],
+            "Germany": [51.2, 10.5],
+            "Mexico": [23.6, -102.5],
+            "Morocco": [31.8, -7.1],
+            "Peru": [-9.2, -75.0],
+            "Poland": [51.9, 19.1],
+            "Scotland": [56.5, -4.2],
+            "Spain": [40.0, -3.7],
+            "Tunisia": [33.9, 9.5],
+            "Turkey": [38.9, 35.2],
+            "Uruguay": [-32.5, -55.8],
+            "Venezuela": [6.4, -66.6]
+            // Add more here as new countries show up in your Groups sheet
+        };
 
         // CONTROLLED VOCABULARIES (from CURVA Specification)
         const GROUP_TAG_VOCABULARY = {
@@ -1482,6 +1881,9 @@
                 // Initialize the filter panel with dynamic options from the database
                 initCurvaFilterControls();
 
+                // Render the world map pins now that globalGroups is populated
+                curvaRenderMap();
+
                 window.curvaHandleSearch();
             }).catch(err => {
                 document.getElementById('loading-state').innerHTML = `<p style="color:#ef4444;">Error connecting to database: ${err.message}</p>`;
@@ -1547,9 +1949,9 @@
                             <div class="curva-filter-block-title">${cat}</div>
                             <div class="curva-filter-pills-row">
                                 ${tags.map(tag => {
-                                    const isAct = activeFilters.groupTags.has(tag) ? 'active' : '';
-                                    return `<button type="button" class="curva-filter-pill ${isAct}" data-filter-type="groupTag" data-filter-val="${tag}" onclick="curvaToggleFilter('groupTag', '${tag}')"><span>${tag}</span></button>`;
-                                }).join('')}
+                        const isAct = activeFilters.groupTags.has(tag) ? 'active' : '';
+                        return `<button type="button" class="curva-filter-pill ${isAct}" data-filter-type="groupTag" data-filter-val="${tag}" onclick="curvaToggleFilter('groupTag', '${tag}')"><span>${tag}</span></button>`;
+                    }).join('')}
                             </div>
                         </div>
                     `;
@@ -1568,9 +1970,9 @@
                             <div class="curva-filter-block-title">${cat}</div>
                             <div class="curva-filter-pills-row">
                                 ${tags.map(tag => {
-                                    const isAct = activeFilters.mediaTags.has(tag) ? 'active' : '';
-                                    return `<button type="button" class="curva-filter-pill ${isAct}" data-filter-type="mediaTag" data-filter-val="${tag}" onclick="curvaToggleFilter('mediaTag', '${tag}')"><span>${tag}</span></button>`;
-                                }).join('')}
+                        const isAct = activeFilters.mediaTags.has(tag) ? 'active' : '';
+                        return `<button type="button" class="curva-filter-pill ${isAct}" data-filter-type="mediaTag" data-filter-val="${tag}" onclick="curvaToggleFilter('mediaTag', '${tag}')"><span>${tag}</span></button>`;
+                    }).join('')}
                             </div>
                         </div>
                     `;
@@ -1598,7 +2000,7 @@
                             </div>
                             <div class="curva-qa-accordion-body">
                                 ${sec.questions.map(q => {
-                                    return `
+                        return `
                                         <div class="curva-qa-question-card" data-qnum="${q.qNum}">
                                             <div class="curva-qa-q-header">
                                                 <span class="curva-qa-qnum">${q.qNum}</span>
@@ -1606,13 +2008,13 @@
                                             </div>
                                             <div class="curva-filter-pills-row">
                                                 ${q.options.map(opt => {
-                                                    const isAct = (activeFilters.questions[q.qNum] && activeFilters.questions[q.qNum].has(opt)) ? 'active' : '';
-                                                    return `<button type="button" class="curva-filter-pill ${isAct}" data-filter-type="question" data-qnum="${q.qNum}" data-filter-val="${opt}" onclick="curvaToggleFilter('question', '${opt}', '${q.qNum}')"><span>${opt}</span></button>`;
-                                                }).join('')}
+                            const isAct = (activeFilters.questions[q.qNum] && activeFilters.questions[q.qNum].has(opt)) ? 'active' : '';
+                            return `<button type="button" class="curva-filter-pill ${isAct}" data-filter-type="question" data-qnum="${q.qNum}" data-filter-val="${opt}" onclick="curvaToggleFilter('question', '${opt}', '${q.qNum}')"><span>${opt}</span></button>`;
+                        }).join('')}
                                             </div>
                                         </div>
                                     `;
-                                }).join('')}
+                    }).join('')}
                             </div>
                         </div>
                     `;
@@ -1620,6 +2022,83 @@
                 qEl.innerHTML = qHtml;
             }
         }
+
+        // ==========================================================================
+        // MAP TOGGLE
+        // ==========================================================================
+        window.curvaToggleMap = function () {
+            const wrapper = document.getElementById('curvaMapCollapseWrapper');
+            const btn = document.getElementById('curvaMapToggleBtn');
+            const label = document.getElementById('curvaMapToggleLabel');
+            if (!wrapper) return;
+
+            const isOpen = wrapper.classList.toggle('open');
+
+            if (btn) btn.classList.toggle('map-open', isOpen);
+            if (label) label.textContent = isOpen ? 'Hide map' : 'Show map';
+
+            // Render pins the first time the map is opened (harmless to re-render on
+            // every open too, since curvaRenderMap() is cheap and idempotent).
+            if (isOpen) {
+                curvaRenderMap();
+            }
+        };
+
+        // ==========================================================================
+        // WORLD MAP RENDERING
+        // ==========================================================================
+        function curvaRenderMap() {
+            const container = document.getElementById('curvaMapPins');
+            if (!container) return;
+
+            // Count groups per country from the full dataset (map always shows totals,
+            // independent of the current text search — adjust to `getFilteredGroups('')`
+            // output if you'd rather have it reflect other active filters).
+            const countsByCountry = {};
+            globalGroups.forEach(g => {
+                if (!g.country) return;
+                countsByCountry[g.country] = (countsByCountry[g.country] || 0) + 1;
+            });
+
+            let html = '';
+            Object.keys(countsByCountry).forEach(country => {
+                const coords = COUNTRY_COORDS[country];
+                if (!coords) return; // skip countries we have no centroid for
+
+                const [lat, lng] = coords;
+                const x = (lng + 180) / 360 * 100;
+                const y = (90 - lat) / 180 * 100;
+                const count = countsByCountry[country];
+                const isActive = activeFilters.countries.has(country) ? 'active' : '';
+
+                html += `
+                    <div class="curva-map-pin ${isActive}" 
+                         style="left:${x}%; top:${y}%;" 
+                         data-country="${escapeHtml(country)}"
+                         onclick="curvaMapPinClick('${country.replace(/'/g, "\\'")}')">
+                        <div class="curva-map-pin-dot"></div>
+                        ${count > 1 ? `<div class="curva-map-pin-count">${count}</div>` : ''}
+                        <div class="curva-map-pin-label">${escapeHtml(country)} (${count})</div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        window.curvaMapPinClick = function (country) {
+            // Reuses the existing filter toggle — pin click behaves exactly like
+            // clicking the country pill in the filter panel.
+            curvaToggleFilter('country', country);
+            curvaRenderMap(); // refresh active state on the pin itself
+
+            const hint = document.getElementById('curvaMapHint');
+            if (hint) {
+                hint.textContent = activeFilters.countries.size > 0
+                    ? `Filtering: ${[...activeFilters.countries].join(', ')}`
+                    : 'Click a country to filter';
+            }
+        };
 
         // Toggle filter selection
         window.curvaToggleFilter = function (filterType, value, qNum = null) {
@@ -1795,6 +2274,12 @@
             activeAccs.forEach(a => a.classList.remove('has-active'));
 
             updateFilterUIBadges();
+
+            // Clear the active state on map pins too, since activeFilters.countries was just cleared
+            curvaRenderMap();
+            const hint = document.getElementById('curvaMapHint');
+            if (hint) hint.textContent = 'Click a country to filter';
+
             window.curvaHandleSearch();
         };
 
@@ -2057,8 +2542,9 @@
                     globalMedia = globalMedia.filter(m => m.groupId !== groupId);
                     delete globalGroupResponses[groupId];
 
-                    // Update filters and live grids
+                    // Update filters, map, and live grids
                     populateBasicDimensionsFilters();
+                    curvaRenderMap();
                     window.curvaHandleSearch();
                     alert(`"${groupName}" has been successfully deleted.`);
                 } else {
@@ -2298,7 +2784,7 @@
 
             // Signal abort to active in-flight fetch
             if (abortController) {
-                try { abortController.abort(); } catch (e) {}
+                try { abortController.abort(); } catch (e) { }
             }
             activeIngestion.isRunning = false;
 
@@ -2514,7 +3000,7 @@
                                 body: rollbackPayload
                             });
                         }
-                    } catch (err) {}
+                    } catch (err) { }
                 }
 
                 e.preventDefault();

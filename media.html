@@ -4,19 +4,21 @@
     <div class="curva-top-bar">
         <div class="curva-nav-left">
             <button onclick="window.history.back()" class="curva-back-btn">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"></line>
                     <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
                 Back
             </button>
             <span class="curva-nav-divider"></span>
-            <div class="curva-top-bar-title">Georgia Tech &middot; CURVA Media Archive</div>
+            <div class="curva-top-bar-title">Georgia Tech · CURVA Media Archive</div>
         </div>
         <div class="curva-admin-group">
             <div class="curva-admin-badge" id="curvaAdminStatus" style="display: none;">Admin Mode</div>
             <button id="curvaAdminToggleBtn" class="curva-admin-btn" onclick="curvaToggleAdmin()">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                 </svg>
@@ -34,7 +36,7 @@
     <!-- MAIN MEDIA VIEW -->
     <div id="media-content" style="display: none;">
         <div class="curva-media-layout">
-            
+
             <!-- LEFT COLUMN: MEDIA EMBED / VIEWER -->
             <div class="curva-media-stage">
                 <div id="media-stage-container" class="curva-stage-inner"></div>
@@ -42,7 +44,7 @@
 
             <!-- RIGHT COLUMN: DETAILS & METADATA -->
             <div class="curva-media-info">
-                
+
                 <!-- PUBLIC VIEW -->
                 <div id="view-mode-panel">
                     <div class="curva-type-badge" id="media-type-label">Media</div>
@@ -52,7 +54,7 @@
                         <div class="curva-callout-name" id="media-group-name">—</div>
                         <div class="curva-callout-meta" id="media-group-meta">—</div>
                     </div>
-                    
+
                     <div class="curva-desc-box" id="media-desc-text"></div>
 
                     <div class="curva-tags-section">
@@ -63,8 +65,11 @@
 
                 <!-- ADMIN INLINE EDIT MODE -->
                 <div id="edit-mode-panel" style="display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #b3a369; letter-spacing: 0.8px;">Edit Media Item</span>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                        <span
+                            style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #b3a369; letter-spacing: 0.8px;">Edit
+                            Media Item</span>
                         <button class="curva-btn-del" onclick="deleteCurrentMedia()">Delete Item</button>
                     </div>
 
@@ -90,12 +95,14 @@
 
                     <div class="curva-form-group">
                         <label>Tags</label>
-                        <div id="mediaTagBankContainer" style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;"></div>
+                        <div id="mediaTagBankContainer"
+                            style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;"></div>
                     </div>
 
                     <div style="display: flex; gap: 8px; margin-top: 20px;">
                         <button class="curva-btn-discard" onclick="cancelEditMode()">Cancel</button>
-                        <button id="saveMediaEditBtn" class="curva-btn-save" onclick="saveMediaEdits()">Save Changes</button>
+                        <button id="saveMediaEditBtn" class="curva-btn-save" onclick="saveMediaEdits()">Save
+                            Changes</button>
                     </div>
                 </div>
 
@@ -116,7 +123,10 @@
         max-width: 1400px !important;
     }
 
-    #curva-media-app * { box-sizing: border-box; }
+    #curva-media-app * {
+        box-sizing: border-box;
+    }
+
     #curva-media-app {
         font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
         background: #ffffff;
@@ -137,6 +147,7 @@
     #navbar-main-btn-search {
         display: none !important;
     }
+
     #navbar-main {
         display: none !important;
     }
@@ -148,7 +159,7 @@
         align-items: center;
         padding: 16px 24px;
         background: radial-gradient(circle at 80% 20%, rgba(179, 163, 105, 0.12) 0%, transparent 60%),
-                    linear-gradient(135deg, #002244 0%, #003057 100%);
+            linear-gradient(135deg, #002244 0%, #003057 100%);
         border: 1px solid rgba(179, 163, 105, 0.32);
         border-top: none;
         border-radius: 0 0 18px 18px;
@@ -191,6 +202,7 @@
         font-family: inherit;
         padding: 0;
     }
+
     .curva-back-btn:hover {
         color: #b3a369;
         transform: translateX(-2px);
@@ -214,6 +226,7 @@
         background: rgba(34, 197, 94, 0.18);
         border: 1px solid rgba(74, 222, 128, 0.35);
     }
+
     .curva-admin-badge.active {
         display: inline-block;
     }
@@ -232,6 +245,7 @@
         gap: 6px;
         transition: all 0.2s ease;
     }
+
     .curva-admin-btn:hover {
         background: rgba(179, 163, 105, 0.2);
         color: #fff;
@@ -253,6 +267,7 @@
         display: flex;
         flex-direction: column;
     }
+
     .curva-stage-inner {
         width: 100%;
         background: #001830;
@@ -271,10 +286,13 @@
         width: 100%;
         padding-top: 56.25%;
     }
+
     .curva-video-wrap iframe {
         position: absolute;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         border: none;
     }
 
@@ -324,6 +342,7 @@
         cursor: pointer;
         transition: all 0.2s ease;
     }
+
     .curva-parent-callout:hover {
         background: #f1f5f9;
         border-color: #cbd5e1;
@@ -331,6 +350,7 @@
         transform: translateX(3px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
+
     .curva-callout-sub {
         font-size: 10px;
         font-weight: 700;
@@ -339,11 +359,13 @@
         color: #94a3b8;
         margin-bottom: 2px;
     }
+
     .curva-callout-name {
         font-size: 15px;
         font-weight: 600;
         color: #0f172a;
     }
+
     .curva-callout-meta {
         font-size: 12px;
         color: #64748b;
@@ -361,6 +383,7 @@
         border-top: 1px solid #f1f5f9;
         padding-top: 18px;
     }
+
     .curva-tags-label {
         font-size: 11px;
         font-weight: 700;
@@ -369,11 +392,13 @@
         letter-spacing: 0.8px;
         margin-bottom: 8px;
     }
+
     .curva-tags {
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
     }
+
     .curva-badge {
         background: #f1f5f9;
         color: #475569;
@@ -385,7 +410,10 @@
     }
 
     /* EDIT FORM CONTROLS */
-    .curva-form-group { margin-bottom: 14px; }
+    .curva-form-group {
+        margin-bottom: 14px;
+    }
+
     .curva-form-group label {
         display: block;
         font-size: 11px;
@@ -395,6 +423,7 @@
         letter-spacing: 0.5px;
         margin-bottom: 4px;
     }
+
     .curva-form-input {
         width: 100%;
         padding: 10px 12px;
@@ -404,7 +433,10 @@
         font-family: inherit;
         outline: none;
     }
-    .curva-form-input:focus { border-color: #b3a369; }
+
+    .curva-form-input:focus {
+        border-color: #b3a369;
+    }
 
     .curva-inline-textarea {
         width: 100%;
@@ -417,7 +449,10 @@
         resize: vertical;
         line-height: 1.5;
     }
-    .curva-inline-textarea:focus { border-color: #b3a369; }
+
+    .curva-inline-textarea:focus {
+        border-color: #b3a369;
+    }
 
     .curva-btn-save {
         background: #b3a369;
@@ -429,7 +464,10 @@
         font-weight: 700;
         cursor: pointer;
     }
-    .curva-btn-save:hover { background: #a39258; }
+
+    .curva-btn-save:hover {
+        background: #a39258;
+    }
 
     .curva-btn-discard {
         background: transparent;
@@ -441,7 +479,11 @@
         font-weight: 600;
         cursor: pointer;
     }
-    .curva-btn-discard:hover { background: #f8fafc; color: #0f172a; }
+
+    .curva-btn-discard:hover {
+        background: #f8fafc;
+        color: #0f172a;
+    }
 
     .curva-btn-del {
         background: #fee2e2;
@@ -453,7 +495,10 @@
         font-weight: 700;
         cursor: pointer;
     }
-    .curva-btn-del:hover { background: #fecaca; }
+
+    .curva-btn-del:hover {
+        background: #fecaca;
+    }
 
     .curva-external-btn {
         display: inline-flex;
@@ -499,7 +544,10 @@
         color: #ffffff;
         border-color: #968652;
     }
-    .curva-external-btn:hover { background: #334155; }
+
+    .curva-external-btn:hover {
+        background: #334155;
+    }
 
     @media (max-width: 860px) {
         .curva-media-layout {
@@ -508,9 +556,11 @@
             padding: 20px 16px;
         }
     }
+
     #navbar-main-btn-search {
         display: none !important;
     }
+
     #navbar-main {
         display: none !important;
     }
@@ -635,7 +685,7 @@
             } else if (mediaItem.type === 'Image URL' || (mediaItem.link.match(/\.(jpeg|jpg|gif|png|webp)($|\?)/i))) {
                 stage.innerHTML = `<img src="${mediaItem.link}" alt="${mediaItem.title}" class="curva-stage-img" loading="lazy">`;
             } else {
-                const previewImg = mediaItem.thumbnailUrl 
+                const previewImg = mediaItem.thumbnailUrl
                     ? `<img src="${mediaItem.thumbnailUrl}" style="max-height: 260px; border-radius: 8px; margin-bottom: 12px; object-fit: cover;">`
                     : '';
 
@@ -654,7 +704,7 @@
             // Info Panel
             document.getElementById('media-type-label').textContent = mediaItem.type;
             document.getElementById('media-title-text').textContent = mediaItem.title || 'Untitled Archive Item';
-            
+
             const descBox = document.getElementById('media-desc-text');
             if (mediaItem.description) {
                 descBox.textContent = mediaItem.description;
@@ -669,23 +719,23 @@
             document.getElementById('media-group-name').textContent = parentGroup ? parentGroup.name : (mediaItem.groupName || 'Ultra Group');
             document.getElementById('media-group-meta').textContent = grpMeta;
 
-        function parseTags(tagString) {
-            if (!tagString || typeof tagString !== 'string') return [];
-            return tagString
-                .replace(/(\d),(\d)/g, (m, d1, d2) => d1 + '__COMMA__' + d2)
-                .split(',')
-                .map(t => t.replace(/__COMMA__/g, ',').trim())
-                .filter(Boolean);
-        }
+            function parseTags(tagString) {
+                if (!tagString || typeof tagString !== 'string') return [];
+                return tagString
+                    .replace(/(\d),(\d)/g, (m, d1, d2) => d1 + '__COMMA__' + d2)
+                    .split(',')
+                    .map(t => t.replace(/__COMMA__/g, ',').trim())
+                    .filter(Boolean);
+            }
 
-        // Tags
-        const tagContainer = document.getElementById('media-tags-list');
-        const tags = parseTags(mediaItem.tags);
-        if (tags.length > 0) {
-            tagContainer.innerHTML = tags.map(t => `<span class="curva-badge">${t}</span>`).join('');
-        } else {
-            tagContainer.innerHTML = '<span style="font-size:12px; color:#94a3b8;">No tags</span>';
-        }
+            // Tags
+            const tagContainer = document.getElementById('media-tags-list');
+            const tags = parseTags(mediaItem.tags);
+            if (tags.length > 0) {
+                tagContainer.innerHTML = tags.map(t => `<span class="curva-badge">${t}</span>`).join('');
+            } else {
+                tagContainer.innerHTML = '<span style="font-size:12px; color:#94a3b8;">No tags</span>';
+            }
         }
 
         window.goToGroupProfile = function () {

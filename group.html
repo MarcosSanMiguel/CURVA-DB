@@ -39,7 +39,7 @@
                 <div id="hero-backdrop" class="curva-hero-backdrop"></div>
                 <div class="curva-hero-inner">
                     <div class="curva-cover-wrap">
-                        <img id="group-cover-img" src="" alt="Ultra Group Cover" />
+                        <img id="group-cover-img" src="" alt="Ultra Group Cover">
                         <button class="curva-cover-edit-btn admin-only" onclick="editCoverUrl()"
                             title="Edit Cover Image URL">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -49,8 +49,8 @@
                         </button>
                     </div>
                     <div class="curva-hero-details">
-                        <div class="curva-hero-club" id="hero-club-country">&mdash;</div>
-                        <h1 class="curva-hero-title" id="hero-group-name">&mdash;</h1>
+                        <div class="curva-hero-club" id="hero-club-country">—</div>
+                        <h1 class="curva-hero-title" id="hero-group-name">—</h1>
                         <div class="curva-hero-meta" id="hero-meta-strip"></div>
                         <div class="curva-tags-row" id="hero-tags"></div>
                     </div>
@@ -97,40 +97,40 @@
                     </div>
                 </div>
 
-                <div class="curva-section-heading">Founding & Historical Dimension</div>
+                <div class="curva-section-heading">Founding &amp; Historical Dimension</div>
                 <div id="overview-historical-cards" class="curva-qa-flow"></div>
             </div>
 
             <div id="panel-sec-behavioral" class="curva-panel">
-                <div class="curva-section-heading">Section 3: Behavioral Dimension & Activism</div>
+                <div class="curva-section-heading">Section 3: Behavioral Dimension &amp; Activism</div>
                 <div id="sec3-cards" class="curva-qa-flow"></div>
             </div>
 
             <div id="panel-sec-ideological" class="curva-panel">
-                <div class="curva-section-heading">Section 4: Ideology, Politics & Social Movements</div>
+                <div class="curva-section-heading">Section 4: Ideology, Politics &amp; Social Movements</div>
                 <div id="sec4-cards" class="curva-qa-flow"></div>
             </div>
 
             <div id="panel-sec-organizational" class="curva-panel">
-                <div class="curva-section-heading">Section 5: Internal Organization, Finance & Autonomy</div>
+                <div class="curva-section-heading">Section 5: Internal Organization, Finance &amp; Autonomy</div>
                 <div id="sec5-cards" class="curva-qa-flow"></div>
             </div>
 
             <div id="panel-sec-representational" class="curva-panel">
-                <div class="curva-section-heading">Section 6: Visual Culture, Tifos, Chants & Pyro</div>
+                <div class="curva-section-heading">Section 6: Visual Culture, Tifos, Chants &amp; Pyro</div>
                 <div id="sec6-cards" class="curva-qa-flow"></div>
             </div>
 
             <!-- SOURCES -->
             <div id="panel-sec-sources" class="curva-panel">
-                <div class="curva-section-heading">Research Sources & Archival References</div>
+                <div class="curva-section-heading">Research Sources &amp; Archival References</div>
                 <div class="curva-source-filter-bar" id="sourcesFilterBar"></div>
                 <div id="sources-grid" class="curva-sources-grid"></div>
             </div>
 
             <!-- MEDIA -->
             <div id="panel-sec-media" class="curva-panel">
-                <div class="curva-section-heading">Associated Photographs & Videos</div>
+                <div class="curva-section-heading">Associated Photographs &amp; Videos</div>
                 <div id="media-grid" class="curva-grid"></div>
             </div>
 
@@ -156,7 +156,7 @@
         <div class="curva-modal-box">
             <div class="curva-modal-header">
                 <h3>Add New Research Source</h3>
-                <button class="curva-modal-close" onclick="closeModal('modalAddSource')">&times;</button>
+                <button class="curva-modal-close" onclick="closeModal('modalAddSource')">×</button>
             </div>
             <div class="curva-form-group">
                 <label>Source Type</label>
@@ -190,7 +190,7 @@
         <div class="curva-modal-box" style="max-width: 560px; max-height: 90vh; overflow-y: auto;">
             <div class="curva-modal-header">
                 <h3>Add New Media Item</h3>
-                <button class="curva-modal-close" onclick="closeModal('modalAddMedia')">&times;</button>
+                <button class="curva-modal-close" onclick="closeModal('modalAddMedia')">×</button>
             </div>
 
             <div class="curva-form-group">
@@ -556,9 +556,11 @@
     .curva-tags-admin-container::-webkit-scrollbar {
         width: 6px;
     }
+
     .curva-tags-admin-container::-webkit-scrollbar-track {
         background: #001933;
     }
+
     .curva-tags-admin-container::-webkit-scrollbar-thumb {
         background: rgba(179, 163, 105, 0.35);
         border-radius: 4px;
@@ -1552,12 +1554,12 @@
                         <div class="curva-tags-admin-cat-title">${escapeHtml(category)}</div>
                         <div class="curva-tags-admin-pills">
                             ${tags.map(t => {
-                                const isActive = activeSet.has(t);
-                                return `<span class="curva-tag-edit-pill ${isActive ? 'active' : 'inactive'}" onclick="toggleGroupTag('${t.replace(/'/g, "\\'")}')">
+                    const isActive = activeSet.has(t);
+                    return `<span class="curva-tag-edit-pill ${isActive ? 'active' : 'inactive'}" onclick="toggleGroupTag('${t.replace(/'/g, "\\'")}')">
                                     ${isActive ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' : ''}
                                     ${escapeHtml(t)}
                                 </span>`;
-                            }).join('')}
+                }).join('')}
                         </div>
                     </div>
                 `;
