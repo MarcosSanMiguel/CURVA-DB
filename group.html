@@ -136,6 +136,89 @@
 
         </div>
 
+        <!-- BOTTOM FEEDBACK / CONTACT SECTION -->
+        <div class="curva-feedback-section">
+            <div class="curva-feedback-card">
+                <div class="curva-feedback-header">
+                    <h3 class="curva-feedback-title">Contributions &amp; Corrections</h3>
+                    <p class="curva-feedback-subtext">
+                        CURVA is an ongoing archival research initiative. If you notice an inaccuracy, have firsthand knowledge, or wish to suggest verified sources for this ultra group, please submit your feedback below.
+                    </p>
+                    <div class="curva-feedback-trigger-row">
+                        <button type="button" class="curva-feedback-trigger-btn" id="curvaFeedbackToggleBtn"
+                            onclick="curvaToggleFeedbackPanel()" aria-expanded="false" title="Provide feedback or correction">
+                            <span class="curva-feedback-btn-icon">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </span>
+                            <span id="curvaFeedbackBtnLabel">Contact Us / Suggest Correction</span>
+                            <svg class="curva-feedback-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- INLINE EXPANDABLE FEEDBACK WRAPPER -->
+                <div id="curvaInlineFeedbackWrapper" class="curva-inline-feedback-wrapper">
+                    <div id="curvaInlineFeedbackPanel" class="curva-inline-feedback-panel">
+                        <div class="curva-feedback-form-inner">
+                            <div class="curva-feedback-field">
+                                <label for="curvaFeedbackDimensionSelect" class="curva-feedback-label">Group Dimension</label>
+                                <select id="curvaFeedbackDimensionSelect" class="curva-form-input curva-feedback-select"
+                                    onchange="curvaOnFeedbackDimensionChange()">
+                                    <!-- Populated dynamically based on active tab and dimensions -->
+                                </select>
+                                <span class="curva-feedback-field-hint" id="curvaFeedbackDimensionHint">
+                                    Options reflect the active tab. You may also select a general inquiry or another dimension.
+                                </span>
+                            </div>
+
+                            <div class="curva-feedback-field">
+                                <label for="curvaFeedbackMessageText" class="curva-feedback-label">Message / Correction</label>
+                                <textarea id="curvaFeedbackMessageText" class="curva-form-input curva-feedback-textarea" rows="4"
+                                    placeholder="Please describe your correction, suggested addition, or archival source context..."></textarea>
+                            </div>
+
+                            <div class="curva-feedback-field">
+                                <label for="curvaFeedbackSenderEmail" class="curva-feedback-label">Your Return Email</label>
+                                <input type="email" id="curvaFeedbackSenderEmail" class="curva-form-input"
+                                    placeholder="your-email@example.com (so the research team can follow up if needed)">
+                            </div>
+
+                            <div id="curvaFeedbackStatus" class="curva-feedback-status-banner" style="display: none;"></div>
+
+                            <div class="curva-feedback-actions-row">
+                                <button type="button" class="curva-btn-send-feedback" id="curvaFeedbackSubmitBtn"
+                                    onclick="curvaSubmitFeedback()">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                    </svg>
+                                    <span id="curvaFeedbackSubmitBtnText">Send Message</span>
+                                </button>
+
+                                <a href="mailto:kirk.bowman@inta.gatech.edu" class="curva-btn-direct-email"
+                                    id="curvaFeedbackDirectEmailBtn" target="_blank" rel="noopener noreferrer"
+                                    title="Open empty email draft directly to Dr. Kirk Bowman">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                        <polyline points="22,6 12,13 2,6"></polyline>
+                                    </svg>
+                                    <span>Open Email Draft Directly</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- FLOATING STICKY SAVE BAR -->
@@ -1279,6 +1362,236 @@
     .curva-form-input:focus {
         border-color: #b3a369;
     }
+
+    /* --- IN-APP CONTACT & CORRECTIONS SECTION --- */
+    .curva-feedback-section {
+        margin: 40px auto 20px auto;
+        max-width: 860px;
+        padding: 0 16px;
+    }
+
+    .curva-feedback-card {
+        background: #fefcf6;
+        border: 1px solid rgba(179, 163, 105, 0.45);
+        border-radius: 16px;
+        padding: 24px 28px;
+        box-shadow: 0 4px 18px rgba(0, 34, 68, 0.05);
+    }
+
+    .curva-feedback-header {
+        text-align: center;
+    }
+
+    .curva-feedback-title {
+        font-family: 'DM Serif Display', Georgia, serif;
+        font-size: 22px;
+        color: #002244;
+        font-weight: 400;
+        margin: 0 0 8px 0;
+    }
+
+    .curva-feedback-subtext {
+        font-size: 14.5px;
+        color: #475569;
+        line-height: 1.6;
+        margin: 0 0 16px 0;
+        max-width: 640px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .curva-feedback-trigger-row {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .curva-feedback-trigger-btn {
+        background: #002244;
+        border: 1px solid rgba(179, 163, 105, 0.5);
+        color: #ffffff;
+        font-size: 13.5px;
+        font-weight: 600;
+        font-family: inherit;
+        padding: 9px 20px;
+        border-radius: 24px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 4px 12px rgba(0, 34, 68, 0.15);
+    }
+
+    .curva-feedback-trigger-btn:hover {
+        background: #003057;
+        border-color: #b3a369;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(0, 34, 68, 0.2);
+    }
+
+    .curva-feedback-trigger-btn.panel-open {
+        background: #003057;
+        border-color: #b3a369;
+        box-shadow: 0 0 0 2px rgba(179, 163, 105, 0.35);
+    }
+
+    .curva-feedback-chevron {
+        transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+        color: #b3a369;
+        margin-left: 2px;
+    }
+
+    .curva-feedback-trigger-btn.panel-open .curva-feedback-chevron {
+        transform: rotate(180deg);
+    }
+
+    /* Expandable container animation mirroring home page filter */
+    .curva-inline-feedback-wrapper {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1), margin-top 0.38s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+        width: 100%;
+        overflow: hidden;
+        visibility: hidden;
+        text-align: left;
+    }
+
+    .curva-inline-feedback-wrapper.open {
+        grid-template-rows: 1fr;
+        margin-top: 20px;
+        visibility: visible;
+    }
+
+    .curva-inline-feedback-panel {
+        min-height: 0;
+        width: 100%;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1), transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        overflow: hidden;
+    }
+
+    .curva-inline-feedback-wrapper.open .curva-inline-feedback-panel {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .curva-feedback-form-inner {
+        padding: 22px 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .curva-feedback-field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .curva-feedback-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #002244;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+    }
+
+    .curva-feedback-field-hint {
+        font-size: 11.5px;
+        color: #64748b;
+        margin-top: 2px;
+    }
+
+    .curva-feedback-textarea {
+        min-height: 90px;
+        resize: vertical;
+        line-height: 1.5;
+    }
+
+    .curva-feedback-actions-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 6px;
+        padding-top: 14px;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .curva-btn-send-feedback {
+        background: #002244;
+        border: 1px solid rgba(179, 163, 105, 0.5);
+        color: #ffffff;
+        font-size: 13.5px;
+        font-weight: 600;
+        font-family: inherit;
+        padding: 9px 22px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .curva-btn-send-feedback:hover:not(:disabled) {
+        background: #003057;
+        border-color: #b3a369;
+        transform: translateY(-1px);
+    }
+
+    .curva-btn-send-feedback:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+    }
+
+    .curva-btn-direct-email {
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        color: #334155;
+        font-size: 13px;
+        font-weight: 600;
+        font-family: inherit;
+        padding: 8px 18px;
+        border-radius: 20px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+    }
+
+    .curva-btn-direct-email:hover {
+        background: #f1f5f9;
+        color: #002244;
+        border-color: #94a3b8;
+        transform: translateY(-1px);
+    }
+
+    .curva-feedback-status-banner {
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 13.5px;
+        line-height: 1.45;
+    }
+
+    .curva-feedback-status-banner.success {
+        background: #ecfdf5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+    }
+
+    .curva-feedback-status-banner.error {
+        background: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+    }
 </style>
 
 <script>
@@ -1470,6 +1783,7 @@
                 document.getElementById('loading-state').style.display = 'none';
                 document.getElementById('profile-content').style.display = 'block';
                 updateAdminUI();
+                updateFeedbackDimensionDropdown(currentActiveTabId);
 
             }).catch(err => {
                 document.getElementById('loading-state').style.display = 'none';
@@ -2402,6 +2716,230 @@
         };
 
         // ==========================================
+        // IN-APP FEEDBACK & CORRECTIONS
+        // ==========================================
+
+        let currentActiveTabId = 'overview';
+        let userManuallySelectedDimension = false;
+
+        const TAB_DIMENSION_MAP = {
+            'overview': {
+                name: 'Overview & Founding',
+                defaultItem: 'Overview — General / Basic Profile',
+                items: [
+                    'Overview — General / Basic Profile',
+                    'Overview — Year Founded',
+                    'Overview — City / Region / Country',
+                    'Overview — Club Affiliation & League Level',
+                    'Overview — Founding & Historical Dimension'
+                ]
+            },
+            'sec-behavioral': {
+                name: 'Section 3: Behavioral Dimension & Activism',
+                defaultItem: 'Behavioral Dimension — General (Section 3)',
+                items: [
+                    'Behavioral Dimension — General (Section 3)'
+                ]
+            },
+            'sec-ideological': {
+                name: 'Section 4: Ideology, Politics & Social Movements',
+                defaultItem: 'Ideological Dimension — General (Section 4)',
+                items: [
+                    'Ideological Dimension — General (Section 4)'
+                ]
+            },
+            'sec-organizational': {
+                name: 'Section 5: Internal Organization, Finance & Autonomy',
+                defaultItem: 'Organizational Dimension — General (Section 5)',
+                items: [
+                    'Organizational Dimension — General (Section 5)'
+                ]
+            },
+            'sec-representational': {
+                name: 'Section 6: Visual Culture, Tifos, Chants & Pyro',
+                defaultItem: 'Representational Dimension — General (Section 6)',
+                items: [
+                    'Representational Dimension — General (Section 6)'
+                ]
+            },
+            'sec-sources': {
+                name: 'Research Sources & Archival References',
+                defaultItem: 'Sources — General Inquiry / Citation Issue',
+                items: [
+                    'Sources — General Inquiry / Citation Issue',
+                    'Sources — Correction to Existing Citation',
+                    'Sources — Suggest New Archival Source / Reading',
+                    'Sources — Broken or Inactive Link'
+                ]
+            },
+            'sec-media': {
+                name: 'Associated Photographs & Videos',
+                defaultItem: 'Media — General Inquiry / Correction',
+                items: [
+                    'Media — General Inquiry / Correction',
+                    'Media — Correction to Existing Media Item',
+                    'Media — Suggest New Photo, Video, or Chant Link'
+                ]
+            }
+        };
+
+        function updateFeedbackDimensionDropdown(activeTab) {
+            const select = document.getElementById('curvaFeedbackDimensionSelect');
+            if (!select) return;
+
+            const previousVal = select.value;
+            const tabMeta = TAB_DIMENSION_MAP[activeTab] || TAB_DIMENSION_MAP['overview'];
+
+            let html = '';
+            // 1. General inquiry option always at top
+            html += '<option value="General inquiry / comment / suggestion (not dimension-specific)">General inquiry / comment / suggestion (not dimension-specific)</option>';
+
+            // 2. Active tab dimensions & questions
+            html += `<optgroup label="Current Tab: ${escapeHtml(tabMeta.name)}">`;
+            tabMeta.items.forEach(itm => {
+                html += `<option value="${escapeHtml(itm)}">${escapeHtml(itm)}</option>`;
+            });
+
+            // Populate specific questions from responsesList for this group & section
+            let matchingQuestions = [];
+            if (activeTab === 'overview') {
+                matchingQuestions = responsesList.filter(r => r.secNum === 1 || r.secNum === 2);
+            } else if (activeTab === 'sec-behavioral') {
+                matchingQuestions = responsesList.filter(r => r.secNum === 3);
+            } else if (activeTab === 'sec-ideological') {
+                matchingQuestions = responsesList.filter(r => r.secNum === 4);
+            } else if (activeTab === 'sec-organizational') {
+                matchingQuestions = responsesList.filter(r => r.secNum === 5);
+            } else if (activeTab === 'sec-representational') {
+                matchingQuestions = responsesList.filter(r => r.secNum === 6);
+            }
+
+            matchingQuestions.forEach(q => {
+                const cleanedQuestion = cleanQuestionText(q.question);
+                const label = `${q.qNum} ${cleanedQuestion}`;
+                const shortLabel = label.length > 76 ? label.substring(0, 74) + '...' : label;
+                html += `<option value="${escapeHtml(label)}">${escapeHtml(shortLabel)}</option>`;
+            });
+            html += `</optgroup>`;
+
+            // 3. Other dimensions
+            html += `<optgroup label="Other Dimensions &amp; Sections">`;
+            const otherTabs = [
+                { id: 'overview', label: 'Overview & Founding (Section 1 & 2)' },
+                { id: 'sec-behavioral', label: 'Section 3: Behavioral Dimension & Activism' },
+                { id: 'sec-ideological', label: 'Section 4: Ideology, Politics & Social Movements' },
+                { id: 'sec-organizational', label: 'Section 5: Internal Organization, Finance & Autonomy' },
+                { id: 'sec-representational', label: 'Section 6: Visual Culture, Tifos, Chants & Pyro' },
+                { id: 'sec-sources', label: 'Research Sources & Archival References' },
+                { id: 'sec-media', label: 'Associated Photographs & Videos' }
+            ].filter(t => t.id !== activeTab);
+
+            otherTabs.forEach(t => {
+                html += `<option value="${escapeHtml(t.label)}">${escapeHtml(t.label)}</option>`;
+            });
+            html += `</optgroup>`;
+
+            select.innerHTML = html;
+
+            // Preserve user's manual selection if it exists in the new options
+            if (userManuallySelectedDimension && previousVal) {
+                const exists = Array.from(select.options).some(o => o.value === previousVal);
+                if (exists) {
+                    select.value = previousVal;
+                    return;
+                }
+            }
+
+            // Otherwise default to the active tab's default dimension
+            if (tabMeta && tabMeta.defaultItem) {
+                select.value = tabMeta.defaultItem;
+            }
+        }
+
+        window.curvaToggleFeedbackPanel = function () {
+            const wrapper = document.getElementById('curvaInlineFeedbackWrapper');
+            const btn = document.getElementById('curvaFeedbackToggleBtn');
+            if (!wrapper || !btn) return;
+
+            const isOpen = wrapper.classList.contains('open');
+            if (isOpen) {
+                wrapper.classList.remove('open');
+                btn.classList.remove('panel-open');
+                btn.setAttribute('aria-expanded', 'false');
+            } else {
+                wrapper.classList.add('open');
+                btn.classList.add('panel-open');
+                btn.setAttribute('aria-expanded', 'true');
+                if (!userManuallySelectedDimension) {
+                    updateFeedbackDimensionDropdown(currentActiveTabId);
+                }
+            }
+        };
+
+        window.curvaOnFeedbackDimensionChange = function () {
+            userManuallySelectedDimension = true;
+        };
+
+        window.curvaSubmitFeedback = async function () {
+            const select = document.getElementById('curvaFeedbackDimensionSelect');
+            const msgInput = document.getElementById('curvaFeedbackMessageText');
+            const emailInput = document.getElementById('curvaFeedbackSenderEmail');
+            const submitBtn = document.getElementById('curvaFeedbackSubmitBtn');
+            const btnText = document.getElementById('curvaFeedbackSubmitBtnText');
+            const statusBox = document.getElementById('curvaFeedbackStatus');
+
+            const dimension = select ? select.value : 'General';
+            const message = msgInput ? msgInput.value.trim() : '';
+            const senderEmail = emailInput ? emailInput.value.trim() : '';
+
+            statusBox.style.display = 'none';
+            statusBox.className = 'curva-feedback-status-banner';
+
+            if (!message) {
+                statusBox.textContent = 'Please enter a message or description of your suggestion before submitting.';
+                statusBox.classList.add('error');
+                statusBox.style.display = 'block';
+                if (msgInput) msgInput.focus();
+                return;
+            }
+
+            submitBtn.disabled = true;
+            const origText = btnText.textContent;
+            btnText.textContent = 'Sending message...';
+
+            try {
+                const res = await callBackend({
+                    action: 'send_feedback',
+                    groupId: groupRecord ? groupRecord.id : currentGroupId,
+                    groupName: groupRecord ? groupRecord.name : 'Unknown Ultra Group',
+                    dimension: dimension,
+                    senderEmail: senderEmail,
+                    message: message
+                });
+
+                if (res && res.status === 'success') {
+                    statusBox.textContent = 'Thank you! Your note has been sent directly to Dr. Kirk Bowman and the CURVA research team.';
+                    statusBox.classList.add('success');
+                    statusBox.style.display = 'block';
+
+                    msgInput.value = '';
+                    emailInput.value = '';
+                    userManuallySelectedDimension = false;
+                    updateFeedbackDimensionDropdown(currentActiveTabId);
+                } else {
+                    throw new Error(res ? res.message : 'Unknown server response');
+                }
+            } catch (err) {
+                statusBox.innerHTML = `Unable to send message directly: ${escapeHtml(err.message)}.<br>You can also use the <strong>Open Email Draft Directly</strong> button below.`;
+                statusBox.classList.add('error');
+                statusBox.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                btnText.textContent = origText;
+            }
+        };
+
+        // ==========================================
         // TABS & AUTH
         // ==========================================
 
@@ -2411,6 +2949,11 @@
             btn.classList.add('active');
             const target = document.getElementById(`panel-${tabId}`);
             if (target) target.classList.add('active');
+
+            currentActiveTabId = tabId;
+            if (!userManuallySelectedDimension) {
+                updateFeedbackDimensionDropdown(tabId);
+            }
         };
 
         function isAdmin() {

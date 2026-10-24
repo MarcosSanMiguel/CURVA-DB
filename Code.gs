@@ -12,12 +12,17 @@ function doPost(e) {
     const data = JSON.parse(e.postData.contents);
     const adminPasscode = PropertiesService.getScriptProperties().getProperty("ADMIN_PASSCODE");
 
-    // 1. Verify Authentication
+    const action = data.action;
+
+    // Public Actions (No admin authentication required)
+    if (action === "send_feedback") {
+      return jsonResponse(handleSendFeedback(data));
+    }
+
+    // 1. Verify Authentication for Admin Actions
     if (!data.passcode || data.passcode !== adminPasscode) {
       return jsonResponse({ status: "error", message: "Unauthorized: Invalid passcode" }, 401);
     }
-
-    const action = data.action;
 
     // 2. Route Actions
     switch (action) {
@@ -817,3 +822,70 @@ function batchUpdateMedia(updates) {
   });
   return { status: "success", updated: count };
 }
+
+// ==========================================
+// 7. IN-APP FEEDBACK / SUGGESTIONS
+// ==========================================
+
+function handleSendFeedback(data) {
+  const recipient = "kirk.bowman@inta.gatech.edu";
+  const groupName = data.groupName || "Unknown Ultra Group";
+  const groupId = data.groupId || "N/A";
+  const dimension = data.dimension || "General";
+  const senderEmail = data.senderEmail ? String(data.senderEmail).trim() : "Not provided";
+  const message = data.message ? String(data.message).trim() : "";
+
+  if (!message) {
+    return { status: "error", message: "Message content cannot be empty." };
+  }
+
+  const subject = `[CURVA Feedback] ${groupName} - ${dimension}`;
+  const body = `CURVA Ultra Database - In-App Feedback & Suggestion\n` +
+    `==================================================\n\n` +
+    `Ultra Group: ${groupName} (${groupId})\n` +
+    `Selected Dimension: ${dimension}\n` +
+    `User Return Email: ${senderEmail}\n` +
+    `Timestamp: ${new Date().toUTCString()}\n\n` +
+    `Message:\n${message}\n\n` +
+    `==================================================\n` +
+    `Sent directly from the CURVA Group Profile Page.`;
+
+  const emailOptions = {
+    to: recipient,
+    subject: subject,
+    body: body
+  };
+
+  if (senderEmail && senderEmail.indexOf("@") !== -1) {
+    emailOptions.replyTo = senderEmail;
+  }
+
+  try {
+    MailApp.sendEmail(emailOptions);
+  } catch (mailErr) {
+    logError(groupId, "send_feedback_email", mailErr.toString(), message.substring(0, 100));
+    throw new Error("Unable to send email: " + mailErr.message);
+  }
+
+  // Also log to Feedback tab in the spreadsheet for archival / record keeping
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let fbSheet = ss.getSheetByName("Feedback");
+    if (!fbSheet) {
+      fbSheet = ss.insertSheet("Feedback");
+      fbSheet.appendRow(["Timestamp", "Group ID", "Group Name", "Dimension", "Return Email", "Message"]);
+    }
+    fbSheet.appendRow([new Date().toISOString(), groupId, groupName, dimension, senderEmail, message]);
+  } catch (logErr) {
+    logError(groupId, "send_feedback_sheet_log", logErr.toString(), "");
+  }
+
+  return { status: "success", message: "Feedback sent successfully" };
+}
+
+// Run this function ONCE in the Apps Script editor to trigger Google's permission prompt for sending email
+function authorizeEmailSending() {
+  const quota = MailApp.getRemainingDailyQuota();
+  Logger.log("Email authorization successful. Daily email quota remaining: " + quota);
+}
+
