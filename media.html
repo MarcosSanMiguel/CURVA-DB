@@ -573,7 +573,12 @@
         // ==========================================
         const SHEET_ID = '1kn6ioZYQiyDaRjVWrisrVipOldxVCLyiBMOmf80mkqQ';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCuAQqe9X-lidTXDgmO93VZzLoVbapbOX2sZb0b1XAJU5buh0FY6mGKy1VhAtxEOC9Fg/exec';
-        const PROFILE_BASE_URL = 'https://sites.gatech.edu/curva/group-profile/';
+        const PROFILE_BASE_URL = (function () {
+            if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return 'group.html';
+            if (window.CURVA_PROFILE_URL) return window.CURVA_PROFILE_URL;
+            const prefix = window.location.pathname.startsWith('/curva/') ? '/curva' : '';
+            return prefix + '/group-profile/';
+        })();
 
         const urlParams = new URLSearchParams(window.location.search);
         const currentMediaId = urlParams.get('mediaId');
@@ -621,6 +626,15 @@
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
             const match = url.match(regExp);
             return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        function parseTags(tagString) {
+            if (!tagString || typeof tagString !== 'string') return [];
+            return tagString
+                .replace(/(\d),(\d)/g, (m, d1, d2) => d1 + '__COMMA__' + d2)
+                .split(',')
+                .map(t => t.replace(/__COMMA__/g, ',').trim())
+                .filter(Boolean);
         }
 
         const GVIZ_URL = tab => `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${tab}`;
@@ -718,15 +732,6 @@
             const grpMeta = parentGroup ? `${parentGroup.club} \u2022 ${parentGroup.country}` : '';
             document.getElementById('media-group-name').textContent = parentGroup ? parentGroup.name : (mediaItem.groupName || 'Ultra Group');
             document.getElementById('media-group-meta').textContent = grpMeta;
-
-            function parseTags(tagString) {
-                if (!tagString || typeof tagString !== 'string') return [];
-                return tagString
-                    .replace(/(\d),(\d)/g, (m, d1, d2) => d1 + '__COMMA__' + d2)
-                    .split(',')
-                    .map(t => t.replace(/__COMMA__/g, ',').trim())
-                    .filter(Boolean);
-            }
 
             // Tags
             const tagContainer = document.getElementById('media-tags-list');
