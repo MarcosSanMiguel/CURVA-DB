@@ -45,7 +45,7 @@ function doPost(e) {
         return jsonResponse(updateSingleField(data.tabName, data.idColumn, data.idValue, data.field, data.value));
 
       case "create_media": // Add Media Item
-        return jsonResponse(createMediaItem(data.payload));
+        return jsonResponse(createMediaItem(data.payload || data));
 
       case "delete_media": // Delete Media Item
         return jsonResponse(deleteRowById("Media", "media_id", data.mediaId));
@@ -60,7 +60,7 @@ function doPost(e) {
         return jsonResponse(updateGroupProfile(data.groupId, data.profile));
 
       case "create_source": // Add Manual Source Item
-        return jsonResponse(createSourceItem(data.payload));
+        return jsonResponse(createSourceItem(data.payload || data));
 
       case "delete_source": // Delete Source Item
         return jsonResponse(deleteRowById("Sources", "source_id", data.sourceId));
@@ -72,10 +72,19 @@ function doPost(e) {
         return jsonResponse(batchUpdateResponses(data.updates));
 
       case "batch_update_sources":
-      return jsonResponse(batchUpdateSources(data.updates));
+        return jsonResponse(batchUpdateSources(data.updates));
 
       case "batch_update_media":
         return jsonResponse(batchUpdateMedia(data.updates));
+
+      case "create_tifo": // Add Tifo Item
+        return jsonResponse(createTifoItem(data.payload || data));
+
+      case "delete_tifo": // Delete Tifo Item
+        return jsonResponse(deleteRowById("Tifos", "tifo_id", data.tifoId));
+
+      case "batch_update_tifos":
+        return jsonResponse(batchUpdateTifos(data.updates));
 
       default:
         return jsonResponse({ status: "error", message: "Unknown action: " + action }, 400);
@@ -533,6 +542,83 @@ function createSourceItem(p) {
   return { status: "success", sourceId: sourceId };
 }
 
+function createTifoItem(p) {
+  p = p || {};
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName("Tifos");
+  if (!sheet) {
+    sheet = initTifosSheet();
+  }
+  const lastRow = sheet.getLastRow();
+
+  const groupId = String(p.groupId || p.group_id || "").trim();
+  let ultraGroup = String(p.ultraGroup || p.ultra_group || "").trim();
+
+  // If ultraGroup wasn't passed directly, look it up by groupId from Groups sheet
+  if (!ultraGroup && groupId) {
+    const groupsSheet = ss.getSheetByName("Groups");
+    if (groupsSheet) {
+      const gData = groupsSheet.getDataRange().getValues();
+      for (let i = 1; i < gData.length; i++) {
+        if (String(gData[i][0]).trim() === groupId) {
+          ultraGroup = String(gData[i][1]).trim();
+          break;
+        }
+      }
+    }
+  }
+
+  let maxIndex = 0;
+  if (lastRow > 1) {
+    const ids = sheet.getRange(2, 1, lastRow - 1, 1).getValues().flat();
+    ids.forEach(id => {
+      if (typeof id === "string" && id.startsWith(groupId + "_TIF_")) {
+        const num = parseInt(id.replace(groupId + "_TIF_", ""), 10);
+        if (!isNaN(num) && num > maxIndex) maxIndex = num;
+      }
+    });
+  }
+
+  const tifoId = `${groupId}_TIF_${String(maxIndex + 1).padStart(3, "0")}`;
+
+  // Gracefully handle YouTube vs Image URL
+  let mediaLink = String(p.mediaLink || p.media_link || "").trim();
+  let mediaType = String(p.mediaType || p.media_type || "Image URL").trim();
+  const ytMatch = mediaLink.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+  if (ytMatch && ytMatch[1]) {
+    mediaType = "YouTube Video";
+  }
+
+  let thumbUrl = String(p.thumbnailUrl || p.thumbnail_url || "").trim();
+  if (!thumbUrl && mediaLink) {
+    if (ytMatch && ytMatch[1]) {
+      thumbUrl = `https://img.youtube.com/vi/${ytMatch[1]}/mqdefault.jpg`;
+    } else {
+      thumbUrl = mediaLink;
+    }
+  }
+
+  const title = String(p.tifoTitle || p.title || p.tifo_title || "Untitled Tifo").trim();
+  const year = p.year ? String(p.year).trim() : "";
+  const desc = String(p.description || "").trim();
+  const tags = String(p.tags || "").trim();
+
+  sheet.appendRow([
+    tifoId,
+    groupId,
+    ultraGroup,
+    title,
+    year,
+    mediaType,
+    mediaLink,
+    desc,
+    thumbUrl,
+    tags
+  ]);
+
+  return { status: "success", tifoId: tifoId, tifo_id: tifoId };
+}
+
 function deleteRowById(tabName, idColumn, idValue) {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = ss.getSheetByName(tabName);
@@ -580,11 +666,12 @@ function deleteGroup(groupId) {
   if (!groupId) throw new Error("groupId is required for deletion");
   const ss = SpreadsheetApp.getActiveSpreadsheet();
 
-  // Fast batch deletion across Groups, Media, Responses, and Sources
+  // Fast batch deletion across Groups, Media, Responses, Sources, and Tifos
   deleteRowsMatchingValue(ss.getSheetByName("Groups"), "group_id", groupId);
   deleteRowsMatchingValue(ss.getSheetByName("Media"), "group_id", groupId);
   deleteRowsMatchingValue(ss.getSheetByName("Responses"), "group_id", groupId);
   deleteRowsMatchingValue(ss.getSheetByName("Sources"), "group_id", groupId);
+  deleteRowsMatchingValue(ss.getSheetByName("Tifos"), "group_id", groupId);
 
   return { status: "success", deletedGroupId: groupId };
 }
@@ -681,6 +768,23 @@ function updateGroupProfile(groupId, profile) {
         for (let r = 1; r < sData.length; r++) {
           if (String(sData[r][sIdCol]) === String(groupId)) {
             srcSheet.getRange(r + 1, sNameCol + 1).setValue(newName);
+          }
+        }
+      }
+    }
+
+    // Sync Tifos
+    const tifoSheet = ss.getSheetByName("Tifos");
+    if (tifoSheet) {
+      const tData = tifoSheet.getDataRange().getValues();
+      if (tData.length > 1) {
+        const tIdCol = tData[0].indexOf("group_id");
+        const tNameCol = tData[0].indexOf("ultra_group");
+        if (tIdCol !== -1 && tNameCol !== -1) {
+          for (let r = 1; r < tData.length; r++) {
+            if (String(tData[r][tIdCol]) === String(groupId)) {
+              tifoSheet.getRange(r + 1, tNameCol + 1).setValue(newName);
+            }
           }
         }
       }
@@ -823,6 +927,64 @@ function batchUpdateMedia(updates) {
   return { status: "success", updated: count };
 }
 
+function batchUpdateTifos(updates) {
+  if (!updates || updates.length === 0) return { status: "success", updated: 0 };
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName("Tifos");
+  if (!sheet) throw new Error("Tifos sheet not found");
+  const data = sheet.getDataRange().getValues();
+  const headers = data[0];
+
+  const idCol = headers.indexOf("tifo_id");
+  const groupCol = headers.indexOf("group_id");
+  const ultraCol = headers.indexOf("ultra_group");
+  const titleCol = headers.indexOf("tifo_title");
+  const yearCol = headers.indexOf("year");
+  const typeCol = headers.indexOf("media_type");
+  const linkCol = headers.indexOf("media_link");
+  const descCol = headers.indexOf("description");
+  const thumbCol = headers.indexOf("thumbnail_url");
+  const tagsCol = headers.indexOf("tags");
+
+  const rowMap = {};
+  for (let r = 1; r < data.length; r++) {
+    rowMap[String(data[r][idCol])] = r + 1;
+  }
+
+  let count = 0;
+  updates.forEach(u => {
+    const tifoId = u.tifo_id || u.tifoId;
+    const rowNum = rowMap[tifoId];
+    if (rowNum) {
+      const gId = u.group_id !== undefined ? u.group_id : u.groupId;
+      if (gId !== undefined && groupCol !== -1) sheet.getRange(rowNum, groupCol + 1).setValue(gId);
+
+      const uG = u.ultra_group !== undefined ? u.ultra_group : u.ultraGroup;
+      if (uG !== undefined && ultraCol !== -1) sheet.getRange(rowNum, ultraCol + 1).setValue(uG);
+
+      const tTitle = u.tifo_title !== undefined ? u.tifo_title : (u.title !== undefined ? u.title : u.tifoTitle);
+      if (tTitle !== undefined && titleCol !== -1) sheet.getRange(rowNum, titleCol + 1).setValue(tTitle);
+
+      if (u.year !== undefined && yearCol !== -1) sheet.getRange(rowNum, yearCol + 1).setValue(String(u.year));
+
+      const mType = u.media_type !== undefined ? u.media_type : u.mediaType;
+      if (mType !== undefined && typeCol !== -1) sheet.getRange(rowNum, typeCol + 1).setValue(mType);
+
+      const mLink = u.media_link !== undefined ? u.media_link : u.mediaLink;
+      if (mLink !== undefined && linkCol !== -1) sheet.getRange(rowNum, linkCol + 1).setValue(mLink);
+
+      if (u.description !== undefined && descCol !== -1) sheet.getRange(rowNum, descCol + 1).setValue(u.description);
+
+      const tThumb = u.thumbnail_url !== undefined ? u.thumbnail_url : u.thumbnailUrl;
+      if (tThumb !== undefined && thumbCol !== -1) sheet.getRange(rowNum, thumbCol + 1).setValue(tThumb);
+
+      if (u.tags !== undefined && tagsCol !== -1) sheet.getRange(rowNum, tagsCol + 1).setValue(u.tags);
+      count++;
+    }
+  });
+  return { status: "success", updated: count };
+}
+
 // ==========================================
 // 7. IN-APP FEEDBACK / SUGGESTIONS
 // ==========================================
@@ -887,5 +1049,50 @@ function handleSendFeedback(data) {
 function authorizeEmailSending() {
   const quota = MailApp.getRemainingDailyQuota();
   Logger.log("Email authorization successful. Daily email quota remaining: " + quota);
+}
+
+/**
+ * One-time setup function: Run this function directly in the Google Apps Script editor
+ * to create and initialize the "Tifos" tab in your CURVA database spreadsheet.
+ */
+function initTifosSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName("Tifos");
+
+  const headers = [
+    "tifo_id",
+    "group_id",
+    "ultra_group",
+    "tifo_title",
+    "year",
+    "media_type",
+    "media_link",
+    "description",
+    "thumbnail_url",
+    "tags"
+  ];
+
+  if (!sheet) {
+    sheet = ss.insertSheet("Tifos");
+    Logger.log("Created 'Tifos' sheet tab.");
+  }
+
+  // Set headers in row 1
+  sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+
+  // Style header row to match CURVA database standard
+  const headerRange = sheet.getRange(1, 1, 1, headers.length);
+  headerRange.setFontWeight("bold");
+  headerRange.setBackground("#002244");
+  headerRange.setFontColor("#FFFFFF");
+  sheet.setFrozenRows(1);
+
+  // Auto-resize columns
+  for (let c = 1; c <= headers.length; c++) {
+    sheet.autoResizeColumn(c);
+  }
+
+  Logger.log("Tifos sheet successfully initialized with headers: " + headers.join(", "));
+  return sheet;
 }
 

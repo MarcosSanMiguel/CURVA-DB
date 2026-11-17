@@ -1,0 +1,1020 @@
+<div id="curva-tifo-app">
+
+    <!-- TOP NAVIGATION BAR -->
+    <div class="curva-top-bar">
+        <div class="curva-nav-left">
+            <button onclick="window.history.back()" class="curva-back-btn">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Back
+            </button>
+            <span class="curva-nav-divider"></span>
+            <div class="curva-top-bar-title">Georgia Tech · CURVA Tifo Archive</div>
+        </div>
+        <div class="curva-admin-group">
+            <div class="curva-admin-badge" id="curvaAdminStatus" style="display: none;">Admin Mode</div>
+            <button id="curvaAdminToggleBtn" class="curva-admin-btn" onclick="curvaToggleAdmin()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                <span id="curvaAdminBtnText">Admin Access</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- LOADING & ERROR STATES -->
+    <div id="loading-state" class="curva-feedback-box">
+        Loading tifo archive entry...
+    </div>
+    <div id="error-state" class="curva-feedback-box" style="display:none; color:#ef4444;"></div>
+
+    <!-- MAIN TIFO VIEW -->
+    <div id="tifo-content" style="display: none;">
+        <div class="curva-media-layout">
+
+            <!-- LEFT COLUMN: TIFO EMBED / VIEWER -->
+            <div class="curva-media-stage">
+                <div id="tifo-stage-container" class="curva-stage-inner"></div>
+            </div>
+
+            <!-- RIGHT COLUMN: DETAILS & METADATA -->
+            <div class="curva-media-info">
+
+                <!-- PUBLIC VIEW -->
+                <div id="view-mode-panel">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <div class="curva-type-badge" id="tifo-type-label">Tifo Display</div>
+                        <div class="curva-year-badge" id="tifo-year-badge" style="display: none;"></div>
+                    </div>
+
+                    <h1 class="curva-media-title" id="tifo-title-text">—</h1>
+
+                    <div class="curva-parent-callout" id="tifo-group-callout" onclick="goToGroupProfile()">
+                        <div class="curva-callout-sub">Documented Ultra Group &amp; Club</div>
+                        <div class="curva-callout-name" id="tifo-group-name">—</div>
+                        <div class="curva-callout-meta" id="tifo-group-meta">—</div>
+                    </div>
+
+                    <div class="curva-desc-box" id="tifo-desc-text"></div>
+
+                    <div class="curva-tags-section" id="tifo-tags-section" style="margin-top: 20px;">
+                        <div class="curva-tags-label" style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #b3a369; letter-spacing: 0.8px; margin-bottom: 8px;">Tags</div>
+                        <div class="curva-tags" id="tifo-tags-list" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+                    </div>
+                </div>
+
+                <!-- ADMIN INLINE EDIT MODE -->
+                <div id="edit-mode-panel" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                        <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #b3a369; letter-spacing: 0.8px;">
+                            Edit Tifo Item
+                        </span>
+                        <button class="curva-btn-del" onclick="deleteCurrentTifo()">Delete Tifo</button>
+                    </div>
+
+                    <div class="curva-form-group">
+                        <label>Tifo Title</label>
+                        <input type="text" id="editTifoTitle" class="curva-form-input">
+                    </div>
+
+                    <div class="curva-form-group">
+                        <label>Year Displayed / Introduced</label>
+                        <input type="text" id="editTifoYear" class="curva-form-input" placeholder="e.g. 2023">
+                    </div>
+
+                    <div class="curva-form-group">
+                        <label>Affiliated Ultra Group</label>
+                        <select id="editTifoGroup" class="curva-form-input"></select>
+                    </div>
+
+                    <div class="curva-form-group">
+                        <label>Description</label>
+                        <textarea id="editTifoDesc" class="curva-inline-textarea" style="min-height: 120px;"></textarea>
+                    </div>
+
+                    <div class="curva-form-group">
+                        <label>Media Link / URL (Image or YouTube)</label>
+                        <input type="url" id="editTifoLink" class="curva-form-input">
+                        <span style="font-size: 11px; color: #64748b; margin-top: 4px; display: block;">
+                            Direct image URL or YouTube link. Thumbnails are automatically generated.
+                        </span>
+                    </div>
+
+                    <div class="curva-form-group">
+                        <label>Tags</label>
+                        <div id="tifoTagBankContainer" style="display: flex; flex-direction: column; gap: 10px; margin-top: 6px;"></div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; margin-top: 20px;">
+                        <button class="curva-btn-discard" onclick="cancelEditMode()">Cancel</button>
+                        <button id="saveTifoEditBtn" class="curva-btn-save" onclick="saveTifoEdits()">Save Changes</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
+
+    /* --- GEORGIA TECH / CAMPUSPRESS CONTAINER WIDTH --- */
+    :root:has(#curva-tifo-app) .site-content,
+    :root:has(#curva-tifo-app) .entry-content,
+    :root:has(#curva-tifo-app) .content-area {
+        max-width: 1400px !important;
+    }
+
+    #curva-tifo-app * {
+        box-sizing: border-box;
+    }
+
+    #curva-tifo-app {
+        font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #ffffff;
+        color: #1e293b;
+        max-width: 1360px;
+        margin: 0 auto;
+        padding-bottom: 60px;
+        width: 100%;
+    }
+
+    .curva-feedback-box {
+        padding: 60px 20px;
+        text-align: center;
+        font-size: 15px;
+        color: #64748b;
+    }
+
+    #navbar-main-btn-search {
+        display: none !important;
+    }
+
+    #navbar-main {
+        display: none !important;
+    }
+
+    /* TOP BAR: UNIFIED GEORGIA TECH NAV STRIP */
+    .curva-top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 24px;
+        background: radial-gradient(circle at 80% 20%, rgba(179, 163, 105, 0.12) 0%, transparent 60%),
+            linear-gradient(135deg, #002244 0%, #003057 100%);
+        border: 1px solid rgba(179, 163, 105, 0.32);
+        border-top: none;
+        border-radius: 0 0 18px 18px;
+        box-shadow: 0 12px 30px -6px rgba(0, 34, 68, 0.22), 0 4px 10px rgba(0, 0, 0, 0.06);
+        margin-top: 0;
+        margin-bottom: 28px;
+    }
+
+    .curva-nav-left {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .curva-nav-divider {
+        width: 1px;
+        height: 18px;
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    .curva-top-bar-title {
+        font-size: 11.5px;
+        letter-spacing: 1.5px;
+        color: #b3a369;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .curva-back-btn {
+        background: none;
+        border: none;
+        color: #cbd5e1;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 6px;
+        transition: all 0.2s;
+    }
+
+    .curva-back-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+    }
+
+    /* ADMIN CONTROLS */
+    .curva-admin-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .curva-admin-badge {
+        font-size: 11px;
+        font-weight: 700;
+        color: #fca5a5;
+        background: rgba(239, 68, 68, 0.18);
+        border: 1px solid rgba(239, 68, 68, 0.4);
+        padding: 5px 11px;
+        border-radius: 20px;
+        letter-spacing: 0.04em;
+    }
+
+    .curva-admin-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .curva-admin-btn:hover {
+        background: rgba(179, 163, 105, 0.2);
+        border-color: #b3a369;
+        color: #fff;
+    }
+
+    /* 2-COLUMN LAYOUT */
+    .curva-media-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.45fr) minmax(360px, 1fr);
+        gap: 36px;
+        padding: 0 16px;
+        align-items: start;
+    }
+
+    @media (max-width: 960px) {
+        .curva-media-layout {
+            grid-template-columns: 1fr;
+            gap: 28px;
+        }
+    }
+
+    /* STAGE (MEDIA VIEWER) */
+    .curva-media-stage {
+        background: #0f172a;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        align-self: start;
+    }
+
+    .curva-stage-inner {
+        width: 100%;
+        display: block;
+    }
+
+    .curva-video-wrap {
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        background: #000;
+        overflow: hidden;
+    }
+
+    .curva-video-wrap iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        display: block;
+    }
+
+    .curva-stage-img {
+        width: 100%;
+        height: auto;
+        display: block;
+        max-height: 720px;
+        object-fit: contain;
+        background: transparent;
+    }
+
+    .curva-fallback-stage {
+        padding: 50px 24px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .curva-external-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #b3a369;
+        color: #002244;
+        padding: 9px 18px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        margin-top: 6px;
+        transition: background 0.2s;
+    }
+
+    .curva-external-btn:hover {
+        background: #c5b57f;
+    }
+
+    /* INFO PANEL (RIGHT COLUMN) */
+    .curva-media-info {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    }
+
+    .curva-type-badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #b3a369;
+        background: rgba(179, 163, 105, 0.12);
+        padding: 4px 10px;
+        border-radius: 6px;
+    }
+
+    .curva-year-badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 700;
+        color: #002244;
+        background: #e2e8f0;
+        padding: 4px 9px;
+        border-radius: 6px;
+        letter-spacing: 0.5px;
+    }
+
+    .curva-media-title {
+        font-family: 'DM Serif Display', Georgia, serif;
+        font-size: 26px;
+        font-weight: 400;
+        line-height: 1.25;
+        color: #002244;
+        margin: 6px 0 18px;
+    }
+
+    /* PARENT GROUP CALLOUT */
+    .curva-parent-callout {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-left: 4px solid #b3a369;
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 22px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .curva-parent-callout:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        border-left-color: #002244;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .curva-callout-sub {
+        font-size: 10.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #64748b;
+        font-weight: 700;
+        margin-bottom: 2px;
+    }
+
+    .curva-callout-name {
+        font-size: 16px;
+        font-weight: 700;
+        color: #002244;
+    }
+
+    .curva-callout-meta {
+        font-size: 13px;
+        color: #475569;
+        margin-top: 2px;
+    }
+
+    .curva-desc-box {
+        font-size: 14.5px;
+        line-height: 1.65;
+        color: #334155;
+        border-top: 1px solid #f1f5f9;
+        padding-top: 18px;
+        white-space: pre-wrap;
+    }
+
+    /* ADMIN FORM CONTROLS */
+    .curva-form-group {
+        margin-bottom: 16px;
+    }
+
+    .curva-form-group label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        color: #475569;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .curva-form-input,
+    .curva-inline-textarea {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        background: #fff;
+        color: #1e293b;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .curva-form-input:focus,
+    .curva-inline-textarea:focus {
+        border-color: #002244;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 34, 68, 0.1);
+    }
+
+    .curva-btn-save {
+        background: #002244;
+        color: #ffffff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+
+    .curva-btn-save:hover {
+        background: #003057;
+    }
+
+    .curva-btn-discard {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #cbd5e1;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-size: 13.5px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .curva-btn-discard:hover {
+        background: #e2e8f0;
+        color: #1e293b;
+    }
+
+    .curva-btn-del {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+        padding: 6px 14px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .curva-btn-del:hover {
+        background: #ef4444;
+        color: #ffffff;
+    }
+
+    /* TAG BADGES & PILL SELECTOR */
+    .curva-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .curva-badge {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .curva-pill-selector {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 4px;
+    }
+
+    .curva-opt-pill {
+        background: #f1f5f9;
+        color: #475569;
+        padding: 4px 11px;
+        border-radius: 14px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        border: 1px solid transparent;
+        transition: all 0.15s;
+        user-select: none;
+    }
+
+    .curva-opt-pill:hover {
+        background: #e2e8f0;
+    }
+
+    .curva-opt-pill.selected {
+        background: #b3a369;
+        color: #ffffff;
+        border-color: #968652;
+    }
+
+    /* WORDPRESS THEME ELEMENT OVERRIDES */
+    #navbar-main-btn-search {
+        display: none !important;
+    }
+
+    #navbar-main {
+        display: none !important;
+    }
+</style>
+
+<script>
+    (function () {
+        // ==========================================
+        // CONFIGURATION
+        // ==========================================
+        const SHEET_ID = '1kn6ioZYQiyDaRjVWrisrVipOldxVCLyiBMOmf80mkqQ';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyCuAQqe9X-lidTXDgmO93VZzLoVbapbOX2sZb0b1XAJU5buh0FY6mGKy1VhAtxEOC9Fg/exec';
+        const PROFILE_BASE_URL = (function () {
+            if (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') return 'group.html';
+            if (window.CURVA_PROFILE_URL) return window.CURVA_PROFILE_URL;
+            const prefix = window.location.pathname.startsWith('/curva/') ? '/curva' : '';
+            return prefix + '/group-profile/';
+        })();
+
+        const TIFO_TAG_BANK = {
+            "Content Type": [
+                "Tifo", "Chant", "Pyro", "Banner", "Match footage", "Protest",
+                "March", "Documentary", "Interview", "Merchandise", "Charity event", "Historical archive"
+            ],
+            "Setting": [
+                "Home game", "Away game", "Derby", "Street / March", "Community event"
+            ],
+            "Subject / Theme": [
+                "Anti-fascist", "Fascist / Far-right", "Anti-racist", "Racist",
+                "Feminism", "LGBTQ+", "Palestine", "Refugees", "Environment",
+                "Anti-modern-football", "Fans' rights", "Anti-repression",
+                "Violence", "Charity", "Volunteering"
+            ]
+        };
+
+        let selectedTifoTags = new Set();
+
+        function parseTags(tagString) {
+            if (!tagString || typeof tagString !== 'string') return [];
+            return tagString
+                .replace(/(\d),(\d)/g, (m, d1, d2) => d1 + '__COMMA__' + d2)
+                .split(',')
+                .map(t => t.replace(/__COMMA__/g, ',').trim())
+                .filter(Boolean);
+        }
+
+        window.initTifoTagBank = function () {
+            const container = document.getElementById('tifoTagBankContainer');
+            if (!container) return;
+
+            const bankTags = new Set();
+            for (const tags of Object.values(TIFO_TAG_BANK)) {
+                tags.forEach(t => bankTags.add(t));
+            }
+
+            const customTags = [];
+            selectedTifoTags.forEach(t => {
+                if (!bankTags.has(t)) customTags.push(t);
+            });
+
+            let html = '';
+            for (const [category, tags] of Object.entries(TIFO_TAG_BANK)) {
+                html += `<div>
+                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">${category}</div>
+                    <div class="curva-pill-selector">`;
+                tags.forEach(t => {
+                    const isSel = selectedTifoTags.has(t);
+                    html += `<span class="curva-opt-pill ${isSel ? 'selected' : ''}" onclick="toggleTifoTag('${t.replace(/'/g, "\\'")}', this)">${t}</span>`;
+                });
+                html += `</div></div>`;
+            }
+
+            if (customTags.length > 0) {
+                html += `<div>
+                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #94a3b8; margin-bottom: 4px;">Custom / Existing</div>
+                    <div class="curva-pill-selector">`;
+                customTags.forEach(t => {
+                    html += `<span class="curva-opt-pill selected" onclick="toggleTifoTag('${t.replace(/'/g, "\\'")}', this)">${t}</span>`;
+                });
+                html += `</div></div>`;
+            }
+
+            container.innerHTML = html;
+        };
+
+        window.toggleTifoTag = function (tag, el) {
+            if (selectedTifoTags.has(tag)) {
+                selectedTifoTags.delete(tag);
+                el.classList.remove('selected');
+            } else {
+                selectedTifoTags.add(tag);
+                el.classList.add('selected');
+            }
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentTifoId = urlParams.get('tifoId');
+
+        if (!currentTifoId) {
+            document.getElementById('loading-state').style.display = 'none';
+            const err = document.getElementById('error-state');
+            err.style.display = 'block';
+            err.innerHTML = '<h3>No Tifo ID Specified</h3><p>Please select a tifo item from the database gallery.</p>';
+            return;
+        }
+
+        let tifoItem = null;
+        let parentGroup = null;
+        let allGroups = [];
+
+        function parseGviz(text) {
+            const start = text.indexOf('{');
+            const end = text.lastIndexOf('}');
+            return JSON.parse(text.slice(start, end + 1));
+        }
+
+        function safeStr(cell) {
+            return (cell && cell.v != null) ? String(cell.v).trim() : '';
+        }
+
+        function getYouTubeId(url) {
+            if (!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        const GVIZ_URL = tab => `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${tab}`;
+
+        function loadTifoData() {
+            Promise.all([
+                fetch(GVIZ_URL('Tifos')).then(r => r.text()),
+                fetch(GVIZ_URL('Groups')).then(r => r.text())
+            ]).then(([tTxt, gTxt]) => {
+                const tRows = parseGviz(tTxt).table.rows || [];
+                const gRows = parseGviz(gTxt).table.rows || [];
+
+                allGroups = gRows.map(r => ({
+                    id: safeStr(r.c[0]),
+                    name: safeStr(r.c[1]),
+                    club: safeStr(r.c[2]),
+                    city: safeStr(r.c[3]),
+                    country: safeStr(r.c[4])
+                })).filter(g => g.id && g.id.toLowerCase() !== 'group_id');
+
+                const matchT = tRows.find(r => safeStr(r.c[0]) === currentTifoId);
+                if (!matchT) throw new Error(`Tifo entry '${currentTifoId}' was not found in the database.`);
+
+                tifoItem = {
+                    id: safeStr(matchT.c[0]),
+                    groupId: safeStr(matchT.c[1]),
+                    ultraGroup: safeStr(matchT.c[2]),
+                    title: safeStr(matchT.c[3]),
+                    year: safeStr(matchT.c[4]),
+                    type: safeStr(matchT.c[5]),
+                    link: safeStr(matchT.c[6]),
+                    description: safeStr(matchT.c[7]),
+                    thumbnailUrl: safeStr(matchT.c[8]),
+                    tags: safeStr(matchT.c[9])
+                };
+
+                parentGroup = allGroups.find(g => g.id === tifoItem.groupId) || {
+                    id: tifoItem.groupId,
+                    name: tifoItem.ultraGroup || 'Ultra Group',
+                    club: '',
+                    city: '',
+                    country: ''
+                };
+
+                renderTifoView();
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('tifo-content').style.display = 'block';
+                updateAdminUI();
+
+            }).catch(err => {
+                document.getElementById('loading-state').style.display = 'none';
+                const errBox = document.getElementById('error-state');
+                errBox.style.display = 'block';
+                errBox.textContent = err.message;
+            });
+        }
+
+        function renderTifoView() {
+            const stage = document.getElementById('tifo-stage-container');
+            const ytId = getYouTubeId(tifoItem.link);
+            const isYt = (tifoItem.type && tifoItem.type.toLowerCase().includes('youtube')) || !!ytId;
+
+            if (isYt && ytId) {
+                stage.innerHTML = `
+                    <div class="curva-video-wrap">
+                        <iframe src="https://www.youtube.com/embed/${ytId}?autoplay=0&rel=0" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                    </div>
+                `;
+            } else if (tifoItem.link || tifoItem.thumbnailUrl) {
+                const imgSrc = tifoItem.link || tifoItem.thumbnailUrl;
+                stage.innerHTML = `<img src="${imgSrc}" alt="${escapeHtml(tifoItem.title || 'Tifo Display')}" class="curva-stage-img" loading="lazy">`;
+            } else {
+                stage.innerHTML = `
+                    <div class="curva-fallback-stage">
+                        <h4 style="margin: 0; font-size: 16px; color: #fff;">${escapeHtml(tifoItem.title || 'Tifo Display')}</h4>
+                        <p style="margin: 0; font-size: 13px; color: #94a3b8; max-width: 320px;">No media link provided for this entry.</p>
+                    </div>
+                `;
+            }
+
+            // Info Panel
+            document.getElementById('tifo-type-label').textContent = isYt ? 'Tifo Video' : 'Tifo Display';
+
+            const yearBadge = document.getElementById('tifo-year-badge');
+            if (tifoItem.year) {
+                yearBadge.textContent = tifoItem.year;
+                yearBadge.style.display = 'inline-block';
+            } else {
+                yearBadge.style.display = 'none';
+            }
+
+            document.getElementById('tifo-title-text').textContent = tifoItem.title || 'Untitled Tifo Display';
+
+            const descBox = document.getElementById('tifo-desc-text');
+            if (tifoItem.description) {
+                descBox.textContent = tifoItem.description;
+                descBox.style.display = 'block';
+            } else {
+                descBox.innerHTML = '<em style="color:#94a3b8;">No description recorded for this tifo display.</em>';
+            }
+
+            // Parent Group & Club Callout
+            const grpName = parentGroup ? parentGroup.name : (tifoItem.ultraGroup || 'Ultra Group');
+            const clubText = parentGroup && parentGroup.club ? parentGroup.club : '';
+            const locText = parentGroup && parentGroup.country ? (parentGroup.city ? `${parentGroup.city}, ${parentGroup.country}` : parentGroup.country) : '';
+            const metaCombined = [clubText, locText].filter(Boolean).join(' · ');
+
+            document.getElementById('tifo-group-name').textContent = grpName;
+            document.getElementById('tifo-group-meta').textContent = metaCombined || 'View ultra group profile &rarr;';
+
+            // Tags List
+            const tagsList = document.getElementById('tifo-tags-list');
+            const tagsSection = document.getElementById('tifo-tags-section');
+            if (tagsList) {
+                const parsed = parseTags(tifoItem.tags);
+                if (parsed.length > 0) {
+                    tagsList.innerHTML = parsed.map(t => `<span class="curva-badge">${escapeHtml(t)}</span>`).join('');
+                    if (tagsSection) tagsSection.style.display = 'block';
+                } else {
+                    tagsList.innerHTML = '';
+                    if (tagsSection) tagsSection.style.display = 'none';
+                }
+            }
+        }
+
+        window.goToGroupProfile = function () {
+            if (tifoItem && tifoItem.groupId) {
+                const base = (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+                    ? 'group.html'
+                    : PROFILE_BASE_URL;
+                window.location.href = `${base}?groupId=${tifoItem.groupId}`;
+            }
+        };
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // ==========================================
+        // ADMIN EDIT & MUTATION
+        // ==========================================
+
+        function isAdmin() {
+            return !!sessionStorage.getItem('curva_admin_passcode');
+        }
+
+        function updateAdminUI() {
+            const badge = document.getElementById('curvaAdminStatus');
+            const btnText = document.getElementById('curvaAdminBtnText');
+            const viewPanel = document.getElementById('view-mode-panel');
+            const editPanel = document.getElementById('edit-mode-panel');
+
+            if (isAdmin()) {
+                if (badge) {
+                    badge.textContent = 'Admin Mode';
+                    badge.classList.add('active');
+                    badge.style.display = 'inline-block';
+                }
+                if (btnText) btnText.textContent = 'Lock / Exit';
+                if (viewPanel) viewPanel.style.display = 'none';
+                if (editPanel) editPanel.style.display = 'block';
+                populateEditForm();
+            } else {
+                if (badge) {
+                    badge.textContent = '';
+                    badge.classList.remove('active');
+                    badge.style.display = 'none';
+                }
+                if (btnText) btnText.textContent = 'Admin Access';
+                if (viewPanel) viewPanel.style.display = 'block';
+                if (editPanel) editPanel.style.display = 'none';
+            }
+        }
+
+        function populateEditForm() {
+            document.getElementById('editTifoTitle').value = tifoItem.title || '';
+            document.getElementById('editTifoYear').value = tifoItem.year || '';
+            document.getElementById('editTifoDesc').value = tifoItem.description || '';
+            document.getElementById('editTifoLink').value = tifoItem.link || '';
+            selectedTifoTags = new Set(parseTags(tifoItem.tags));
+            initTifoTagBank();
+
+            const grpSelect = document.getElementById('editTifoGroup');
+            if (grpSelect) {
+                grpSelect.innerHTML = allGroups.map(g => {
+                    const sel = g.id === tifoItem.groupId ? 'selected' : '';
+                    const sub = g.club ? `${g.club} · ${g.country}` : g.country;
+                    return `<option value="${g.id}" ${sel}>${escapeHtml(g.name)} (${escapeHtml(sub)})</option>`;
+                }).join('');
+            }
+        }
+
+        window.cancelEditMode = function () {
+            populateEditForm();
+            sessionStorage.removeItem('curva_admin_passcode');
+            updateAdminUI();
+        };
+
+        window.curvaToggleAdmin = async function () {
+            if (isAdmin()) {
+                sessionStorage.removeItem('curva_admin_passcode');
+                updateAdminUI();
+            } else {
+                const pass = prompt('Enter team admin passcode:');
+                if (!pass) return;
+
+                const btnText = document.getElementById('curvaAdminBtnText');
+                const orig = btnText.textContent;
+                btnText.textContent = 'Verifying...';
+
+                try {
+                    const res = await callBackend({ action: 'verify_passcode', passcode: pass });
+                    if (res && res.status === 'success') {
+                        sessionStorage.setItem('curva_admin_passcode', pass);
+                        updateAdminUI();
+                    } else {
+                        alert('Incorrect passcode.');
+                    }
+                } catch (e) {
+                    alert('Verification error: ' + e.message);
+                } finally {
+                    btnText.textContent = isAdmin() ? 'Lock / Exit' : orig;
+                }
+            }
+        };
+
+        window.saveTifoEdits = async function () {
+            const btn = document.getElementById('saveTifoEditBtn');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            const newTitle = document.getElementById('editTifoTitle').value.trim();
+            const newYear = document.getElementById('editTifoYear').value.trim();
+            const newGroupId = document.getElementById('editTifoGroup').value;
+            const newDesc = document.getElementById('editTifoDesc').value.trim();
+            const newLink = document.getElementById('editTifoLink').value.trim();
+            const newTags = Array.from(selectedTifoTags).join(', ');
+
+            const selectedGrp = allGroups.find(g => g.id === newGroupId);
+            const newUltraGroup = selectedGrp ? selectedGrp.name : tifoItem.ultraGroup;
+
+            const ytId = getYouTubeId(newLink);
+            const newType = ytId ? 'YouTube Video' : 'Image URL';
+            const autoThumb = ytId ? `https://img.youtube.com/vi/${ytId}/mqdefault.jpg` : newLink;
+
+            const updates = [{
+                tifo_id: tifoItem.id,
+                group_id: newGroupId,
+                ultra_group: newUltraGroup,
+                tifo_title: newTitle,
+                year: newYear,
+                media_type: newType,
+                media_link: newLink,
+                description: newDesc,
+                thumbnail_url: autoThumb,
+                tags: newTags
+            }];
+
+            try {
+                await callBackend({
+                    action: 'batch_update_tifos',
+                    passcode: sessionStorage.getItem('curva_admin_passcode'),
+                    updates: updates
+                });
+
+                tifoItem.title = newTitle;
+                tifoItem.year = newYear;
+                tifoItem.groupId = newGroupId;
+                tifoItem.ultraGroup = newUltraGroup;
+                tifoItem.type = newType;
+                tifoItem.description = newDesc;
+                tifoItem.link = newLink;
+                tifoItem.thumbnailUrl = autoThumb;
+                tifoItem.tags = newTags;
+                parentGroup = selectedGrp || parentGroup;
+
+                renderTifoView();
+                alert('Tifo item updated successfully.');
+            } catch (err) {
+                alert('Failed to save changes: ' + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save Changes';
+            }
+        };
+
+        window.deleteCurrentTifo = async function () {
+            if (!confirm(`Are you sure you want to permanently delete tifo "${tifoItem.title}"?`)) return;
+            try {
+                await callBackend({
+                    action: 'delete_tifo',
+                    passcode: sessionStorage.getItem('curva_admin_passcode'),
+                    tifoId: tifoItem.id
+                });
+                alert('Tifo item deleted.');
+                goToGroupProfile();
+            } catch (e) {
+                alert('Failed to delete tifo: ' + e.message);
+            }
+        };
+
+        async function callBackend(payload) {
+            const res = await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (data.status === 'error') throw new Error(data.message || 'Server error');
+            return data;
+        }
+
+        loadTifoData();
+    })();
+</script>
